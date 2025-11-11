@@ -19,5 +19,6 @@ export const generateQRCode = async (data) => {
 
 export const generateRegistrationURL = (eventId) => {
   const baseURL = window.location.origin;
-  return `${baseURL}/event/${eventId}/register`;
+  const basePath = import.meta.env.BASE_URL || '/';
+  return `${baseURL}${basePath}event/${eventId}/register`;
 };
