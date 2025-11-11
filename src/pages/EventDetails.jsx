@@ -1,0 +1,277 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Edit, QrCode, FileText, UserCheck, Download } from 'lucide-react';
+import { getEvent, getAttendeesByEvent } from '../db/database';
+import { format } from 'date-fns';
+import Header from '../components/Header';
+import TabNavigation from '../components/TabNavigation';
+import { exportToCSV, prepareAttendeeData } from '../utils/csv';
+
+const EventDetails = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [event, setEvent] = useState(null);
+  const [attendees, setAttendees] = useState([]);
+  const [activeTab, setActiveTab] = useState('event');
+
+  useEffect(() => {
+    loadData();
+  }, [id]);
+
+  const loadData = async () => {
+    try {
+      const eventData = await getEvent(parseInt(id));
+      setEvent(eventData);
+      
+      const attendeeData = await getAttendeesByEvent(parseInt(id));
+      setAttendees(attendeeData);
+    } catch (error) {
+      console.error('Error loading data:', error);
+    }
+  };
+
+  const handleExportRegistered = () => {
+    const data = prepareAttendeeData(attendees);
+    exportToCSV(data, `${event.title}-registered.csv`);
+  };
+
+  const handleExportAttended = () => {
+    const attended = attendees.filter(a => a.attended);
+    const data = prepareAttendeeData(attended, true);
+    exportToCSV(data, `${event.title}-attended.csv`);
+  };
+
+  if (!event) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <p className="text-gray-400">Loading...</p>
+      </div>
+    );
+  }
+
+  const tabs = [
+    { id: 'event', label: 'Event' },
+    { id: 'details', label: 'Details' },
+    { id: 'flyer', label: 'Flyer' },
+    { id: 'checkin', label: 'Check-in' },
+  ];
+
+  return (
+    <div className="min-h-screen bg-black">
+      <Header
+        showBack
+        rightAction={
+          <button
+            onClick={() => navigate(`/event/${id}/edit`)}
+            className="text-white hover:text-gray-300"
+          >
+            <Edit size={20} />
+          </button>
+        }
+      />
+
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        <TabNavigation tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
+
+        {activeTab === 'event' && (
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Event date</label>
+              <p className="text-white">{event.date ? format(new Date(event.date), 'yyyy-MM-dd') : '-'}</p>
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Title</label>
+              <p className="text-white">{event.title}</p>
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Desc</label>
+              <p className="text-white">{event.description || '-'}</p>
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Venue</label>
+              <p className="text-white">{event.venue || '-'}</p>
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Organiser name</label>
+              {event.organisers && event.organisers.length > 0 ? (
+                <div className="space-y-2">
+                  {event.organisers.map((org, idx) => (
+                    <div key={idx} className="bg-dark-lighter p-3 rounded">
+                      <p className="text-white">{org.name}</p>
+                      {org.detail && <p className="text-sm text-gray-400">{org.detail}</p>}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-white">-</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Logo</label>
+              {event.logo ? (
+                <img src={event.logo} alt="Logo" className="w-24 h-24 object-cover rounded" />
+              ) : (
+                <p className="text-white">No file chosen</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Event Image</label>
+              {event.image ? (
+                <img src={event.image} alt="Event" className="w-full max-w-md rounded" />
+              ) : (
+                <p className="text-white">No file chosen</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'details' && (
+          <div className="space-y-6">
+            {event.guestsOfHonour && event.guestsOfHonour.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Guests of Honour</h3>
+                <div className="grid gap-3">
+                  {event.guestsOfHonour.map((guest, idx) => (
+                    <div key={idx} className="bg-dark-lighter p-4 rounded flex items-center gap-4">
+                      {guest.photo && (
+                        <img src={guest.photo} alt={guest.name} className="w-16 h-16 object-cover rounded-full" />
+                      )}
+                      <div>
+                        <p className="font-medium">{guest.name}</p>
+                        {guest.title && <p className="text-sm text-gray-400">{guest.title}</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {event.speakers && event.speakers.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Speakers</h3>
+                <div className="grid gap-3">
+                  {event.speakers.map((speaker, idx) => (
+                    <div key={idx} className="bg-dark-lighter p-4 rounded flex items-center gap-4">
+                      {speaker.photo && (
+                        <img src={speaker.photo} alt={speaker.name} className="w-16 h-16 object-cover rounded-full" />
+                      )}
+                      <div>
+                        <p className="font-medium">{speaker.name}</p>
+                        {speaker.title && <p className="text-sm text-gray-400">{speaker.title}</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {event.sponsors && event.sponsors.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Sponsors</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {event.sponsors.map((sponsor, idx) => (
+                    <div key={idx} className="bg-dark-lighter p-4 rounded text-center">
+                      {sponsor.logo && (
+                        <img src={sponsor.logo} alt={sponsor.name} className="w-20 h-20 object-contain mx-auto mb-2" />
+                      )}
+                      <p className="text-sm">{sponsor.name}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {event.media && event.media.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Media Partners</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {event.media.map((media, idx) => (
+                    <div key={idx} className="bg-dark-lighter p-4 rounded text-center">
+                      {media.logo && (
+                        <img src={media.logo} alt={media.name} className="w-20 h-20 object-contain mx-auto mb-2" />
+                      )}
+                      <p className="text-sm">{media.name}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'flyer' && (
+          <div className="space-y-4">
+            <button
+              onClick={() => navigate(`/event/${id}/flyer`)}
+              className="btn-primary w-full flex items-center justify-center gap-2"
+            >
+              <FileText size={20} />
+              View & Download Flyer
+            </button>
+            <button
+              onClick={() => navigate(`/event/${id}/register`)}
+              className="btn-secondary w-full flex items-center justify-center gap-2"
+            >
+              <QrCode size={20} />
+              Registration Page
+            </button>
+          </div>
+        )}
+
+        {activeTab === 'checkin' && (
+          <div className="space-y-4">
+            <div className="bg-dark-lighter p-4 rounded">
+              <div className="grid grid-cols-2 gap-4 text-center">
+                <div>
+                  <p className="text-3xl font-bold text-primary">{attendees.length}</p>
+                  <p className="text-sm text-gray-400">Registered</p>
+                </div>
+                <div>
+                  <p className="text-3xl font-bold text-green-500">
+                    {attendees.filter(a => a.attended).length}
+                  </p>
+                  <p className="text-sm text-gray-400">Attended</p>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => navigate(`/event/${id}/checkin`)}
+              className="btn-primary w-full flex items-center justify-center gap-2"
+            >
+              <UserCheck size={20} />
+              Check-in Attendees
+            </button>
+
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={handleExportRegistered}
+                disabled={attendees.length === 0}
+                className="btn-secondary flex items-center justify-center gap-2"
+              >
+                <Download size={18} />
+                Export Registered
+              </button>
+              <button
+                onClick={handleExportAttended}
+                disabled={attendees.filter(a => a.attended).length === 0}
+                className="btn-secondary flex items-center justify-center gap-2"
+              >
+                <Download size={18} />
+                Export Attended
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default EventDetails;

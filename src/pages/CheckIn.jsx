@@ -1,0 +1,234 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams } from 'react-router-dom';
+import { Search, QrCode, X } from 'lucide-react';
+import { Html5Qrcode } from 'html5-qrcode';
+import { getEvent, getAttendeesByEvent, updateAttendeeStatus, searchAttendees } from '../db/database';
+import Header from '../components/Header';
+
+const CheckIn = () => {
+  const { id } = useParams();
+  const [event, setEvent] = useState(null);
+  const [attendees, setAttendees] = useState([]);
+  const [filteredAttendees, setFilteredAttendees] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [scanning, setScanning] = useState(false);
+  const [scanner, setScanner] = useState(null);
+  const scannerRef = useRef(null);
+
+  useEffect(() => {
+    loadData();
+  }, [id]);
+
+  useEffect(() => {
+    if (searchQuery) {
+      performSearch();
+    } else {
+      setFilteredAttendees(attendees);
+    }
+  }, [searchQuery, attendees]);
+
+  useEffect(() => {
+    return () => {
+      if (scanner) {
+        scanner.stop().catch(console.error);
+      }
+    };
+  }, [scanner]);
+
+  const loadData = async () => {
+    try {
+      const eventData = await getEvent(parseInt(id));
+      setEvent(eventData);
+
+      const attendeeData = await getAttendeesByEvent(parseInt(id));
+      setAttendees(attendeeData);
+      setFilteredAttendees(attendeeData);
+    } catch (error) {
+      console.error('Error loading data:', error);
+    }
+  };
+
+  const performSearch = async () => {
+    try {
+      const results = await searchAttendees(parseInt(id), searchQuery);
+      setFilteredAttendees(results);
+    } catch (error) {
+      console.error('Error searching:', error);
+    }
+  };
+
+  const handleMarkAttend = async (attendeeId, currentStatus) => {
+    try {
+      await updateAttendeeStatus(attendeeId, !currentStatus);
+      await loadData();
+    } catch (error) {
+      console.error('Error updating status:', error);
+      alert('Failed to update attendance');
+    }
+  };
+
+  const startScanning = async () => {
+    try {
+      const html5QrCode = new Html5Qrcode('qr-reader');
+      setScanner(html5QrCode);
+
+      await html5QrCode.start(
+        { facingMode: 'environment' },
+        {
+          fps: 10,
+          qrbox: { width: 250, height: 250 }
+        },
+        onScanSuccess,
+        onScanFailure
+      );
+
+      setScanning(true);
+    } catch (error) {
+      console.error('Error starting scanner:', error);
+      alert('Failed to start camera. Please check permissions.');
+    }
+  };
+
+  const stopScanning = async () => {
+    if (scanner) {
+      try {
+        await scanner.stop();
+        setScanner(null);
+        setScanning(false);
+      } catch (error) {
+        console.error('Error stopping scanner:', error);
+      }
+    }
+  };
+
+  const onScanSuccess = async (decodedText) => {
+    // Check if scanned text contains attendee info (email or name)
+    const results = await searchAttendees(parseInt(id), decodedText);
+    
+    if (results.length > 0) {
+      const attendee = results[0];
+      if (!attendee.attended) {
+        await handleMarkAttend(attendee.id, attendee.attended);
+        alert(`✓ ${attendee.name} checked in successfully!`);
+      } else {
+        alert(`${attendee.name} already checked in.`);
+      }
+    } else {
+      alert('Attendee not found. Please register first.');
+    }
+  };
+
+  const onScanFailure = (error) => {
+    // Silent fail - QR scanning errors are common
+  };
+
+  if (!event) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <p className="text-gray-400">Loading...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-black">
+      <Header title="Check-in" showBack />
+
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        {/* Stats */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="bg-dark-lighter p-4 rounded text-center">
+            <p className="text-3xl font-bold text-primary">{attendees.length}</p>
+            <p className="text-sm text-gray-400">Registered</p>
+          </div>
+          <div className="bg-dark-lighter p-4 rounded text-center">
+            <p className="text-3xl font-bold text-green-500">
+              {attendees.filter(a => a.attended).length}
+            </p>
+            <p className="text-sm text-gray-400">Attended</p>
+          </div>
+        </div>
+
+        {/* Search and Scan */}
+        <div className="mb-6 space-y-3">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by name, email, or contact..."
+              className="pl-10"
+            />
+          </div>
+
+          {!scanning ? (
+            <button
+              onClick={startScanning}
+              className="btn-primary w-full flex items-center justify-center gap-2"
+            >
+              <QrCode size={20} />
+              Scan QR
+            </button>
+          ) : (
+            <button
+              onClick={stopScanning}
+              className="btn-secondary w-full flex items-center justify-center gap-2"
+            >
+              <X size={20} />
+              Stop Scanning
+            </button>
+          )}
+        </div>
+
+        {/* QR Scanner */}
+        {scanning && (
+          <div className="mb-6 bg-dark-lighter p-4 rounded">
+            <div id="qr-reader" className="w-full"></div>
+          </div>
+        )}
+
+        {/* Attendee List */}
+        <div className="space-y-3">
+          {filteredAttendees.length === 0 ? (
+            <p className="text-center text-gray-400 py-8">
+              {searchQuery ? 'No attendees found' : 'No registrations yet'}
+            </p>
+          ) : (
+            filteredAttendees.map((attendee) => (
+              <div
+                key={attendee.id}
+                className="bg-dark-lighter border border-gray-800 rounded-lg p-4"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-lg mb-1">{attendee.name}</h3>
+                    <p className="text-sm text-gray-400">{attendee.email}</p>
+                    {attendee.contact && (
+                      <p className="text-sm text-gray-400">{attendee.contact}</p>
+                    )}
+                    {attendee.notes && (
+                      <p className="text-sm text-gray-500 mt-1">{attendee.notes}</p>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => handleMarkAttend(attendee.id, attendee.attended)}
+                    className={`px-4 py-2 rounded font-medium ${
+                      attendee.attended
+                        ? 'bg-green-600 hover:bg-green-700 text-white'
+                        : 'bg-primary hover:bg-primary-dark text-white'
+                    }`}
+                  >
+                    {attendee.attended ? 'Attended' : 'Mark Attend'}
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CheckIn;
