@@ -15,7 +15,7 @@ const EventList = () => {
       <Header
         rightAction={
           <button
-            onClick={() => navigate('/event/new')}
+            onClick={() => navigate('/new')}
             className="btn-primary flex items-center gap-2"
           >
             <Plus size={20} />
@@ -31,7 +31,7 @@ const EventList = () => {
             <h2 className="text-xl font-semibold mb-2">No Events Yet</h2>
             <p className="text-gray-400 mb-6">Create your first event to get started</p>
             <button
-              onClick={() => navigate('/event/new')}
+              onClick={() => navigate('/new')}
               className="btn-primary inline-flex items-center gap-2"
             >
               <Plus size={20} />
@@ -43,7 +43,7 @@ const EventList = () => {
             {events.map((event) => (
               <div
                 key={event.id}
-                onClick={() => navigate(`/event/${event.id}`)}
+                onClick={() => navigate(`/${event.id}`)}
                 className="bg-dark-lighter border border-gray-800 rounded-lg p-5 cursor-pointer hover:border-primary transition-colors"
               >
                 <div className="flex items-start gap-4">

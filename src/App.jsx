@@ -13,12 +13,12 @@ function App() {
       <div className="min-h-screen bg-black text-white">
         <Routes>
           <Route path="/" element={<EventList />} />
-          <Route path="/event/new" element={<EventForm />} />
-          <Route path="/event/:id/edit" element={<EventForm />} />
-          <Route path="/event/:id" element={<EventDetails />} />
-          <Route path="/event/:id/flyer" element={<FlyerView />} />
-          <Route path="/event/:id/register" element={<RegistrationForm />} />
-          <Route path="/event/:id/checkin" element={<CheckIn />} />
+          <Route path="/new" element={<EventForm />} />
+          <Route path="/:id/edit" element={<EventForm />} />
+          <Route path="/:id" element={<EventDetails />} />
+          <Route path="/:id/flyer" element={<FlyerView />} />
+          <Route path="/:id/register" element={<RegistrationForm />} />
+          <Route path="/:id/checkin" element={<CheckIn />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

@@ -83,7 +83,7 @@ const EventForm = () => {
       }
 
       const savedId = await saveEvent(eventData);
-      navigate(`/event/${isEdit ? id : savedId}`);
+      navigate(`/${isEdit ? id : savedId}`);
     } catch (error) {
       console.error('Error saving event:', error);
       alert('Failed to save event');

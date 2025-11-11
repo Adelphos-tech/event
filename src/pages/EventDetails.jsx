@@ -62,7 +62,7 @@ const EventDetails = () => {
         showBack
         rightAction={
           <button
-            onClick={() => navigate(`/event/${id}/edit`)}
+            onClick={() => navigate(`/${id}/edit`)}
             className="text-white hover:text-gray-300"
           >
             <Edit size={20} />
@@ -208,14 +208,14 @@ const EventDetails = () => {
         {activeTab === 'flyer' && (
           <div className="space-y-4">
             <button
-              onClick={() => navigate(`/event/${id}/flyer`)}
+              onClick={() => navigate(`/${id}/flyer`)}
               className="btn-primary w-full flex items-center justify-center gap-2"
             >
               <FileText size={20} />
               View & Download Flyer
             </button>
             <button
-              onClick={() => navigate(`/event/${id}/register`)}
+              onClick={() => navigate(`/${id}/register`)}
               className="btn-secondary w-full flex items-center justify-center gap-2"
             >
               <QrCode size={20} />
@@ -242,7 +242,7 @@ const EventDetails = () => {
             </div>
 
             <button
-              onClick={() => navigate(`/event/${id}/checkin`)}
+              onClick={() => navigate(`/${id}/checkin`)}
               className="btn-primary w-full flex items-center justify-center gap-2"
             >
               <UserCheck size={20} />
