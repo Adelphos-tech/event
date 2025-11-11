@@ -9,7 +9,7 @@ import CheckIn from './pages/CheckIn';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/event">
       <div className="min-h-screen bg-black text-white">
         <Routes>
           <Route path="/" element={<EventList />} />
