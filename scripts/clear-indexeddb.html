@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clear EventsX Database</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 1rem;
+    }
+    p {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+    button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 12px 32px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #5568d3;
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .status {
+      margin-top: 1rem;
+      padding: 12px;
+      border-radius: 6px;
+      display: none;
+    }
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      display: block;
+    }
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔄 Clear EventsX Database</h1>
+    <p>
+      This will clear your local IndexedDB database and allow it to reinitialize 
+      with the updated super admin email (lowercase).
+    </p>
+    <p>
+      <strong>Note:</strong> All local data will be deleted. If you're using 
+      Neon database, your data is safe in the cloud.
+    </p>
+    <button id="clearBtn" onclick="clearDatabase()">Clear Database</button>
+    <div id="status" class="status"></div>
+  </div>
+
+  <script>
+    async function clearDatabase() {
+      const btn = document.getElementById('clearBtn');
+      const status = document.getElementById('status');
+      
+      btn.disabled = true;
+      btn.textContent = 'Clearing...';
+      status.className = 'status';
+      status.style.display = 'none';
+      
+      try {
+        // Clear IndexedDB
+        await new Promise((resolve, reject) => {
+          const request = indexedDB.deleteDatabase('EventsXDatabase');
+          
+          request.onsuccess = () => {
+            console.log('✅ Database deleted successfully');
+            resolve();
+          };
+          
+          request.onerror = () => {
+            console.error('❌ Error deleting database');
+            reject(new Error('Failed to delete database'));
+          };
+          
+          request.onblocked = () => {
+            console.warn('⚠️ Database deletion blocked');
+            reject(new Error('Database deletion blocked. Please close all other tabs with EventsX.'));
+          };
+        });
+        
+        // Clear localStorage
+        localStorage.removeItem('eventsx_user');
+        
+        status.className = 'status success';
+        status.textContent = '✅ Database cleared successfully! You can now refresh your EventsX application.';
+        btn.textContent = 'Cleared!';
+        
+        // Optionally redirect after a delay
+        setTimeout(() => {
+          window.close();
+        }, 3000);
+        
+      } catch (error) {
+        status.className = 'status error';
+        status.textContent = '❌ ' + error.message;
+        btn.disabled = false;
+        btn.textContent = 'Try Again';
+      }
+    }
+  </script>
+</body>
+</html>

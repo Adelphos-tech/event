@@ -115,7 +115,7 @@ CREATE INDEX IF NOT EXISTS idx_attendees_email ON attendees(email);
 
 INSERT INTO users (email, password_hash, role, first_name, last_name, contact, email_verified)
 VALUES (
-  'Robocorpsg@gmail.com',
+  'robocorpsg@gmail.com',
   'Admin@7990',
   'superadmin',
   'Super',
@@ -132,7 +132,7 @@ SELECT
   'Singapore Convention Centre',
   u.id,
   'active'
-FROM users u WHERE u.email = 'Robocorpsg@gmail.com'
+FROM users u WHERE u.email = 'robocorpsg@gmail.com'
 ON CONFLICT DO NOTHING;
 
 INSERT INTO events (title, description, event_date, venue, owner_id, status) 
@@ -143,7 +143,7 @@ SELECT
   'Raffles City Convention Centre',
   u.id,
   'active'
-FROM users u WHERE u.email = 'Robocorpsg@gmail.com'
+FROM users u WHERE u.email = 'robocorpsg@gmail.com'
 ON CONFLICT DO NOTHING;
 `;
 

@@ -12,10 +12,10 @@ db.version(1).stores({
 
 // Initialize super admin and sample events on first load
 db.on('ready', async () => {
-  const superAdmin = await db.users.where('email').equals('Robocorpsg@gmail.com').first();
+  const superAdmin = await db.users.where('email').equals('robocorpsg@gmail.com').first();
   if (!superAdmin) {
     await db.users.add({
-      email: 'Robocorpsg@gmail.com',
+      email: 'robocorpsg@gmail.com',
       password: 'Admin@7990', // In production, this should be hashed
       role: 'superadmin',
       contact: '+65 0000 0000',
@@ -221,13 +221,15 @@ export const searchAttendees = async (eventId, query) => {
 export const registerUser = async (userData) => {
   try {
     // Check if user already exists
-    const existingUser = await db.users.where('email').equals(userData.email).first();
+    const normalizedEmail = userData.email.toLowerCase();
+    const existingUser = await db.users.where('email').equals(normalizedEmail).first();
     if (existingUser) {
       throw new Error('User with this email already exists');
     }
     
     const id = await db.users.add({
       ...userData,
+      email: normalizedEmail,
       role: 'owner',
       createdAt: new Date().toISOString()
     });
@@ -240,7 +242,8 @@ export const registerUser = async (userData) => {
 
 export const loginUser = async (email, password) => {
   try {
-    const user = await db.users.where('email').equals(email).first();
+    const normalizedEmail = email.toLowerCase();
+    const user = await db.users.where('email').equals(normalizedEmail).first();
     if (!user) {
       throw new Error('User not found');
     }
