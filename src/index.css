@@ -16,8 +16,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-
-/* Dark theme input styles - only applies in dark-themed areas */
+/* Dark theme styles - only applies in dark-themed areas */
 .bg-black input,
 .bg-black textarea,
 .bg-black select,
@@ -49,7 +48,7 @@ body {
   color: #666;
 }
 
-
+/* Button styles */
 button {
   cursor: pointer;
   transition: all 0.2s;
@@ -85,7 +84,7 @@ button:disabled {
   background-color: #3a3a3a;
 }
 
-/* Custom utilities for better mobile experience */
+/* Dark theme utilities */
 .dark-light {
   background-color: #1a1a1a;
 }
@@ -94,7 +93,53 @@ button:disabled {
   background-color: #2a2a2a;
 }
 
-/* Ensure proper mobile viewport */
+/* Line clamp utility */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* Smooth animations */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Mobile optimizations */
 @media (max-width: 640px) {
   .max-w-4xl {
     max-width: 100%;
@@ -105,17 +150,14 @@ button:disabled {
     padding-right: 1rem;
   }
 
-  /* Better mobile button sizing */
   .btn-primary,
   .btn-secondary {
     min-height: 44px;
-    /* iOS touch target minimum */
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  /* Mobile-friendly text sizes */
   h1 {
     font-size: 1.5rem;
     line-height: 2rem;
@@ -126,7 +168,6 @@ button:disabled {
     line-height: 1.75rem;
   }
 
-  /* Better mobile spacing */
   .space-y-4>*+* {
     margin-top: 1rem;
   }
@@ -134,4 +175,23 @@ button:disabled {
   .space-y-6>*+* {
     margin-top: 1.5rem;
   }
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid #DC2626;
+  outline-offset: 2px;
+}
+
+/* Premium shadow utilities */
+.shadow-premium {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.shadow-hover {
+  transition: box-shadow 0.3s ease;
+}
+
+.shadow-hover:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
 }
