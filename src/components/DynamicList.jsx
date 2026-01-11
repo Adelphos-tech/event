@@ -37,11 +37,11 @@ const DynamicList = ({ title, items, onChange, fields }) => {
   return (
     <div className="mb-6">
       <div className="flex items-center justify-between mb-3">
-        <label className="block text-sm font-medium text-gray-300">{title}</label>
+        <label className="block text-sm font-medium text-gray-700">{title}</label>
         <button
           type="button"
           onClick={addItem}
-          className="flex items-center gap-1 text-primary hover:text-primary-dark text-sm"
+          className="flex items-center gap-1 text-red-600 hover:text-red-700 font-medium text-sm"
         >
           <Plus size={16} />
           Add
@@ -50,14 +50,14 @@ const DynamicList = ({ title, items, onChange, fields }) => {
 
       <div className="space-y-3">
         {items.map((item, index) => (
-          <div key={index} className="bg-dark-lighter p-4 rounded-lg border border-gray-800">
+          <div key={index} className="bg-gray-50 p-4 rounded-lg border border-gray-300">
             <div className="flex items-start gap-3">
               <div className="flex-1 space-y-3">
                 {fields.map(field => (
                   <div key={field.name}>
                     {field.type === 'image' ? (
                       <div>
-                        <label className="block text-xs text-gray-400 mb-1">
+                        <label className="block text-xs text-gray-600 font-medium mb-1">
                           {field.label}
                         </label>
                         <div className="flex items-center gap-3">
@@ -68,7 +68,7 @@ const DynamicList = ({ title, items, onChange, fields }) => {
                               className="w-16 h-16 object-cover rounded"
                             />
                           )}
-                          <label className="flex items-center gap-2 px-3 py-2 bg-dark-light rounded cursor-pointer hover:bg-gray-700 text-sm">
+                          <label className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded cursor-pointer hover:bg-gray-50 text-sm text-gray-700">
                             <Upload size={16} />
                             {item[field.name] ? 'Change' : 'Upload'}
                             <input
@@ -82,7 +82,7 @@ const DynamicList = ({ title, items, onChange, fields }) => {
                       </div>
                     ) : (
                       <div>
-                        <label className="block text-xs text-gray-400 mb-1">
+                        <label className="block text-xs text-gray-600 font-medium mb-1">
                           {field.label}
                         </label>
                         <input
@@ -90,7 +90,7 @@ const DynamicList = ({ title, items, onChange, fields }) => {
                           value={item[field.name] || ''}
                           onChange={(e) => updateItem(index, field.name, e.target.value)}
                           placeholder={field.placeholder}
-                          className="w-full"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                         />
                       </div>
                     )}
@@ -109,7 +109,7 @@ const DynamicList = ({ title, items, onChange, fields }) => {
         ))}
 
         {items.length === 0 && (
-          <p className="text-gray-500 text-sm text-center py-4">
+          <p className="text-gray-400 text-sm text-center py-4 bg-gray-50 rounded-lg border border-gray-200">
             No {title.toLowerCase()} added yet. Click "Add" to create one.
           </p>
         )}
