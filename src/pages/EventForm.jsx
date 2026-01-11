@@ -406,6 +406,15 @@ const EventForm = () => {
       return;
     }
 
+    // Confirmation before submission
+    const confirmMessage = isEdit 
+      ? 'Are you sure you want to update this event?'
+      : `Are you sure you want to create this event?\n\nTitle: ${formData.title}\nDate: ${formData.startDate} to ${formData.endDate}\nVenue: ${formData.venue || 'Not specified'}`;
+    
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+
     setLoading(true);
     try {
       let ownerId = user?.id;
@@ -529,7 +538,16 @@ const EventForm = () => {
             </p>
           </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form 
+          onSubmit={handleSubmit} 
+          className="space-y-6"
+          onKeyDown={(e) => {
+            // Prevent form submission on Enter key (except in textarea)
+            if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+              e.preventDefault();
+            }
+          }}
+        >
           {/* Event Type Tabs */}
           <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
             <div className="flex flex-wrap gap-2 mb-6">
@@ -604,6 +622,7 @@ const EventForm = () => {
               value={formData.title}
               onChange={(e) => handleChange('title', e.target.value)}
               onBlur={() => handleBlur('title')}
+              onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
               placeholder="Enter event title..."
               maxLength={MAX_TITLE_LENGTH}
               className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${
