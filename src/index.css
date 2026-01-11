@@ -14,11 +14,16 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #000000;
-  color: #ffffff;
 }
 
-input, textarea, select {
+
+/* Dark theme input styles - only applies in dark-themed areas */
+.bg-black input,
+.bg-black textarea,
+.bg-black select,
+.dark-theme input,
+.dark-theme textarea,
+.dark-theme select {
   background-color: #1a1a1a;
   color: #ffffff;
   border: 1px solid #2a2a2a;
@@ -28,13 +33,22 @@ input, textarea, select {
   outline: none;
 }
 
-input:focus, textarea:focus, select:focus {
+.bg-black input:focus,
+.bg-black textarea:focus,
+.bg-black select:focus,
+.dark-theme input:focus,
+.dark-theme textarea:focus,
+.dark-theme select:focus {
   border-color: #DC2626;
 }
 
-input::placeholder, textarea::placeholder {
+.bg-black input::placeholder,
+.bg-black textarea::placeholder,
+.dark-theme input::placeholder,
+.dark-theme textarea::placeholder {
   color: #666;
 }
+
 
 button {
   cursor: pointer;
@@ -85,37 +99,39 @@ button:disabled {
   .max-w-4xl {
     max-width: 100%;
   }
-  
+
   .px-4 {
     padding-left: 1rem;
     padding-right: 1rem;
   }
-  
+
   /* Better mobile button sizing */
-  .btn-primary, .btn-secondary {
-    min-height: 44px; /* iOS touch target minimum */
+  .btn-primary,
+  .btn-secondary {
+    min-height: 44px;
+    /* iOS touch target minimum */
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  
+
   /* Mobile-friendly text sizes */
   h1 {
     font-size: 1.5rem;
     line-height: 2rem;
   }
-  
+
   h2 {
     font-size: 1.25rem;
     line-height: 1.75rem;
   }
-  
+
   /* Better mobile spacing */
-  .space-y-4 > * + * {
+  .space-y-4>*+* {
     margin-top: 1rem;
   }
-  
-  .space-y-6 > * + * {
+
+  .space-y-6>*+* {
     margin-top: 1.5rem;
   }
 }

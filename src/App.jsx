@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import MainPage from './pages/MainPage';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -17,7 +18,8 @@ function App() {
     <AuthProvider>
       <Router basename="/">
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<MainPage />} />
+          <Route path="/landing" element={<LandingPage />} />
           <Route path="/login" element={<div className="min-h-screen bg-black text-white"><Login /></div>} />
           <Route path="/register" element={<div className="min-h-screen bg-black text-white"><Register /></div>} />
           <Route path="/admin" element={<div className="min-h-screen bg-black text-white"><AdminDashboard /></div>} />
