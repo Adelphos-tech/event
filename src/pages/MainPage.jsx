@@ -140,8 +140,8 @@ const MainPage = () => {
                                             key={tab.id}
                                             onClick={() => handleTabClick(tab.id)}
                                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === tab.id
-                                                    ? 'bg-gray-900 text-white'
-                                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                                ? 'bg-gray-900 text-white'
+                                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                                 }`}
                                         >
                                             {tab.label}
@@ -309,14 +309,72 @@ const MainPage = () => {
                         </div>
 
                         {/* Right - Illustration */}
-                        <div className="hidden lg:flex justify-center items-start pt-20">
+                        <div className="hidden lg:flex justify-center items-start pt-12">
                             <div className="relative">
-                                {/* Clipboard Illustration */}
-                                <img
-                                    src="https://img.icons8.com/3d-fluency/375/checklist.png"
-                                    alt="Checklist"
-                                    className="w-80 h-auto drop-shadow-2xl"
-                                />
+                                {/* Inline SVG Clipboard Illustration */}
+                                <svg width="320" height="400" viewBox="0 0 320 400" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-2xl">
+                                    {/* Clipboard Base */}
+                                    <rect x="40" y="50" width="240" height="320" rx="16" fill="#F5E6D3" stroke="#D4B896" strokeWidth="3" />
+
+                                    {/* Clipboard Clip */}
+                                    <rect x="110" y="30" width="100" height="45" rx="8" fill="#8B4513" />
+                                    <rect x="125" y="40" width="70" height="25" rx="6" fill="#A0522D" />
+
+                                    {/* Checklist Items */}
+                                    {/* Item 1 - Checked */}
+                                    <rect x="70" y="100" width="180" height="50" rx="8" fill="white" stroke="#E5E7EB" strokeWidth="2" />
+                                    <circle cx="95" cy="125" r="12" fill="#22C55E" />
+                                    <path d="M89 125 L93 129 L101 121" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                                    <rect x="115" y="115" width="80" height="8" rx="4" fill="#D1D5DB" />
+                                    <rect x="115" y="128" width="50" height="6" rx="3" fill="#E5E7EB" />
+                                    <rect x="210" y="110" width="30" height="30" rx="6" fill="#FEE2E2" />
+                                    <text x="218" y="130" fontSize="16">🏠</text>
+
+                                    {/* Item 2 - Checked */}
+                                    <rect x="70" y="165" width="180" height="50" rx="8" fill="white" stroke="#E5E7EB" strokeWidth="2" />
+                                    <circle cx="95" cy="190" r="12" fill="#22C55E" />
+                                    <path d="M89 190 L93 194 L101 186" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                                    <rect x="115" y="180" width="70" height="8" rx="4" fill="#D1D5DB" />
+                                    <rect x="115" y="193" width="60" height="6" rx="3" fill="#E5E7EB" />
+                                    <rect x="210" y="175" width="30" height="30" rx="6" fill="#DBEAFE" />
+                                    <text x="218" y="195" fontSize="16">🏢</text>
+
+                                    {/* Item 3 - Checked */}
+                                    <rect x="70" y="230" width="180" height="50" rx="8" fill="white" stroke="#E5E7EB" strokeWidth="2" />
+                                    <circle cx="95" cy="255" r="12" fill="#22C55E" />
+                                    <path d="M89 255 L93 259 L101 251" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                                    <rect x="115" y="245" width="90" height="8" rx="4" fill="#D1D5DB" />
+                                    <rect x="115" y="258" width="45" height="6" rx="3" fill="#E5E7EB" />
+                                    <rect x="210" y="240" width="30" height="30" rx="6" fill="#FEF3C7" />
+                                    <text x="218" y="260" fontSize="16">📦</text>
+
+                                    {/* Item 4 - Unchecked */}
+                                    <rect x="70" y="295" width="180" height="50" rx="8" fill="white" stroke="#E5E7EB" strokeWidth="2" />
+                                    <circle cx="95" cy="320" r="12" fill="white" stroke="#D1D5DB" strokeWidth="2" />
+                                    <rect x="115" y="310" width="65" height="8" rx="4" fill="#D1D5DB" />
+                                    <rect x="115" y="323" width="55" height="6" rx="3" fill="#E5E7EB" />
+                                    <rect x="210" y="305" width="30" height="30" rx="6" fill="#F3E8FF" />
+                                    <text x="218" y="325" fontSize="16">💼</text>
+
+                                    {/* Pencil */}
+                                    <g transform="rotate(-45, 270, 200)">
+                                        <rect x="250" y="180" width="12" height="60" fill="#F59E0B" />
+                                        <polygon points="256,240 250,255 262,255" fill="#F59E0B" />
+                                        <polygon points="256,250 253,255 259,255" fill="#1F2937" />
+                                        <rect x="250" y="180" width="12" height="10" fill="#F472B6" />
+                                    </g>
+
+                                    {/* Big Checkmark Badge */}
+                                    <circle cx="265" cy="340" r="35" fill="#22C55E" filter="url(#shadow)" />
+                                    <path d="M248 340 L258 350 L282 326" stroke="white" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+
+                                    {/* Shadow Filter */}
+                                    <defs>
+                                        <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                                            <feDropShadow dx="0" dy="4" stdDeviation="6" floodOpacity="0.2" />
+                                        </filter>
+                                    </defs>
+                                </svg>
                             </div>
                         </div>
                     </div>
