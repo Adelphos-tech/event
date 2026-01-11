@@ -24,8 +24,8 @@ function App() {
           <Route path="/register" element={<div className="min-h-screen bg-black text-white"><Register /></div>} />
           <Route path="/admin" element={<div className="min-h-screen bg-black text-white"><AdminDashboard /></div>} />
           <Route path="/events" element={<div className="min-h-screen bg-black text-white"><EventList /></div>} />
-          <Route path="/new" element={<div className="min-h-screen bg-black text-white"><EventForm /></div>} />
-          <Route path="/:id/edit" element={<div className="min-h-screen bg-black text-white"><EventForm /></div>} />
+          <Route path="/new" element={<EventForm />} />
+          <Route path="/:id/edit" element={<EventForm />} />
           <Route path="/:id" element={<div className="min-h-screen bg-black text-white"><EventDetails /></div>} />
           <Route path="/:id/flyer" element={<div className="min-h-screen bg-black text-white"><FlyerView /></div>} />
           <Route path="/:id/register" element={<div className="min-h-screen bg-black text-white"><RegistrationForm /></div>} />
