@@ -150,19 +150,27 @@ export const getEvent = async (eventId) => {
 export const getAllEvents = async () => {
   await ensureInitialized();
   
-  const query = `
-    SELECT e.*, u.email as owner_email, u.first_name as owner_first_name, u.last_name as owner_last_name,
-           COUNT(a.id) as attendee_count
-    FROM events e
-    JOIN users u ON e.owner_id = u.id
-    LEFT JOIN attendees a ON e.id = a.event_id AND a.status != 'cancelled'
-    WHERE e.status != 'deleted' AND e.is_public = true
-    GROUP BY e.id, u.email, u.first_name, u.last_name
-    ORDER BY e.event_date ASC
-  `;
-  
-  const result = await executeQuery(query);
-  return result;
+  try {
+    const query = `
+      SELECT e.*, 
+             COALESCE(u.email, '') as owner_email, 
+             COALESCE(u.first_name, '') as owner_first_name, 
+             COALESCE(u.last_name, '') as owner_last_name,
+             COALESCE(COUNT(a.id), 0) as attendee_count
+      FROM events e
+      LEFT JOIN users u ON e.owner_id = u.id
+      LEFT JOIN attendees a ON e.id = a.event_id AND a.status != 'cancelled'
+      WHERE e.status != 'deleted'
+      GROUP BY e.id, u.email, u.first_name, u.last_name
+      ORDER BY e.event_date ASC NULLS LAST
+    `;
+    
+    const result = await executeQuery(query);
+    return Array.isArray(result) ? result : [];
+  } catch (error) {
+    console.error('Error fetching all events from Neon:', error);
+    return [];
+  }
 };
 
 export const updateEvent = async (eventId, eventData) => {

@@ -40,7 +40,9 @@ const EventList = () => {
   }, []);
 
   // Sort events: Today's first, then upcoming, then past
-  const events = allEvents ? [...allEvents].sort((a, b) => {
+  // Ensure allEvents is always an array
+  const safeEvents = Array.isArray(allEvents) ? allEvents : [];
+  const events = safeEvents.length > 0 ? [...safeEvents].sort((a, b) => {
     // Handle missing dates
     if (!a.startDate && !b.startDate) return 0;
     if (!a.startDate) return 1;
