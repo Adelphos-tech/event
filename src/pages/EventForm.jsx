@@ -318,7 +318,8 @@ const EventForm = () => {
 
   // Validate all fields before submission
   const validateAllFields = () => {
-    const fieldsToValidate = ['title', 'startDate', 'endDate', 'capacity', 'description', 'venue'];
+    // All mandatory fields for database storage and retrieval
+    const fieldsToValidate = ['title', 'description', 'startDate', 'endDate', 'venue', 'capacity'];
     if (!user && !isEdit) {
       fieldsToValidate.push('creatorEmail', 'creatorPassword', 'creatorContact');
     }
@@ -339,6 +340,15 @@ const EventForm = () => {
             isValid = false;
           }
           break;
+        case 'description':
+          if (!value || !value.trim()) {
+            newErrors.description = 'Description is required';
+            isValid = false;
+          } else if (value.trim().length < 10) {
+            newErrors.description = 'Description must be at least 10 characters';
+            isValid = false;
+          }
+          break;
         case 'startDate':
           if (!value) {
             newErrors.startDate = 'Start date is required';
@@ -354,8 +364,20 @@ const EventForm = () => {
             isValid = false;
           }
           break;
+        case 'venue':
+          if (!value || !value.trim()) {
+            newErrors.venue = 'Venue is required';
+            isValid = false;
+          } else if (value.trim().length < 3) {
+            newErrors.venue = 'Venue must be at least 3 characters';
+            isValid = false;
+          }
+          break;
         case 'capacity':
-          if (value !== '' && value !== null && value !== undefined) {
+          if (!value || value === '') {
+            newErrors.capacity = 'Capacity is required';
+            isValid = false;
+          } else {
             const numValue = parseInt(value);
             if (isNaN(numValue) || numValue < 1) {
               newErrors.capacity = 'Capacity must be a positive number';
@@ -650,7 +672,9 @@ const EventForm = () => {
 
           {/* Description - Right after title */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Description <span className="text-red-500">*</span>
+            </label>
             <textarea
               value={formData.description}
               onChange={(e) => handleChange('description', e.target.value)}
@@ -678,31 +702,41 @@ const EventForm = () => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                <MapPin className="inline w-4 h-4 mr-1" />Venue
+                <MapPin className="inline w-4 h-4 mr-1" />Venue <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={formData.venue}
                 onChange={(e) => handleChange('venue', e.target.value)}
-                placeholder="Event location"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                onBlur={() => handleBlur('venue')}
+                placeholder="Event location (e.g., Singapore Convention Centre)"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${
+                  errors.venue ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                }`}
+                required
               />
+              {errors.venue && (
+                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" />{errors.venue}
+                </p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Users className="inline w-4 h-4 mr-1" />Capacity
+                <Users className="inline w-4 h-4 mr-1" />Capacity <span className="text-red-500">*</span>
               </label>
               <input
                 type="number"
                 value={formData.capacity}
                 onChange={(e) => handleChange('capacity', e.target.value)}
                 onBlur={() => handleBlur('capacity')}
-                placeholder="Max attendees"
+                placeholder="Max attendees (e.g., 100)"
                 min="1"
                 max={MAX_CAPACITY}
                 className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${
                   errors.capacity ? 'border-red-500 bg-red-50' : 'border-gray-300'
                 }`}
+                required
               />
               {errors.capacity && (
                 <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
