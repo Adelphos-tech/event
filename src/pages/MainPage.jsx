@@ -464,71 +464,114 @@ const MainPage = () => {
                 </div>
 
                 {/* Right Side - Listings Sidebar */}
-                <div className="hidden lg:block w-96 sticky top-24 self-start">
-                    <div className="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl p-6 shadow-lg">
-                        <div className="flex items-center gap-3 mb-4">
-                            {getCategoryIcon(activeCategory)}
-                            <h3 className="text-lg font-semibold text-gray-900">
-                                {getCategoryLabel(activeCategory)} Listings
-                            </h3>
-                        </div>
-                        
-                        {loadingListings ? (
-                            <div className="flex items-center justify-center py-8">
-                                <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
-                            </div>
-                        ) : listings.length === 0 ? (
-                            <div className="text-center py-8">
-                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <div className="hidden lg:block w-[420px] sticky top-8 self-start">
+                    {/* Header Card */}
+                    <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-5 mb-4 shadow-xl">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-white">
                                     {getCategoryIcon(activeCategory)}
                                 </div>
-                                <p className="text-gray-500 text-sm">No listings yet</p>
-                                <p className="text-gray-400 text-xs mt-1">Be the first to post!</p>
+                                <div>
+                                    <h3 className="text-white font-semibold">
+                                        {getCategoryLabel(activeCategory)}
+                                    </h3>
+                                    <p className="text-gray-400 text-xs">{listings.length} active listings</p>
+                                </div>
                             </div>
-                        ) : (
-                            <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
-                                {listings.map((listing) => (
-                                    <div 
-                                        key={listing.id} 
-                                        className="bg-white border border-gray-100 rounded-xl p-4 hover:shadow-md transition-all cursor-pointer"
-                                    >
-                                        {/* Listing Image */}
-                                        {listing.images && listing.images.length > 0 && (
+                            <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-medium rounded-full">
+                                Live
+                            </span>
+                        </div>
+                    </div>
+                    
+                    {loadingListings ? (
+                        <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 flex items-center justify-center">
+                            <div className="text-center">
+                                <div className="w-10 h-10 border-3 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                                <p className="text-gray-500 text-sm">Loading listings...</p>
+                            </div>
+                        </div>
+                    ) : listings.length === 0 ? (
+                        <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 text-center">
+                            <div className="w-20 h-20 bg-gradient-to-br from-amber-100 to-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-amber-600">
+                                {getCategoryIcon(activeCategory)}
+                            </div>
+                            <h4 className="font-semibold text-gray-800 mb-1">No listings yet</h4>
+                            <p className="text-gray-500 text-sm">Be the first to post in this category!</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1 scrollbar-thin">
+                            {listings.map((listing, index) => (
+                                <div 
+                                    key={listing.id} 
+                                    className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100 hover:border-amber-200 hover:-translate-y-1"
+                                >
+                                    {/* Image with overlay */}
+                                    {listing.images && listing.images.length > 0 ? (
+                                        <div className="relative h-36 overflow-hidden">
                                             <img 
                                                 src={listing.images[0]} 
                                                 alt={listing.title}
-                                                className="w-full h-32 object-cover rounded-lg mb-3"
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                             />
-                                        )}
-                                        
-                                        {/* Listing Details */}
-                                        <h4 className="font-medium text-gray-900 text-sm line-clamp-2 mb-1">
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                                            {/* Price Badge */}
+                                            {(listing.budgetMin || listing.budgetMax) && (
+                                                <div className="absolute bottom-3 left-3 px-3 py-1.5 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg">
+                                                    <span className="text-emerald-600 font-bold text-sm">
+                                                        {listing.currency === 'SGD' ? 'S$' : listing.currency === 'MYR' ? 'RM' : '$'}
+                                                        {listing.budgetMin?.toLocaleString() || '0'}
+                                                        {listing.budgetMax && ` - ${listing.budgetMax.toLocaleString()}`}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            {/* Image count badge */}
+                                            {listing.images.length > 1 && (
+                                                <div className="absolute top-3 right-3 px-2 py-1 bg-black/50 backdrop-blur-sm rounded-md flex items-center gap-1">
+                                                    <Image className="w-3 h-3 text-white" />
+                                                    <span className="text-white text-xs font-medium">{listing.images.length}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <div className="h-24 bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center">
+                                            <div className="text-gray-300">
+                                                {getCategoryIcon(activeCategory)}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    {/* Content */}
+                                    <div className="p-4">
+                                        <h4 className="font-semibold text-gray-900 line-clamp-1 mb-1 group-hover:text-amber-700 transition-colors">
                                             {listing.title}
                                         </h4>
                                         
                                         {listing.description && (
-                                            <p className="text-gray-500 text-xs line-clamp-2 mb-2">
+                                            <p className="text-gray-500 text-sm line-clamp-2 mb-3 leading-relaxed">
                                                 {listing.description}
                                             </p>
                                         )}
                                         
-                                        <div className="flex items-center justify-between text-xs">
-                                            {(listing.budgetMin || listing.budgetMax) && (
-                                                <span className="text-amber-600 font-medium">
-                                                    {listing.currency === 'SGD' ? 'S$' : listing.currency === 'MYR' ? 'RM' : '$'}
-                                                    {listing.budgetMin || '0'} - {listing.budgetMax || '∞'}
-                                                </span>
-                                            )}
-                                            <span className="text-gray-400 flex items-center gap-1">
-                                                <MapPin className="w-3 h-3" />
-                                                {listing.location || 'Singapore'}
-                                            </span>
+                                        {/* Footer */}
+                                        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                                            <div className="flex items-center gap-1.5 text-gray-400">
+                                                <MapPin className="w-3.5 h-3.5" />
+                                                <span className="text-xs">{listing.location || 'Singapore'}</span>
+                                            </div>
+                                            <button className="text-xs font-medium text-amber-600 hover:text-amber-700 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                View Details
+                                                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                </svg>
+                                            </button>
                                         </div>
                                     </div>
+                                </div>
                                 ))}
                             </div>
                         )}
-                    </div>
                 </div>
             </main>
 
