@@ -97,26 +97,28 @@ export const createEvent = async (eventData) => {
   console.log('📝 Creating event in Supabase:', eventData.title);
   
   // Get or create owner
-  let ownerId = eventData.ownerId;
+  let ownerId = eventData.ownerId || null;
   
-  if (!ownerId || typeof ownerId !== 'number') {
-    const email = eventData.creatorEmail || 'default@eventsx.com';
-    let user = await getUserByEmail(email);
-    
-    if (!user) {
-      try {
+  // Try to create/get user if email provided
+  if (!ownerId && eventData.creatorEmail) {
+    const email = eventData.creatorEmail;
+    try {
+      let user = await getUserByEmail(email);
+      
+      if (!user) {
+        console.log('Creating new user:', email);
         ownerId = await registerUser({
           email: email,
           password: eventData.creatorPassword || 'EventsX2024!',
           contact: eventData.creatorContact || '',
           role: 'owner'
         });
-      } catch (e) {
-        user = await getUserByEmail(email);
-        ownerId = user?.id || null;
+      } else {
+        ownerId = user.id;
       }
-    } else {
-      ownerId = user.id;
+    } catch (e) {
+      console.warn('Could not create/get user, continuing without owner:', e.message);
+      ownerId = null;
     }
   }
   
