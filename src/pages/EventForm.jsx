@@ -518,51 +518,41 @@ const EventForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+    <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
+        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link to="/events" className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 transition-colors">
-              <ArrowLeft className="w-5 h-5 text-gray-600" />
+            <Link to="/events" className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-800 transition-colors">
+              <ArrowLeft className="w-5 h-5 text-gray-400" />
             </Link>
             <Link to="/" className="flex items-center gap-1 hover:opacity-80 transition-opacity">
               <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">EX</span>
               </div>
-              <span className="text-xl font-bold text-gray-800">EventsX</span>
+              <span className="text-xl font-bold text-white">EventsX</span>
             </Link>
-          </div>
-          <div className="text-right">
-            <p className="text-xs text-gray-500">1 listing per account, editable after login.</p>
-            <p className="text-xs text-gray-400">Admin approval required ✓</p>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid lg:grid-cols-[1fr,400px] gap-8">
-        {/* Left Column - Form */}
+      <div className="max-w-4xl mx-auto px-6 py-8">
         <div>
           {/* Hero Section */}
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            <h1 className="text-3xl font-bold text-white mb-3">
               {isEdit ? 'Edit Event' : 'Create Your Event'}
             </h1>
             
             {/* General Error Message */}
             {errors.general && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-                <p className="text-red-700">{errors.general}</p>
+              <div className="bg-red-900/50 border border-red-700 rounded-lg p-4 mb-4 flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                <p className="text-red-300">{errors.general}</p>
               </div>
             )}
-            <p className="text-gray-600 text-lg">
-              Post an event for conferences, workshops, seminars,<br/>
-              meetups, exhibitions, or networking sessions.<br/>
-              <span className="text-sm text-gray-500 mt-2 inline-block">
-                Login required to submit and get admin approval.
-              </span>
+            <p className="text-gray-400">
+              Post an event for conferences, workshops, seminars, meetups, exhibitions, or networking sessions.
             </p>
           </div>
 
@@ -577,7 +567,7 @@ const EventForm = () => {
           }}
         >
           {/* Event Type Tabs */}
-          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
             <div className="flex flex-wrap gap-2 mb-6">
               {eventTypes.map(type => (
                 <button
@@ -586,8 +576,8 @@ const EventForm = () => {
                   onClick={() => handleChange('eventType', type.id)}
                   className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
                     formData.eventType === type.id
-                      ? 'bg-gray-800 text-white shadow-md'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-red-600 text-white shadow-md'
+                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                   }`}
                 >
                   {type.label}
@@ -597,7 +587,7 @@ const EventForm = () => {
           {/* Date Range */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 <Calendar className="inline w-4 h-4 mr-1" />From Date
               </label>
               <input
@@ -606,8 +596,8 @@ const EventForm = () => {
                 onChange={(e) => handleChange('startDate', e.target.value)}
                 onBlur={() => handleBlur('startDate')}
                 min={!isEdit ? new Date().toISOString().split('T')[0] : undefined}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${
-                  errors.startDate ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-red-500 focus:border-transparent ${
+                  errors.startDate ? 'border-red-500' : 'border-gray-700'
                 }`}
                 required
               />
@@ -618,7 +608,7 @@ const EventForm = () => {
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 <Calendar className="inline w-4 h-4 mr-1" />To Date
               </label>
               <input
@@ -627,8 +617,8 @@ const EventForm = () => {
                 onChange={(e) => handleChange('endDate', e.target.value)}
                 onBlur={() => handleBlur('endDate')}
                 min={formData.startDate || (!isEdit ? new Date().toISOString().split('T')[0] : undefined)}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${
-                  errors.endDate ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-red-500 focus:border-transparent ${
+                  errors.endDate ? 'border-red-500' : 'border-gray-700'
                 }`}
                 required
               />
@@ -642,7 +632,7 @@ const EventForm = () => {
 
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Title <span className="text-red-500">*</span>
             </label>
             <input
@@ -653,8 +643,8 @@ const EventForm = () => {
               onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
               placeholder="Enter event title..."
               maxLength={MAX_TITLE_LENGTH}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${
-                errors.title ? 'border-red-500 bg-red-50' : 'border-gray-300'
+              className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent ${
+                errors.title ? 'border-red-500' : 'border-gray-700'
               }`}
               required
             />
@@ -672,7 +662,7 @@ const EventForm = () => {
 
           {/* Description - Right after title */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Description <span className="text-red-500">*</span>
             </label>
             <textarea
@@ -682,8 +672,8 @@ const EventForm = () => {
               placeholder="Describe your event, what attendees can expect..."
               rows={4}
               maxLength={MAX_DESCRIPTION_LENGTH}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none ${
-                errors.description ? 'border-red-500 bg-red-50' : 'border-gray-300'
+              className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none ${
+                errors.description ? 'border-red-500' : 'border-gray-700'
               }`}
             />
             <div className="flex justify-between mt-1">
@@ -701,7 +691,7 @@ const EventForm = () => {
           {/* Venue and Capacity */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 <MapPin className="inline w-4 h-4 mr-1" />Venue <span className="text-red-500">*</span>
               </label>
               <input
@@ -710,8 +700,8 @@ const EventForm = () => {
                 onChange={(e) => handleChange('venue', e.target.value)}
                 onBlur={() => handleBlur('venue')}
                 placeholder="Event location (e.g., Singapore Convention Centre)"
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${
-                  errors.venue ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent ${
+                  errors.venue ? 'border-red-500' : 'border-gray-700'
                 }`}
                 required
               />
@@ -722,7 +712,7 @@ const EventForm = () => {
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 <Users className="inline w-4 h-4 mr-1" />Capacity <span className="text-red-500">*</span>
               </label>
               <input
@@ -733,8 +723,8 @@ const EventForm = () => {
                 placeholder="Max attendees (e.g., 100)"
                 min="1"
                 max={MAX_CAPACITY}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${
-                  errors.capacity ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent ${
+                  errors.capacity ? 'border-red-500' : 'border-gray-700'
                 }`}
                 required
               />
@@ -749,12 +739,12 @@ const EventForm = () => {
           {/* Registration Section - Only for new events when not logged in */}
           {!isEdit && !user && (
             <>
-            <div className="pt-4 border-t border-gray-200">
-              <h3 className="text-sm font-semibold text-gray-700 mb-3">Contact Information</h3>
+            <div className="pt-4 border-t border-gray-700">
+              <h3 className="text-sm font-semibold text-gray-300 mb-3">Contact Information</h3>
               <div className="grid grid-cols-2 gap-4">
               
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     <Phone className="inline w-4 h-4 mr-1" />Contact
                     <span className="text-xs text-gray-400 ml-2">(Auto-detects country)</span>
                   </label>
@@ -762,7 +752,7 @@ const EventForm = () => {
                     <select
                       value={formData.creatorCountryCode}
                       onChange={(e) => handleChange('creatorCountryCode', e.target.value)}
-                      className="w-28 px-2 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 text-sm"
+                      className="w-28 px-2 py-3 border border-gray-700 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-red-500 text-sm"
                     >
                       {countryCodes.map(c => (
                         <option key={c.code} value={c.code}>
@@ -785,15 +775,15 @@ const EventForm = () => {
                       }}
                       onBlur={() => handleBlur('creatorContact')}
                       placeholder={getPlaceholder(formData.creatorCountryCode)}
-                      className={`flex-1 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 ${
-                        errors.creatorContact ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                      className={`flex-1 px-4 py-3 border rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 ${
+                        errors.creatorContact ? 'border-red-500' : 'border-gray-700'
                       }`}
                       required={!user}
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     <Mail className="inline w-4 h-4 mr-1" />Email
                   </label>
                   <input
@@ -802,8 +792,8 @@ const EventForm = () => {
                     onChange={(e) => handleChange('creatorEmail', e.target.value)}
                     onBlur={() => handleBlur('creatorEmail')}
                     placeholder="your@email.com"
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 ${
-                      errors.creatorEmail ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                    className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 ${
+                      errors.creatorEmail ? 'border-red-500' : 'border-gray-700'
                     }`}
                     required={!user}
                   />
@@ -815,15 +805,15 @@ const EventForm = () => {
                 </div>
               </div>
               <div className="mt-3">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
                 <input
                   type="password"
                   value={formData.creatorPassword}
                   onChange={(e) => handleChange('creatorPassword', e.target.value)}
                   onBlur={() => handleBlur('creatorPassword')}
                   placeholder="At least 6 characters"
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 ${
-                    errors.creatorPassword ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                  className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 ${
+                    errors.creatorPassword ? 'border-red-500' : 'border-gray-700'
                   }`}
                   required={!user}
                 />
@@ -838,19 +828,19 @@ const EventForm = () => {
           )}
 
           {/* Note */}
-          <p className="text-sm text-gray-600 pb-4 border-b border-gray-200">
-            1 listing per account. Login required. Admin approval required.
+          <p className="text-sm text-gray-500 pb-4 border-b border-gray-700">
+            1 listing per account. Admin approval required.
           </p>
           </div>
 
           {/* Additional Details Section */}
-          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm space-y-6">
-            <h2 className="text-xl font-semibold text-gray-900">Additional Details</h2>
+          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-6">
+            <h2 className="text-xl font-semibold text-white">Additional Details</h2>
 
             {/* Logo and Image */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Logo</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Logo</label>
                 <div className="space-y-3">
                   {formData.logo && (
                     <img
@@ -859,9 +849,9 @@ const EventForm = () => {
                       className="w-24 h-24 object-cover rounded-lg border-2 border-gray-200"
                     />
                   )}
-                  <label className="flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors">
-                    <Upload size={16} />
-                    <span className="text-sm font-medium text-gray-700">
+                  <label className="flex items-center justify-center gap-2 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors">
+                    <Upload size={16} className="text-gray-400" />
+                    <span className="text-sm font-medium text-gray-300">
                       {formData.logo ? 'Change' : 'Upload'}
                     </span>
                     <input
@@ -874,7 +864,7 @@ const EventForm = () => {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Event Banner</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Event Banner</label>
                 <div className="space-y-3">
                   {formData.image && (
                     <img
@@ -883,9 +873,9 @@ const EventForm = () => {
                       className="w-full h-24 object-cover rounded-lg border-2 border-gray-200"
                     />
                   )}
-                  <label className="flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors">
-                    <Upload size={16} />
-                    <span className="text-sm font-medium text-gray-700">
+                  <label className="flex items-center justify-center gap-2 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors">
+                    <Upload size={16} className="text-gray-400" />
+                    <span className="text-sm font-medium text-gray-300">
                       {formData.image ? 'Change' : 'Upload'}
                     </span>
                     <input
@@ -971,18 +961,18 @@ const EventForm = () => {
               </>
             ) : (
               <>
-                <span className="text-xl">🇺🇸</span> {isEdit ? 'Update Event' : 'Pay & Submit Event $1'}
+                {isEdit ? 'Update Event' : 'Submit Event'}
               </>
             )}
           </button>
           
           {/* Validation Summary */}
           {submitAttempted && Object.keys(errors).filter(k => k !== 'general').length > 0 && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+            <div className="bg-red-900/50 border border-red-700 rounded-lg p-4 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-red-700 font-medium">Please fix the following errors:</p>
-                <ul className="text-red-600 text-sm mt-1 list-disc list-inside">
+                <p className="text-red-300 font-medium">Please fix the following errors:</p>
+                <ul className="text-red-400 text-sm mt-1 list-disc list-inside">
                   {Object.entries(errors).filter(([k]) => k !== 'general').map(([key, value]) => (
                     <li key={key}>{value}</li>
                   ))}
@@ -992,92 +982,6 @@ const EventForm = () => {
           )}
         </form>
         </div>
-
-        {/* Right Column - Other Listings */}
-        <div className="hidden lg:block sticky top-24">
-          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Other Listings</h3>
-            <p className="text-sm text-gray-500 mb-4">Explore more on LinkMeU</p>
-            
-            <div className="space-y-3">
-              {/* Part-time Job */}
-              <Link 
-                to="/" 
-                className="block p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg hover:shadow-md transition-all border border-blue-200"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                    <Users className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900">Part-time Job</p>
-                    <p className="text-xs text-gray-500">Find or post jobs</p>
-                  </div>
-                </div>
-              </Link>
-
-              {/* Business for Sale */}
-              <Link 
-                to="/" 
-                className="block p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg hover:shadow-md transition-all border border-purple-200"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold">$</span>
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900">Business for Sale</p>
-                    <p className="text-xs text-gray-500">Buy or sell businesses</p>
-                  </div>
-                </div>
-              </Link>
-
-              {/* Property for Rent */}
-              <Link 
-                to="/" 
-                className="block p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-lg hover:shadow-md transition-all border border-green-200"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
-                    <MapPin className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900">Property for Rent</p>
-                    <p className="text-xs text-gray-500">Find rental properties</p>
-                  </div>
-                </div>
-              </Link>
-
-              {/* Wedding Hall Booking */}
-              <Link 
-                to="/" 
-                className="block p-4 bg-gradient-to-r from-pink-50 to-pink-100 rounded-lg hover:shadow-md transition-all border border-pink-200"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-pink-500 rounded-lg flex items-center justify-center">
-                    <Calendar className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900">Wedding Hall Booking</p>
-                    <p className="text-xs text-gray-500">Book venues for events</p>
-                  </div>
-                </div>
-              </Link>
-            </div>
-
-            {/* Back to Main */}
-            <div className="mt-6 pt-4 border-t border-gray-200">
-              <Link 
-                to="/" 
-                className="flex items-center justify-center gap-2 w-full py-3 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 font-medium transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Back to All Listings
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
       </div>
     </div>
   );

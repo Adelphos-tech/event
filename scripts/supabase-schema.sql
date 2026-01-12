@@ -70,35 +70,40 @@ CREATE INDEX idx_attendees_email ON attendees(email);
 CREATE INDEX idx_users_email ON users(email);
 
 -- =====================================================
--- ROW LEVEL SECURITY (RLS) - Enable for production
+-- ROW LEVEL SECURITY (RLS) - Permissive for anonymous access
 -- =====================================================
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE attendees ENABLE ROW LEVEL SECURITY;
 
--- Allow public read access to events
-CREATE POLICY "Events are viewable by everyone" ON events
-    FOR SELECT USING (status != 'deleted');
+-- USERS TABLE POLICIES
+CREATE POLICY "Allow anonymous user creation" ON users
+    FOR INSERT WITH CHECK (true);
 
--- Allow public read access to attendees count
-CREATE POLICY "Attendees viewable by event owner" ON attendees
+CREATE POLICY "Allow public read users" ON users
     FOR SELECT USING (true);
 
--- Allow insert for authenticated users
-CREATE POLICY "Users can insert events" ON events
-    FOR INSERT WITH CHECK (true);
-
-CREATE POLICY "Users can insert attendees" ON attendees
-    FOR INSERT WITH CHECK (true);
-
-CREATE POLICY "Users can be created" ON users
-    FOR INSERT WITH CHECK (true);
-
--- Allow update for event owners
-CREATE POLICY "Users can update own events" ON events
+CREATE POLICY "Allow updates on users" ON users
     FOR UPDATE USING (true);
 
-CREATE POLICY "Users can update attendees" ON attendees
+-- EVENTS TABLE POLICIES
+CREATE POLICY "Allow anonymous event creation" ON events
+    FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Allow public read events" ON events
+    FOR SELECT USING (status != 'deleted');
+
+CREATE POLICY "Allow updates on events" ON events
+    FOR UPDATE USING (true);
+
+-- ATTENDEES TABLE POLICIES
+CREATE POLICY "Allow anonymous attendee registration" ON attendees
+    FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Allow public read attendees" ON attendees
+    FOR SELECT USING (true);
+
+CREATE POLICY "Allow updates on attendees" ON attendees
     FOR UPDATE USING (true);
 
 -- =====================================================
