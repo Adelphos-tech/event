@@ -244,86 +244,24 @@ const MainPage = () => {
 
                     {/* Form - Premium Glass Style */}
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* From Date / To Date */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                            <div className="group">
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">From Date</label>
-                                <div className="relative">
-                                    <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-amber-600 transition-colors" />
-                                    <input
-                                        type="date"
-                                        value={formData.fromDate}
-                                        onChange={(e) => setFormData({ ...formData, fromDate: e.target.value })}
-                                        className="w-full pl-12 pr-4 py-3.5 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all text-gray-700 shadow-sm"
-                                    />
-                                </div>
-                            </div>
-                            <div className="group">
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">To Date</label>
-                                <div className="relative">
-                                    <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-amber-600 transition-colors" />
-                                    <input
-                                        type="date"
-                                        value={formData.toDate}
-                                        onChange={(e) => setFormData({ ...formData, toDate: e.target.value })}
-                                        className="w-full pl-12 pr-4 py-3.5 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all text-gray-700 shadow-sm"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Title */}
-                        <div className="group">
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">Title</label>
-                            <input
-                                type="text"
-                                value={formData.title}
-                                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                className="w-full px-4 py-3.5 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
-                                placeholder="Enter title..."
-                                required
-                            />
-                        </div>
-
-                        {/* Description */}
-                        <div className="group">
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">Description</label>
-                            <textarea
-                                value={formData.description}
-                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                className="w-full px-4 py-3.5 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm resize-none"
-                                placeholder="Describe your listing in detail..."
-                                rows={3}
-                            />
-                        </div>
-
-                        {/* Images Section */}
-                        <div className="group">
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                <Image className="inline w-4 h-4 mr-1" />
-                                Images (Max 5)
+                        
+                        {/* Images Section - At Top */}
+                        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-100 shadow-sm">
+                            <label className="block text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                                <Image className="w-4 h-4 text-amber-600" />
+                                Upload Photos
+                                <span className="text-gray-400 font-normal">(Max 5)</span>
                             </label>
-                            <div className="flex flex-wrap gap-3 mb-3">
-                                {formData.images.map((img, index) => (
-                                    <div key={index} className="relative">
-                                        <img
-                                            src={img}
-                                            alt={`Upload ${index + 1}`}
-                                            className="w-20 h-20 object-cover rounded-lg border-2 border-gray-200"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => removeImage(index)}
-                                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
-                                        >
-                                            <X className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                ))}
-                                {formData.images.length < 5 && (
-                                    <label className="w-20 h-20 flex flex-col items-center justify-center bg-white/70 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-amber-500 hover:bg-amber-50/50 transition-all">
-                                        <Upload className="w-6 h-6 text-gray-400" />
-                                        <span className="text-xs text-gray-400 mt-1">Add</span>
+                            
+                            <div className="grid grid-cols-5 gap-3">
+                                {/* Main large upload area or first image */}
+                                {formData.images.length === 0 ? (
+                                    <label className="col-span-2 row-span-2 aspect-square flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-dashed border-gray-300 rounded-2xl cursor-pointer hover:border-amber-500 hover:bg-amber-50/30 transition-all group">
+                                        <div className="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                            <Upload className="w-7 h-7 text-amber-500" />
+                                        </div>
+                                        <span className="text-sm font-medium text-gray-600">Add Main Photo</span>
+                                        <span className="text-xs text-gray-400 mt-1">Click to upload</span>
                                         <input
                                             type="file"
                                             accept="image/*"
@@ -332,55 +270,165 @@ const MainPage = () => {
                                             onChange={handleImageUpload}
                                         />
                                     </label>
+                                ) : (
+                                    <div className="col-span-2 row-span-2 relative group">
+                                        <img
+                                            src={formData.images[0]}
+                                            alt="Main"
+                                            className="w-full h-full aspect-square object-cover rounded-2xl border-2 border-amber-200"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => removeImage(0)}
+                                            className="absolute top-2 right-2 w-8 h-8 bg-black/60 backdrop-blur-sm text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-red-500 transition-all"
+                                        >
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                        <span className="absolute bottom-2 left-2 px-2 py-1 bg-black/60 backdrop-blur-sm text-white text-xs rounded-md">Main</span>
+                                    </div>
                                 )}
+                                
+                                {/* Secondary image slots */}
+                                {[1, 2, 3, 4].map((index) => (
+                                    <div key={index} className="aspect-square">
+                                        {formData.images[index] ? (
+                                            <div className="relative group w-full h-full">
+                                                <img
+                                                    src={formData.images[index]}
+                                                    alt={`Photo ${index + 1}`}
+                                                    className="w-full h-full object-cover rounded-xl border border-gray-200"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeImage(index)}
+                                                    className="absolute top-1 right-1 w-6 h-6 bg-black/60 backdrop-blur-sm text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-red-500 transition-all"
+                                                >
+                                                    <X className="w-3 h-3" />
+                                                </button>
+                                            </div>
+                                        ) : formData.images.length > 0 && formData.images.length <= index ? (
+                                            <label className="w-full h-full flex flex-col items-center justify-center bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:border-amber-400 hover:bg-amber-50/30 transition-all">
+                                                <Upload className="w-5 h-5 text-gray-300" />
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    className="hidden"
+                                                    onChange={handleImageUpload}
+                                                />
+                                            </label>
+                                        ) : (
+                                            <div className="w-full h-full bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center">
+                                                <span className="text-gray-200 text-lg font-medium">{index + 1}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
                             </div>
                         </div>
 
-                        {/* Budget / Revenue */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">Budget</label>
-                                <div className="flex gap-2">
-                                    <div className="relative flex-1">
-                                        <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                        <input
-                                            type="text"
-                                            value={formData.budgetMin}
-                                            onChange={(e) => setFormData({ ...formData, budgetMin: e.target.value })}
-                                            className="w-full pl-8 pr-3 py-3.5 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
-                                            placeholder="Min"
-                                        />
-                                    </div>
-                                    <div className="relative flex-1">
-                                        <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                        <input
-                                            type="text"
-                                            value={formData.budgetMax}
-                                            onChange={(e) => setFormData({ ...formData, budgetMax: e.target.value })}
-                                            className="w-full pl-8 pr-3 py-3.5 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
-                                            placeholder="Max"
-                                        />
-                                    </div>
-                                    <select 
-                                        value={formData.currency}
-                                        onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                                        className="px-3 py-3.5 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl text-gray-600 shadow-sm cursor-pointer"
-                                    >
-                                        <option value="USD">$</option>
-                                        <option value="SGD">S$</option>
-                                        <option value="MYR">RM</option>
-                                    </select>
-                                </div>
-                            </div>
+                        {/* Title & Description Card */}
+                        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-100 shadow-sm space-y-5">
                             <div className="group">
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">Expected Revenue / Profit</label>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    Listing Title <span className="text-red-500">*</span>
+                                </label>
                                 <input
                                     type="text"
-                                    value={formData.revenue}
-                                    onChange={(e) => setFormData({ ...formData, revenue: e.target.value })}
-                                    className="w-full px-4 py-3.5 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
-                                    placeholder="Enter budget, amount..."
+                                    value={formData.title}
+                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                    className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm text-gray-800"
+                                    placeholder="e.g., Weekend Barista Position at Premium Cafe"
+                                    required
                                 />
+                            </div>
+
+                            <div className="group">
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+                                <textarea
+                                    value={formData.description}
+                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                    className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm resize-none text-gray-800"
+                                    placeholder="Describe your listing in detail - what makes it special?"
+                                    rows={3}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Date & Budget Card */}
+                        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-100 shadow-sm">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
+                                <div className="group">
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">From Date</label>
+                                    <div className="relative">
+                                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                        <input
+                                            type="date"
+                                            value={formData.fromDate}
+                                            onChange={(e) => setFormData({ ...formData, fromDate: e.target.value })}
+                                            className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all text-gray-700 shadow-sm"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="group">
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">To Date</label>
+                                    <div className="relative">
+                                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                        <input
+                                            type="date"
+                                            value={formData.toDate}
+                                            onChange={(e) => setFormData({ ...formData, toDate: e.target.value })}
+                                            className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all text-gray-700 shadow-sm"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                        {/* Budget / Revenue */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Budget Range</label>
+                                    <div className="flex gap-2">
+                                        <div className="relative flex-1">
+                                            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                            <input
+                                                type="text"
+                                                value={formData.budgetMin}
+                                                onChange={(e) => setFormData({ ...formData, budgetMin: e.target.value })}
+                                                className="w-full pl-8 pr-3 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
+                                                placeholder="Min"
+                                            />
+                                        </div>
+                                        <span className="flex items-center text-gray-400">-</span>
+                                        <div className="relative flex-1">
+                                            <input
+                                                type="text"
+                                                value={formData.budgetMax}
+                                                onChange={(e) => setFormData({ ...formData, budgetMax: e.target.value })}
+                                                className="w-full px-3 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
+                                                placeholder="Max"
+                                            />
+                                        </div>
+                                        <select 
+                                            value={formData.currency}
+                                            onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                                            className="px-3 py-3.5 bg-white border border-gray-200 rounded-xl text-gray-600 shadow-sm cursor-pointer font-medium"
+                                        >
+                                            <option value="USD">$</option>
+                                            <option value="SGD">S$</option>
+                                            <option value="MYR">RM</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="group">
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Expected Revenue</label>
+                                    <input
+                                        type="text"
+                                        value={formData.revenue}
+                                        onChange={(e) => setFormData({ ...formData, revenue: e.target.value })}
+                                        className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
+                                        placeholder="e.g., $5,000/month"
+                                    />
+                                </div>
                             </div>
                         </div>
 
