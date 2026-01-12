@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Download } from 'lucide-react';
-import { getEvent } from '../db/database';
+import { getEvent } from '../db/databaseAdapter';
 import { generateQRCode, generateRegistrationURL } from '../utils/qrcode';
 import { generateA5Flyer, downloadPDF } from '../utils/pdf';
 import { format } from 'date-fns';

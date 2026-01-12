@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { LogIn, Eye, EyeOff } from 'lucide-react';
-import { loginUser } from '../db/database';
+import { loginUser } from '../db/databaseAdapter';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {

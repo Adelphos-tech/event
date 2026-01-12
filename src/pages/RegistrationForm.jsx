@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { CheckCircle } from 'lucide-react';
-import { getEvent, saveAttendee } from '../db/database';
+import { getEvent, registerAttendee } from '../db/databaseAdapter';
 import { format } from 'date-fns';
 import Header from '../components/Header';
 
@@ -30,7 +30,7 @@ const RegistrationForm = () => {
       setEvent(eventData);
       
       // Get current attendees to check capacity
-      const { getAttendeesByEvent } = await import('../db/database');
+      const { getAttendeesByEvent } = await import('../db/databaseAdapter');
       const attendeeData = await getAttendeesByEvent(parseInt(id));
       setAttendees(attendeeData);
       
@@ -57,7 +57,7 @@ const RegistrationForm = () => {
 
     setLoading(true);
     try {
-      await saveAttendee({
+      await registerAttendee({
         eventId: parseInt(id),
         ...formData,
         attended: false,

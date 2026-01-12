@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Calendar, MapPin, LogOut, Users, Download, FileText, Trash2 } from 'lucide-react';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db, getAttendeesByEvent, deleteEvent } from '../db/database';
+import { Plus, Calendar, MapPin, LogOut, Users, Download, FileText, Trash2, RefreshCw } from 'lucide-react';
+import { getAllEvents, getAttendeesByEvent, deleteEvent, getDatabaseStatus } from '../db/databaseAdapter';
+import { db } from '../db/database';
 import { format } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
 import Header from '../components/Header';
@@ -11,12 +11,35 @@ import { exportToCSV, prepareAttendeeData } from '../utils/csv';
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const { user, logout, isSuperAdmin } = useAuth();
-  const events = useLiveQuery(() => db.events.toArray());
-  const users = useLiveQuery(() => db.users.toArray());
+  const [events, setEvents] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [dbStatus, setDbStatus] = useState(null);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const eventsData = await getAllEvents();
+      setEvents(eventsData || []);
+      
+      // Get users from local db (users are local)
+      const usersData = await db.users.toArray();
+      setUsers(usersData || []);
+      
+      const status = await getDatabaseStatus();
+      setDbStatus(status);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!user || !isSuperAdmin()) {
       navigate('/login');
+    } else {
+      fetchData();
     }
   }, [user]);
 

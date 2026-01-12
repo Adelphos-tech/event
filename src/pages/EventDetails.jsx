@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Edit, QrCode, FileText, UserCheck, Download, Share2, Copy } from 'lucide-react';
-import { getEvent, getAttendeesByEvent } from '../db/database';
+import { getEvent, getAttendeesByEvent } from '../db/databaseAdapter';
 import { format } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
 import Header from '../components/Header';

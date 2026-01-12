@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { UserPlus, Eye, EyeOff } from 'lucide-react';
-import { registerUser } from '../db/database';
+import { registerUser } from '../db/databaseAdapter';
 import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
