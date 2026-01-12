@@ -496,15 +496,17 @@ const EventForm = () => {
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/events" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
-            <div className="flex items-center gap-1">
+          <div className="flex items-center gap-4">
+            <Link to="/events" className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 transition-colors">
+              <ArrowLeft className="w-5 h-5 text-gray-600" />
+            </Link>
+            <Link to="/" className="flex items-center gap-1 hover:opacity-80 transition-opacity">
               <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">EX</span>
               </div>
               <span className="text-xl font-bold text-gray-800">EventsX</span>
-            </div>
-          </Link>
+            </Link>
+          </div>
           <div className="text-right">
             <p className="text-xs text-gray-500">1 listing per account, editable after login.</p>
             <p className="text-xs text-gray-400">Admin approval required ✓</p>
@@ -642,6 +644,32 @@ const EventForm = () => {
             </div>
           </div>
 
+          {/* Description - Right after title */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => handleChange('description', e.target.value)}
+              onBlur={() => handleBlur('description')}
+              placeholder="Describe your event, what attendees can expect..."
+              rows={4}
+              maxLength={MAX_DESCRIPTION_LENGTH}
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none ${
+                errors.description ? 'border-red-500 bg-red-50' : 'border-gray-300'
+              }`}
+            />
+            <div className="flex justify-between mt-1">
+              {errors.description ? (
+                <p className="text-red-500 text-xs flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" />{errors.description}
+                </p>
+              ) : <span />}
+              <span className="text-xs text-gray-400">
+                {formData.description.length}/{MAX_DESCRIPTION_LENGTH}
+              </span>
+            </div>
+          </div>
+
           {/* Venue and Capacity */}
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -759,32 +787,6 @@ const EventForm = () => {
             </div>
             </>
           )}
-
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => handleChange('description', e.target.value)}
-              onBlur={() => handleBlur('description')}
-              placeholder="Describe your event..."
-              rows={4}
-              maxLength={MAX_DESCRIPTION_LENGTH}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${
-                errors.description ? 'border-red-500 bg-red-50' : 'border-gray-300'
-              }`}
-            />
-            <div className="flex justify-between mt-1">
-              {errors.description ? (
-                <p className="text-red-500 text-xs flex items-center gap-1">
-                  <AlertCircle className="w-3 h-3" />{errors.description}
-                </p>
-              ) : <span />}
-              <span className="text-xs text-gray-400">
-                {formData.description.length}/{MAX_DESCRIPTION_LENGTH}
-              </span>
-            </div>
-          </div>
 
           {/* Note */}
           <p className="text-sm text-gray-600 pb-4 border-b border-gray-200">
@@ -942,50 +944,87 @@ const EventForm = () => {
         </form>
         </div>
 
-        {/* Right Column - Illustration */}
-        <div className="hidden lg:flex items-start justify-center pt-20">
-          <div className="relative w-full max-w-md">
-            {/* Decorative illustration */}
-            <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-3xl p-8 shadow-xl">
-              <div className="bg-white rounded-2xl p-6 shadow-lg transform rotate-3">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="text-green-500" size={24} />
-                    <div className="flex-1 h-3 bg-gray-200 rounded"></div>
+        {/* Right Column - Other Listings */}
+        <div className="hidden lg:block sticky top-24">
+          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Other Listings</h3>
+            <p className="text-sm text-gray-500 mb-4">Explore more on LinkMeU</p>
+            
+            <div className="space-y-3">
+              {/* Part-time Job */}
+              <Link 
+                to="/" 
+                className="block p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg hover:shadow-md transition-all border border-blue-200"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                    <Users className="w-5 h-5 text-white" />
                   </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="text-green-500" size={24} />
-                    <div className="flex-1 h-3 bg-gray-200 rounded"></div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="text-green-500" size={24} />
-                    <div className="flex-1 h-3 bg-gray-200 rounded"></div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 border-2 border-gray-300 rounded-full"></div>
-                    <div className="flex-1 h-3 bg-gray-100 rounded"></div>
+                  <div>
+                    <p className="font-medium text-gray-900">Part-time Job</p>
+                    <p className="text-xs text-gray-500">Find or post jobs</p>
                   </div>
                 </div>
-                <div className="mt-6 flex items-center justify-center">
-                  <div className="bg-gradient-to-r from-red-500 to-red-600 text-white p-3 rounded-full shadow-lg">
-                    <Upload size={32} />
+              </Link>
+
+              {/* Business for Sale */}
+              <Link 
+                to="/" 
+                className="block p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg hover:shadow-md transition-all border border-purple-200"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+                    <span className="text-white font-bold">$</span>
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">Business for Sale</p>
+                    <p className="text-xs text-gray-500">Buy or sell businesses</p>
                   </div>
                 </div>
-              </div>
-              {/* Floating event cards */}
-              <div className="absolute -left-4 top-12 bg-white rounded-lg shadow-md p-3 transform -rotate-12">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg"></div>
-              </div>
-              <div className="absolute -right-4 top-32 bg-white rounded-lg shadow-md p-3 transform rotate-12">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-lg"></div>
-              </div>
-              <div className="absolute -left-6 bottom-24 bg-white rounded-lg shadow-md p-3 transform rotate-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-lg"></div>
-              </div>
+              </Link>
+
+              {/* Property for Rent */}
+              <Link 
+                to="/" 
+                className="block p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-lg hover:shadow-md transition-all border border-green-200"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                    <MapPin className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">Property for Rent</p>
+                    <p className="text-xs text-gray-500">Find rental properties</p>
+                  </div>
+                </div>
+              </Link>
+
+              {/* Wedding Hall Booking */}
+              <Link 
+                to="/" 
+                className="block p-4 bg-gradient-to-r from-pink-50 to-pink-100 rounded-lg hover:shadow-md transition-all border border-pink-200"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-pink-500 rounded-lg flex items-center justify-center">
+                    <Calendar className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">Wedding Hall Booking</p>
+                    <p className="text-xs text-gray-500">Book venues for events</p>
+                  </div>
+                </div>
+              </Link>
             </div>
-            {/* Floating check badge */}
-            <div className="absolute -bottom-4 -right-4 bg-green-500 text-white rounded-full p-4 shadow-xl">
-              <CheckCircle size={40} />
+
+            {/* Back to Main */}
+            <div className="mt-6 pt-4 border-t border-gray-200">
+              <Link 
+                to="/" 
+                className="flex items-center justify-center gap-2 w-full py-3 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 font-medium transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back to All Listings
+              </Link>
             </div>
           </div>
         </div>
