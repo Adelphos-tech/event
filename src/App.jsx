@@ -5,6 +5,7 @@ import MainPage from './pages/MainPage';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import RegisterListing from './pages/RegisterListing';
 import AdminDashboard from './pages/AdminDashboard';
 import EventList from './pages/EventList';
 import EventForm from './pages/EventForm';
@@ -22,6 +23,7 @@ function App() {
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/landing" element={<LandingPage />} />
+          <Route path="/register-listing" element={<RegisterListing />} />
           <Route path="/login" element={<div className="min-h-screen bg-black text-white"><Login /></div>} />
           <Route path="/register" element={<div className="min-h-screen bg-black text-white"><Register /></div>} />
           <Route path="/admin" element={<div className="min-h-screen bg-black text-white"><AdminDashboard /></div>} />

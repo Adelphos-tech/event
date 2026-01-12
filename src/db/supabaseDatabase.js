@@ -368,13 +368,14 @@ export const createListing = async (listingData) => {
       to_date: listingData.toDate || null,
       budget_min: parseFloat(listingData.budgetMin) || null,
       budget_max: parseFloat(listingData.budgetMax) || null,
-      currency: listingData.currency || 'USD',
+      currency: listingData.currency || 'SGD',
       revenue: listingData.revenue || '',
       location: listingData.location || 'Singapore',
       contact: listingData.contact || '',
       email: listingData.email || '',
       images: listingData.images || [],
       owner_id: ownerId,
+      is_paid: listingData.isPaid || false, // New field: false = show platform contact, true = show owner contact
       status: 'active' // Auto-approve for now, change to 'pending' for admin approval
     })
     .select()
@@ -497,6 +498,7 @@ const mapListingToFrontend = (listing) => ({
   email: listing.email,
   images: listing.images || [],
   ownerId: listing.owner_id,
+  isPaid: listing.is_paid || false, // Boolean: true = show owner contact, false = show platform contact
   status: listing.status,
   createdAt: listing.created_at,
   updatedAt: listing.updated_at
