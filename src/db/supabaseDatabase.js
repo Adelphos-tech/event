@@ -329,6 +329,180 @@ export const searchAttendees = async (eventId, query) => {
 };
 
 // =====================================================
+// LISTING OPERATIONS (Marketplace)
+// =====================================================
+
+export const createListing = async (listingData) => {
+  console.log('📝 Creating listing in Supabase:', listingData.title);
+  
+  // Get or create owner
+  let ownerId = null;
+  
+  if (listingData.email) {
+    try {
+      let user = await getUserByEmail(listingData.email);
+      
+      if (!user) {
+        console.log('Creating new user for listing:', listingData.email);
+        ownerId = await registerUser({
+          email: listingData.email,
+          password: listingData.password || 'LinkMeU2024!',
+          contact: listingData.contact || '',
+          role: 'owner'
+        });
+      } else {
+        ownerId = user.id;
+      }
+    } catch (e) {
+      console.warn('Could not create/get user for listing:', e.message);
+    }
+  }
+  
+  const { data, error } = await supabase
+    .from('listings')
+    .insert({
+      category: listingData.category,
+      title: listingData.title || 'Untitled Listing',
+      description: listingData.description || '',
+      from_date: listingData.fromDate || null,
+      to_date: listingData.toDate || null,
+      budget_min: parseFloat(listingData.budgetMin) || null,
+      budget_max: parseFloat(listingData.budgetMax) || null,
+      currency: listingData.currency || 'USD',
+      revenue: listingData.revenue || '',
+      location: listingData.location || 'Singapore',
+      contact: listingData.contact || '',
+      email: listingData.email || '',
+      images: listingData.images || [],
+      owner_id: ownerId,
+      status: 'active' // Auto-approve for now, change to 'pending' for admin approval
+    })
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('❌ Error creating listing:', error);
+    throw new Error(error.message);
+  }
+  
+  console.log('✅ Listing created with ID:', data.id);
+  return mapListingToFrontend(data);
+};
+
+export const getListing = async (listingId) => {
+  const { data, error } = await supabase
+    .from('listings')
+    .select('*')
+    .eq('id', listingId)
+    .neq('status', 'deleted')
+    .single();
+  
+  if (error || !data) return null;
+  return mapListingToFrontend(data);
+};
+
+export const getListingsByCategory = async (category) => {
+  console.log('📊 Fetching listings for category:', category);
+  
+  const { data, error } = await supabase
+    .from('listings')
+    .select('*')
+    .eq('category', category)
+    .eq('status', 'active')
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('❌ Error fetching listings:', error);
+    return [];
+  }
+  
+  console.log(`✅ Found ${data?.length || 0} listings for ${category}`);
+  return (data || []).map(mapListingToFrontend);
+};
+
+export const getAllListings = async () => {
+  console.log('📊 Fetching all listings from Supabase...');
+  
+  const { data, error } = await supabase
+    .from('listings')
+    .select('*')
+    .eq('status', 'active')
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('❌ Error fetching listings:', error);
+    return [];
+  }
+  
+  console.log(`✅ Found ${data?.length || 0} listings`);
+  return (data || []).map(mapListingToFrontend);
+};
+
+export const updateListing = async (listingId, listingData) => {
+  const updateData = {};
+  
+  if (listingData.title !== undefined) updateData.title = listingData.title;
+  if (listingData.description !== undefined) updateData.description = listingData.description;
+  if (listingData.fromDate !== undefined) updateData.from_date = listingData.fromDate;
+  if (listingData.toDate !== undefined) updateData.to_date = listingData.toDate;
+  if (listingData.budgetMin !== undefined) updateData.budget_min = listingData.budgetMin;
+  if (listingData.budgetMax !== undefined) updateData.budget_max = listingData.budgetMax;
+  if (listingData.revenue !== undefined) updateData.revenue = listingData.revenue;
+  if (listingData.images !== undefined) updateData.images = listingData.images;
+  if (listingData.status !== undefined) updateData.status = listingData.status;
+  
+  updateData.updated_at = new Date().toISOString();
+  
+  const { data, error } = await supabase
+    .from('listings')
+    .update(updateData)
+    .eq('id', listingId)
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('Error updating listing:', error);
+    throw new Error(error.message);
+  }
+  
+  return mapListingToFrontend(data);
+};
+
+export const deleteListing = async (listingId) => {
+  const { error } = await supabase
+    .from('listings')
+    .update({ status: 'deleted' })
+    .eq('id', listingId);
+  
+  if (error) {
+    console.error('Error deleting listing:', error);
+    throw new Error(error.message);
+  }
+};
+
+// Helper to map database fields to frontend format
+const mapListingToFrontend = (listing) => ({
+  id: listing.id,
+  category: listing.category,
+  title: listing.title,
+  description: listing.description,
+  fromDate: listing.from_date,
+  toDate: listing.to_date,
+  budgetMin: listing.budget_min,
+  budgetMax: listing.budget_max,
+  currency: listing.currency,
+  revenue: listing.revenue,
+  location: listing.location,
+  contact: listing.contact,
+  email: listing.email,
+  images: listing.images || [],
+  ownerId: listing.owner_id,
+  status: listing.status,
+  createdAt: listing.created_at,
+  updatedAt: listing.updated_at
+});
+
+// =====================================================
 // DATABASE STATUS
 // =====================================================
 

@@ -60,6 +60,31 @@ CREATE TABLE attendees (
 );
 
 -- =====================================================
+-- LISTINGS TABLE (Marketplace)
+-- =====================================================
+DROP TABLE IF EXISTS listings CASCADE;
+CREATE TABLE listings (
+    id BIGSERIAL PRIMARY KEY,
+    category VARCHAR(50) NOT NULL CHECK (category IN ('parttime', 'business', 'property', 'wedding')),
+    title VARCHAR(500) NOT NULL,
+    description TEXT,
+    from_date DATE,
+    to_date DATE,
+    budget_min DECIMAL(12,2),
+    budget_max DECIMAL(12,2),
+    currency VARCHAR(10) DEFAULT 'USD',
+    revenue VARCHAR(255),
+    location VARCHAR(255) DEFAULT 'Singapore',
+    contact VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    images JSONB DEFAULT '[]'::jsonb,
+    owner_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
+    status VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending', 'active', 'rejected', 'expired', 'deleted')),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- =====================================================
 -- INDEXES FOR PERFORMANCE
 -- =====================================================
 CREATE INDEX idx_events_owner ON events(owner_id);
@@ -68,6 +93,9 @@ CREATE INDEX idx_events_status ON events(status);
 CREATE INDEX idx_attendees_event ON attendees(event_id);
 CREATE INDEX idx_attendees_email ON attendees(email);
 CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_listings_category ON listings(category);
+CREATE INDEX idx_listings_status ON listings(status);
+CREATE INDEX idx_listings_email ON listings(email);
 
 -- =====================================================
 -- ROW LEVEL SECURITY (RLS) - Permissive for anonymous access
@@ -75,6 +103,7 @@ CREATE INDEX idx_users_email ON users(email);
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE attendees ENABLE ROW LEVEL SECURITY;
+ALTER TABLE listings ENABLE ROW LEVEL SECURITY;
 
 -- USERS TABLE POLICIES
 CREATE POLICY "Allow anonymous user creation" ON users
@@ -104,6 +133,16 @@ CREATE POLICY "Allow public read attendees" ON attendees
     FOR SELECT USING (true);
 
 CREATE POLICY "Allow updates on attendees" ON attendees
+    FOR UPDATE USING (true);
+
+-- LISTINGS TABLE POLICIES
+CREATE POLICY "Allow anonymous listing creation" ON listings
+    FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Allow public read listings" ON listings
+    FOR SELECT USING (status = 'active');
+
+CREATE POLICY "Allow updates on listings" ON listings
     FOR UPDATE USING (true);
 
 -- =====================================================

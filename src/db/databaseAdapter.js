@@ -76,6 +76,32 @@ export const searchAttendees = async (eventId, query) => {
   return await SupabaseDB.searchAttendees(eventId, query);
 };
 
+// ==================== LISTING OPERATIONS (Marketplace) ====================
+
+export const createListing = async (listingData) => {
+  return await SupabaseDB.createListing(listingData);
+};
+
+export const getListing = async (listingId) => {
+  return await SupabaseDB.getListing(listingId);
+};
+
+export const getListingsByCategory = async (category) => {
+  return await SupabaseDB.getListingsByCategory(category);
+};
+
+export const getAllListings = async () => {
+  return await SupabaseDB.getAllListings();
+};
+
+export const updateListing = async (listingId, listingData) => {
+  return await SupabaseDB.updateListing(listingId, listingData);
+};
+
+export const deleteListing = async (listingId) => {
+  return await SupabaseDB.deleteListing(listingId);
+};
+
 // ==================== DATABASE STATUS ====================
 
 export const getDatabaseMode = () => {

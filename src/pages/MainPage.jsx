@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, DollarSign, User, Mail, CheckCircle, Sparkles } from 'lucide-react';
+import { Calendar, DollarSign, User, Mail, CheckCircle, Sparkles, Upload, X, MapPin, Briefcase, Home, Heart, Image } from 'lucide-react';
+import { createListing, getListingsByCategory } from '../db/databaseAdapter';
+import { convertImageToBase64 } from '../utils/imageUtils';
 
 const MainPage = () => {
     const navigate = useNavigate();
@@ -9,13 +11,20 @@ const MainPage = () => {
         fromDate: '',
         toDate: '',
         title: '',
+        description: '',
         budgetMin: '',
         budgetMax: '',
+        currency: 'USD',
         revenue: '',
         contact: '',
-        email: ''
+        email: '',
+        password: '',
+        location: 'Singapore',
+        images: []
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [listings, setListings] = useState([]);
+    const [loadingListings, setLoadingListings] = useState(false);
 
     const categories = [
         { id: 'parttime', label: 'Part-time Job' },
@@ -25,6 +34,23 @@ const MainPage = () => {
         { id: 'events', label: 'Events', isLink: true }
     ];
 
+    // Fetch listings when category changes
+    useEffect(() => {
+        const fetchListings = async () => {
+            if (activeCategory === 'events') return;
+            setLoadingListings(true);
+            try {
+                const data = await getListingsByCategory(activeCategory);
+                setListings(data);
+            } catch (error) {
+                console.error('Error fetching listings:', error);
+                setListings([]);
+            }
+            setLoadingListings(false);
+        };
+        fetchListings();
+    }, [activeCategory]);
+
     const handleCategoryClick = (cat) => {
         if (cat.isLink) {
             navigate('/events');
@@ -33,38 +59,95 @@ const MainPage = () => {
         }
     };
 
+    const handleImageUpload = async (e) => {
+        const files = Array.from(e.target.files);
+        if (formData.images.length + files.length > 5) {
+            alert('Maximum 5 images allowed');
+            return;
+        }
+        
+        for (const file of files) {
+            try {
+                const base64 = await convertImageToBase64(file);
+                setFormData(prev => ({
+                    ...prev,
+                    images: [...prev.images, base64]
+                }));
+            } catch (error) {
+                console.error('Error uploading image:', error);
+            }
+        }
+    };
+
+    const removeImage = (index) => {
+        setFormData(prev => ({
+            ...prev,
+            images: prev.images.filter((_, i) => i !== index)
+        }));
+    };
+
+    const getCategoryIcon = (category) => {
+        switch (category) {
+            case 'parttime': return <Briefcase className="w-5 h-5" />;
+            case 'business': return <DollarSign className="w-5 h-5" />;
+            case 'property': return <Home className="w-5 h-5" />;
+            case 'wedding': return <Heart className="w-5 h-5" />;
+            default: return <Briefcase className="w-5 h-5" />;
+        }
+    };
+
+    const getCategoryLabel = (category) => {
+        const cat = categories.find(c => c.id === category);
+        return cat ? cat.label : category;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
 
         try {
-            const response = await fetch('http://localhost:3001/api/listings', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    category: activeCategory,
-                    purpose: 'sale',
-                    fromDate: formData.fromDate,
-                    toDate: formData.toDate,
-                    title: formData.title,
-                    budget: `${formData.budgetMin} - ${formData.budgetMax}`,
-                    revenue: formData.revenue,
-                    contact: formData.contact,
-                    email: formData.email,
-                    sellerName: formData.contact,
-                    location: 'Singapore',
-                    country: 'Singapore',
-                    description: formData.title
-                })
+            const listing = await createListing({
+                category: activeCategory,
+                title: formData.title,
+                description: formData.description || formData.title,
+                fromDate: formData.fromDate,
+                toDate: formData.toDate,
+                budgetMin: formData.budgetMin,
+                budgetMax: formData.budgetMax,
+                currency: formData.currency,
+                revenue: formData.revenue,
+                location: formData.location,
+                contact: formData.contact,
+                email: formData.email,
+                password: formData.password,
+                images: formData.images
             });
 
-            const result = await response.json();
-            if (result.success) {
-                alert('Listing submitted successfully! Admin will review shortly.');
-                window.open(result.whatsappLink, '_blank');
-            }
+            alert('Listing submitted successfully!');
+            
+            // Reset form
+            setFormData({
+                fromDate: '',
+                toDate: '',
+                title: '',
+                description: '',
+                budgetMin: '',
+                budgetMax: '',
+                currency: 'USD',
+                revenue: '',
+                contact: '',
+                email: '',
+                password: '',
+                location: 'Singapore',
+                images: []
+            });
+            
+            // Refresh listings
+            const data = await getListingsByCategory(activeCategory);
+            setListings(data);
         } catch (error) {
-            alert('Listing submitted! We will contact you shortly.');
+            console.error('Error submitting listing:', error);
+            alert('Error submitting listing: ' + error.message);
         }
 
         setIsSubmitting(false);
@@ -180,9 +263,60 @@ const MainPage = () => {
                                 value={formData.title}
                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                 className="w-full px-4 py-3.5 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
-                                placeholder="Enter description..."
+                                placeholder="Enter title..."
                                 required
                             />
+                        </div>
+
+                        {/* Description */}
+                        <div className="group">
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+                            <textarea
+                                value={formData.description}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                className="w-full px-4 py-3.5 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm resize-none"
+                                placeholder="Describe your listing in detail..."
+                                rows={3}
+                            />
+                        </div>
+
+                        {/* Images Section */}
+                        <div className="group">
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                <Image className="inline w-4 h-4 mr-1" />
+                                Images (Max 5)
+                            </label>
+                            <div className="flex flex-wrap gap-3 mb-3">
+                                {formData.images.map((img, index) => (
+                                    <div key={index} className="relative">
+                                        <img
+                                            src={img}
+                                            alt={`Upload ${index + 1}`}
+                                            className="w-20 h-20 object-cover rounded-lg border-2 border-gray-200"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => removeImage(index)}
+                                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                                        >
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                ))}
+                                {formData.images.length < 5 && (
+                                    <label className="w-20 h-20 flex flex-col items-center justify-center bg-white/70 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-amber-500 hover:bg-amber-50/50 transition-all">
+                                        <Upload className="w-6 h-6 text-gray-400" />
+                                        <span className="text-xs text-gray-400 mt-1">Add</span>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            multiple
+                                            className="hidden"
+                                            onChange={handleImageUpload}
+                                        />
+                                    </label>
+                                )}
+                            </div>
                         </div>
 
                         {/* Budget / Revenue */}
@@ -210,10 +344,14 @@ const MainPage = () => {
                                             placeholder="Max"
                                         />
                                     </div>
-                                    <select className="px-3 py-3.5 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl text-gray-600 shadow-sm cursor-pointer">
-                                        <option>$</option>
-                                        <option>S$</option>
-                                        <option>RM</option>
+                                    <select 
+                                        value={formData.currency}
+                                        onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                                        className="px-3 py-3.5 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl text-gray-600 shadow-sm cursor-pointer"
+                                    >
+                                        <option value="USD">$</option>
+                                        <option value="SGD">S$</option>
+                                        <option value="MYR">RM</option>
                                     </select>
                                 </div>
                             </div>
@@ -263,7 +401,7 @@ const MainPage = () => {
 
                         {/* Footer text */}
                         <p className="text-gray-400 text-sm">
-                            1 listing per account. Login required. Pay US$1 to submit. Admin approval required.
+                            1 listing per account. Admin approval required.
                         </p>
 
                         {/* Submit Button - Premium Gradient */}
@@ -272,99 +410,76 @@ const MainPage = () => {
                             disabled={isSubmitting}
                             className="group w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-[#8B2323] via-[#A52A2A] to-[#8B2323] text-white rounded-xl font-semibold text-lg transition-all duration-300 shadow-lg shadow-red-900/30 hover:shadow-xl hover:shadow-red-900/40 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3"
                         >
-                            <span className="text-xl">🇺🇸</span>
-                            <span>{isSubmitting ? 'Submitting...' : 'Pay & Submit Listing $1'}</span>
+                            <span>{isSubmitting ? 'Submitting...' : 'Submit Listing'}</span>
                         </button>
                     </form>
                 </div>
 
-                {/* Right Side - Premium Illustration */}
-                <div className="hidden lg:flex flex-1 items-center justify-center">
-                    <div className="relative">
-                        {/* Decorative elements */}
-                        <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-amber-200/30 to-orange-200/30 rounded-full blur-3xl"></div>
-                        <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-gradient-to-br from-emerald-200/30 to-teal-200/30 rounded-full blur-2xl"></div>
-
-                        {/* Clipboard illustration */}
-                        <svg width="380" height="430" viewBox="0 0 400 450" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-2xl">
-                            {/* Clipboard base with gradient */}
-                            <defs>
-                                <linearGradient id="clipboardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stopColor="#C9A87C" />
-                                    <stop offset="100%" stopColor="#A68B5B" />
-                                </linearGradient>
-                                <linearGradient id="paperGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                                    <stop offset="0%" stopColor="#FFFDF9" />
-                                    <stop offset="100%" stopColor="#FFF8F0" />
-                                </linearGradient>
-                                <filter id="cardShadow" x="-20%" y="-20%" width="140%" height="140%">
-                                    <feDropShadow dx="0" dy="4" stdDeviation="8" floodColor="#000" floodOpacity="0.1" />
-                                </filter>
-                            </defs>
-
-                            <rect x="80" y="40" width="240" height="320" rx="20" fill="url(#clipboardGrad)" />
-                            <rect x="95" y="55" width="210" height="290" rx="14" fill="url(#paperGrad)" />
-
-                            {/* Clipboard clip - premium metal look */}
-                            <rect x="140" y="22" width="120" height="45" rx="8" fill="#6B5B4F" />
-                            <rect x="145" y="27" width="110" height="35" rx="6" fill="#8B7B6B" />
-                            <rect x="155" y="35" width="90" height="20" rx="4" fill="#A8998B" />
-
-                            {/* Checklist items with premium styling */}
-                            {[80, 120, 160, 200, 240].map((y, i) => (
-                                <g key={i}>
-                                    <rect x="115" y={y} width="22" height="22" rx="6" stroke="#C4B5A5" strokeWidth="2" fill="white" />
-                                    {i < 3 && (
-                                        <path d={`M120 ${y + 11} L125 ${y + 16} L137 ${y + 5}`} stroke="#10B981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                                    )}
-                                    <rect x="148" y={y + 5} width={140 - i * 15} height="10" rx="3" fill="#E8E0D8" />
-                                </g>
-                            ))}
-
-                            {/* Premium pencil */}
-                            <g transform="translate(250, 175) rotate(45)">
-                                <rect x="0" y="0" width="90" height="12" rx="2" fill="#FFD93D" />
-                                <rect x="0" y="0" width="90" height="6" fill="#FFE066" />
-                                <rect x="90" y="0" width="18" height="12" fill="#FFDDC1" />
-                                <polygon points="108,0 120,6 108,12" fill="#2D3436" />
-                                <rect x="0" y="0" width="14" height="12" rx="2" fill="#FF6B9C" />
-                            </g>
-
-                            {/* Floating cards with premium shadows */}
-                            <g transform="translate(290, 50)" filter="url(#cardShadow)">
-                                <rect x="0" y="0" width="75" height="55" rx="10" fill="white" />
-                                <rect x="12" y="12" width="50" height="6" rx="3" fill="#E8E0D8" />
-                                <rect x="12" y="24" width="35" height="6" rx="3" fill="#E8E0D8" />
-                                <rect x="50" y="35" width="14" height="14" rx="4" fill="#10B981" />
-                                <path d="M54 42 L57 45 L63 38" stroke="white" strokeWidth="2" strokeLinecap="round" fill="none" />
-                            </g>
-
-                            <g transform="translate(315, 125)" filter="url(#cardShadow)">
-                                <rect x="0" y="0" width="75" height="55" rx="10" fill="white" />
-                                <circle cx="22" cy="20" r="14" fill="#EF4444" />
-                                <rect x="14" y="35" width="16" height="8" rx="2" fill="#EF4444" />
-                                <rect x="40" y="12" width="25" height="6" rx="3" fill="#E8E0D8" />
-                                <rect x="40" y="24" width="18" height="6" rx="3" fill="#E8E0D8" />
-                                <rect x="52" y="38" width="14" height="14" rx="4" fill="#10B981" />
-                            </g>
-
-                            <g transform="translate(335, 205)" filter="url(#cardShadow)">
-                                <rect x="0" y="0" width="60" height="50" rx="10" fill="white" />
-                                <rect x="5" y="5" width="50" height="22" rx="5" fill="#DDD" />
-                                <rect x="5" y="32" width="28" height="6" rx="3" fill="#E8E0D8" />
-                                <rect x="38" y="30" width="14" height="14" rx="4" fill="#10B981" />
-                            </g>
-
-                            {/* Premium green checkmark circle */}
-                            <circle cx="310" cy="330" r="38" fill="url(#checkGrad)" />
-                            <defs>
-                                <linearGradient id="checkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stopColor="#10B981" />
-                                    <stop offset="100%" stopColor="#059669" />
-                                </linearGradient>
-                            </defs>
-                            <path d="M290 330 L303 343 L330 315" stroke="white" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                        </svg>
+                {/* Right Side - Listings Sidebar */}
+                <div className="hidden lg:block w-96 sticky top-24 self-start">
+                    <div className="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl p-6 shadow-lg">
+                        <div className="flex items-center gap-3 mb-4">
+                            {getCategoryIcon(activeCategory)}
+                            <h3 className="text-lg font-semibold text-gray-900">
+                                {getCategoryLabel(activeCategory)} Listings
+                            </h3>
+                        </div>
+                        
+                        {loadingListings ? (
+                            <div className="flex items-center justify-center py-8">
+                                <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+                            </div>
+                        ) : listings.length === 0 ? (
+                            <div className="text-center py-8">
+                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    {getCategoryIcon(activeCategory)}
+                                </div>
+                                <p className="text-gray-500 text-sm">No listings yet</p>
+                                <p className="text-gray-400 text-xs mt-1">Be the first to post!</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                                {listings.map((listing) => (
+                                    <div 
+                                        key={listing.id} 
+                                        className="bg-white border border-gray-100 rounded-xl p-4 hover:shadow-md transition-all cursor-pointer"
+                                    >
+                                        {/* Listing Image */}
+                                        {listing.images && listing.images.length > 0 && (
+                                            <img 
+                                                src={listing.images[0]} 
+                                                alt={listing.title}
+                                                className="w-full h-32 object-cover rounded-lg mb-3"
+                                            />
+                                        )}
+                                        
+                                        {/* Listing Details */}
+                                        <h4 className="font-medium text-gray-900 text-sm line-clamp-2 mb-1">
+                                            {listing.title}
+                                        </h4>
+                                        
+                                        {listing.description && (
+                                            <p className="text-gray-500 text-xs line-clamp-2 mb-2">
+                                                {listing.description}
+                                            </p>
+                                        )}
+                                        
+                                        <div className="flex items-center justify-between text-xs">
+                                            {(listing.budgetMin || listing.budgetMax) && (
+                                                <span className="text-amber-600 font-medium">
+                                                    {listing.currency === 'SGD' ? 'S$' : listing.currency === 'MYR' ? 'RM' : '$'}
+                                                    {listing.budgetMin || '0'} - {listing.budgetMax || '∞'}
+                                                </span>
+                                            )}
+                                            <span className="text-gray-400 flex items-center gap-1">
+                                                <MapPin className="w-3 h-3" />
+                                                {listing.location || 'Singapore'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
             </main>
