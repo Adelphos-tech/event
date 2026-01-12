@@ -103,6 +103,23 @@ const MainPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Validate required fields
+        if (!formData.email || !formData.password || !formData.contact) {
+            alert('Please fill in all required fields: Email, Password, and Contact');
+            return;
+        }
+        
+        if (formData.password.length < 6) {
+            alert('Password must be at least 6 characters');
+            return;
+        }
+        
+        if (!formData.title) {
+            alert('Please enter a title for your listing');
+            return;
+        }
+        
         setIsSubmitting(true);
 
         try {
@@ -367,32 +384,63 @@ const MainPage = () => {
                             </div>
                         </div>
 
-                        {/* Contact / Email */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                            <div className="group">
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">Contact</label>
+                        {/* Account Registration Section */}
+                        <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/50 rounded-xl p-5">
+                            <h3 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                                <User className="w-4 h-4 text-amber-600" />
+                                Create Your LinkMeU Account
+                            </h3>
+                            <p className="text-xs text-gray-500 mb-4">
+                                Register to manage your listings and get notified when someone is interested.
+                            </p>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="group">
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                        Email <span className="text-red-500">*</span>
+                                    </label>
+                                    <div className="relative">
+                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-amber-600 transition-colors" />
+                                        <input
+                                            type="email"
+                                            value={formData.email}
+                                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                            className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
+                                            placeholder="your@email.com"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div className="group">
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                        Password <span className="text-red-500">*</span>
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            type="password"
+                                            value={formData.password}
+                                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                            className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
+                                            placeholder="Min 6 characters"
+                                            minLength={6}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="group mt-4">
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    Contact Number <span className="text-red-500">*</span>
+                                </label>
                                 <div className="relative">
                                     <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-amber-600 transition-colors" />
                                     <input
                                         type="text"
                                         value={formData.contact}
                                         onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-                                        className="w-full pl-12 pr-4 py-3.5 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
-                                        placeholder="Contact"
-                                        required
-                                    />
-                                </div>
-                            </div>
-                            <div className="group">
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
-                                <div className="relative">
-                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-amber-600 transition-colors" />
-                                    <input
-                                        type="email"
-                                        value={formData.email}
-                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                        className="w-full pl-12 pr-4 py-3.5 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
-                                        placeholder="Email your r-email..."
+                                        className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
+                                        placeholder="+65 9XXX XXXX"
                                         required
                                     />
                                 </div>
@@ -401,7 +449,7 @@ const MainPage = () => {
 
                         {/* Footer text */}
                         <p className="text-gray-400 text-sm">
-                            1 listing per account. Admin approval required.
+                            By submitting, you agree to create a LinkMeU account. 1 listing per account.
                         </p>
 
                         {/* Submit Button - Premium Gradient */}
@@ -410,7 +458,7 @@ const MainPage = () => {
                             disabled={isSubmitting}
                             className="group w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-[#8B2323] via-[#A52A2A] to-[#8B2323] text-white rounded-xl font-semibold text-lg transition-all duration-300 shadow-lg shadow-red-900/30 hover:shadow-xl hover:shadow-red-900/40 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3"
                         >
-                            <span>{isSubmitting ? 'Submitting...' : 'Submit Listing'}</span>
+                            <span>{isSubmitting ? 'Creating Account & Submitting...' : 'Register & Submit Listing'}</span>
                         </button>
                     </form>
                 </div>

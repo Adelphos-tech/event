@@ -169,6 +169,34 @@ FROM users WHERE email = 'robocorpsg@gmail.com'
 LIMIT 1;
 
 -- =====================================================
+-- SEED DATA - Sample Listings
+-- =====================================================
+
+-- Part-time Job Listings
+INSERT INTO listings (category, title, description, budget_min, budget_max, currency, location, contact, email, images, status) VALUES
+('parttime', 'Weekend Barista at Premium Cafe', 'Looking for an experienced barista to work weekends at our premium coffee shop in Orchard. Must have latte art skills and customer service experience.', 15, 20, 'SGD', 'Orchard, Singapore', '+65 9123 4567', 'cafe@example.com', '["https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400", "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400"]'::jsonb, 'active'),
+('parttime', 'Delivery Rider - Flexible Hours', 'Join our delivery team! Flexible hours, good pay. Must have own motorcycle and valid license. Training provided.', 2000, 4000, 'SGD', 'Island-wide, Singapore', '+65 8234 5678', 'delivery@example.com', '["https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400"]'::jsonb, 'active'),
+('parttime', 'Tuition Teacher - Math & Science', 'Seeking qualified tutors for primary and secondary students. Competitive hourly rates. Must have teaching experience.', 40, 80, 'SGD', 'Tampines, Singapore', '+65 9345 6789', 'tutor@example.com', '["https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400"]'::jsonb, 'active');
+
+-- Business for Sale Listings
+INSERT INTO listings (category, title, description, budget_min, budget_max, currency, revenue, location, contact, email, images, status) VALUES
+('business', 'Profitable Bubble Tea Shop for Sale', 'Well-established bubble tea shop in high foot traffic area. Includes all equipment, recipes, and trained staff. Monthly revenue $25k+.', 80000, 120000, 'SGD', '$25,000/month', 'Bugis, Singapore', '+65 9456 7890', 'biz1@example.com', '["https://images.unsplash.com/photo-1558857563-b371033873b8?w=400", "https://images.unsplash.com/photo-1525803377221-4f5e3c4e0b3c?w=400"]'::jsonb, 'active'),
+('business', 'Online E-commerce Store - Fashion', 'Turnkey fashion e-commerce business with 10k+ followers. Includes inventory, supplier contacts, and social media accounts.', 15000, 25000, 'USD', '$5,000/month', 'Online', '+65 8567 8901', 'biz2@example.com', '["https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400"]'::jsonb, 'active'),
+('business', 'Food Truck Business - Ready to Operate', 'Fully equipped food truck with all licenses. Specializes in Western fusion cuisine. Prime locations secured.', 45000, 60000, 'SGD', '$8,000/month', 'Mobile, Singapore', '+65 9678 9012', 'biz3@example.com', '["https://images.unsplash.com/photo-1565123409695-7b5ef63a2efb?w=400"]'::jsonb, 'active');
+
+-- Property for Rent Listings
+INSERT INTO listings (category, title, description, budget_min, budget_max, currency, location, contact, email, images, status) VALUES
+('property', 'Modern 2BR Condo near MRT', 'Fully furnished 2-bedroom condo with city view. Walking distance to MRT. Includes gym and pool access. Min 1 year lease.', 2800, 3200, 'SGD', 'Toa Payoh, Singapore', '+65 9789 0123', 'rent1@example.com', '["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400", "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400"]'::jsonb, 'active'),
+('property', 'Cozy Studio Apartment - CBD', 'Compact studio perfect for professionals. High floor, great view. All utilities included. Available immediately.', 1800, 2200, 'SGD', 'Raffles Place, Singapore', '+65 8890 1234', 'rent2@example.com', '["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400"]'::jsonb, 'active'),
+('property', 'Spacious HDB Room for Rent', 'Master bedroom in 4-room HDB. Aircon, attached bathroom. Near amenities and bus stop. Female tenants preferred.', 800, 1000, 'SGD', 'Jurong East, Singapore', '+65 9901 2345', 'rent3@example.com', '["https://images.unsplash.com/photo-1513694203232-719a280e022f?w=400"]'::jsonb, 'active');
+
+-- Wedding Hall Booking Listings
+INSERT INTO listings (category, title, description, budget_min, budget_max, currency, location, contact, email, images, status) VALUES
+('wedding', 'Grand Ballroom - 500 Guests Capacity', 'Elegant ballroom with crystal chandeliers and marble floors. Includes catering, decoration, and AV equipment. Perfect for grand weddings.', 15000, 25000, 'SGD', 'Marina Bay, Singapore', '+65 9012 3456', 'wedding1@example.com', '["https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=400", "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=400"]'::jsonb, 'active'),
+('wedding', 'Garden Wedding Venue - Outdoor', 'Beautiful garden setting with gazebo. Capacity 150 guests. Includes setup, chairs, and basic decoration. Sunset ceremony available.', 5000, 8000, 'SGD', 'Sentosa, Singapore', '+65 8123 4567', 'wedding2@example.com', '["https://images.unsplash.com/photo-1478146896981-b80fe463b330?w=400"]'::jsonb, 'active'),
+('wedding', 'Intimate Restaurant Wedding Package', 'Cozy restaurant venue for 50-80 guests. 8-course dinner included. Private space with romantic ambiance.', 8000, 12000, 'SGD', 'Dempsey Hill, Singapore', '+65 9234 5678', 'wedding3@example.com', '["https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400"]'::jsonb, 'active');
+
+-- =====================================================
 -- VERIFY SETUP
 -- =====================================================
 SELECT 'Setup Complete!' as status;
@@ -176,4 +204,6 @@ SELECT 'Users:' as table_name, COUNT(*) as count FROM users
 UNION ALL
 SELECT 'Events:', COUNT(*) FROM events
 UNION ALL
-SELECT 'Attendees:', COUNT(*) FROM attendees;
+SELECT 'Attendees:', COUNT(*) FROM attendees
+UNION ALL
+SELECT 'Listings:', COUNT(*) FROM listings;
