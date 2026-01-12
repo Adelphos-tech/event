@@ -87,6 +87,11 @@ export const getUserByEmail = createAdapter(
   (email) => IndexedDB.db.users.where('email').equals(email).first()
 );
 
+export const getAllUsers = createAdapter(
+  NeonDB.getAllUsers,
+  () => IndexedDB.db.users.toArray()
+);
+
 // Event operations
 export const addEvent = createAdapter(
   NeonDB.createEvent,

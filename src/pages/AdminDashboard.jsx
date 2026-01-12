@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Calendar, MapPin, LogOut, Users, Download, FileText, Trash2, RefreshCw } from 'lucide-react';
-import { getAllEvents, getAttendeesByEvent, deleteEvent, getDatabaseStatus } from '../db/databaseAdapter';
-import { db } from '../db/database';
+import { getAllEvents, getAttendeesByEvent, deleteEvent, getDatabaseStatus, getAllUsers } from '../db/databaseAdapter';
 import { format } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
 import Header from '../components/Header';
@@ -22,8 +21,8 @@ const AdminDashboard = () => {
       const eventsData = await getAllEvents();
       setEvents(eventsData || []);
       
-      // Get users from local db (users are local)
-      const usersData = await db.users.toArray();
+      // Get users from adapter (syncs with Neon)
+      const usersData = await getAllUsers();
       setUsers(usersData || []);
       
       const status = await getDatabaseStatus();
