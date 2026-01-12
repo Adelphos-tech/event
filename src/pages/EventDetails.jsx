@@ -158,20 +158,11 @@ const EventDetails = () => {
                 <span className="hidden sm:inline">Back</span>
               </button>
               {/* LinkMeU Logo */}
-              <div className="hidden sm:flex items-center gap-2 cursor-pointer border-l border-gray-700 pl-4" onClick={() => navigate('/')}>
-                <svg className="h-8 w-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="30" cy="18" r="8" fill="#DC2626"/>
-                  <circle cx="70" cy="18" r="8" fill="#9CA3AF"/>
-                  <path d="M30 28 C30 28, 22 32, 22 42 L22 50" stroke="#DC2626" strokeWidth="5" strokeLinecap="round" fill="none"/>
-                  <path d="M70 28 C70 28, 78 32, 78 42 L78 50" stroke="#9CA3AF" strokeWidth="5" strokeLinecap="round" fill="none"/>
-                  <path d="M30 32 C30 32, 38 36, 42 48 C46 60, 38 72, 28 72 C18 72, 12 62, 16 52 C20 42, 30 38, 38 42" stroke="#DC2626" strokeWidth="5" strokeLinecap="round" fill="none"/>
-                  <path d="M70 32 C70 32, 62 36, 58 48 C54 60, 62 72, 72 72 C82 72, 88 62, 84 52 C80 42, 70 38, 62 42" stroke="#9CA3AF" strokeWidth="5" strokeLinecap="round" fill="none"/>
-                  <path d="M42 55 C48 50, 52 50, 58 55" stroke="#DC2626" strokeWidth="4" strokeLinecap="round" fill="none"/>
-                </svg>
+              <div className="hidden sm:flex items-center cursor-pointer border-l border-gray-700 pl-4" onClick={() => navigate('/')}>
                 <div className="flex items-center">
-                  <span className="text-sm font-bold text-white">Link</span>
-                  <span className="text-sm font-bold text-red-500">Me</span>
-                  <span className="text-sm font-bold text-white">U</span>
+                  <span className="text-lg font-bold text-white">Link</span>
+                  <span className="text-lg font-bold text-red-500">Me</span>
+                  <span className="text-lg font-bold text-white">U</span>
                 </div>
               </div>
             </div>
