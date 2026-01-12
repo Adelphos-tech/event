@@ -152,6 +152,11 @@ INSERT INTO users (email, password, role, first_name, last_name)
 VALUES ('robocorpsg@gmail.com', 'Admin@7990', 'superadmin', 'Super', 'Admin')
 ON CONFLICT (email) DO NOTHING;
 
+-- Listings Admin User
+INSERT INTO users (email, password, role, first_name, last_name)
+VALUES ('listingsadmin@linkmeu.com', 'LinkMeU@Admin2024', 'superadmin', 'Listings', 'Admin')
+ON CONFLICT (email) DO NOTHING;
+
 -- =====================================================
 -- SEED DATA - Test Event
 -- =====================================================

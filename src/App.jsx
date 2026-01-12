@@ -12,6 +12,8 @@ import EventDetails from './pages/EventDetails';
 import FlyerView from './pages/FlyerView';
 import RegistrationForm from './pages/RegistrationForm';
 import CheckIn from './pages/CheckIn';
+import ListingsAdmin from './pages/ListingsAdmin';
+import ListingsLogin from './pages/ListingsLogin';
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
           <Route path="/login" element={<div className="min-h-screen bg-black text-white"><Login /></div>} />
           <Route path="/register" element={<div className="min-h-screen bg-black text-white"><Register /></div>} />
           <Route path="/admin" element={<div className="min-h-screen bg-black text-white"><AdminDashboard /></div>} />
+          <Route path="/listings-admin" element={<ListingsAdmin />} />
+          <Route path="/listings-login" element={<ListingsLogin />} />
           <Route path="/events" element={<div className="min-h-screen bg-black text-white"><EventList /></div>} />
           <Route path="/new" element={<EventForm />} />
           <Route path="/:id/edit" element={<EventForm />} />
