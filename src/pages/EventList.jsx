@@ -15,7 +15,7 @@ const EventList = () => {
   const [dbStatus, setDbStatus] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
 
-  // Fetch events from database adapter (Neon or IndexedDB)
+  // Fetch events from database adapter (Supabase)
   const fetchEvents = async () => {
     setLoading(true);
     setError(null);
@@ -214,7 +214,7 @@ const EventList = () => {
           </p>
           {dbStatus && (
             <p className="text-xs text-gray-600 mt-1">
-              Database: {dbStatus.mode === 'neon' ? '☁️ Cloud (Neon)' : '💾 Local (IndexedDB)'}
+              Database: {dbStatus.mode === 'supabase' ? '☁️ Cloud (Supabase)' : '💾 Local'}
             </p>
           )}
         </div>

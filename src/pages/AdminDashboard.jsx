@@ -21,7 +21,7 @@ const AdminDashboard = () => {
       const eventsData = await getAllEvents();
       setEvents(eventsData || []);
       
-      // Get users from adapter (syncs with Neon)
+      // Get users from adapter (Supabase)
       const usersData = await getAllUsers();
       setUsers(usersData || []);
       
