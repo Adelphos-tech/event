@@ -6,7 +6,7 @@ import { getAllListings } from '../db/databaseAdapter';
 // Platform support contact (shown for unpaid listings)
 const PLATFORM_CONTACT = {
     phone: '+65 9019 1311',
-    email: 'listing@linkmeu.com'
+    email: 'linkmeucom@gmail.com'
 };
 
 const MainPage = () => {
@@ -390,7 +390,7 @@ const MainPage = () => {
                                 </p>
                                 <p className="flex items-center gap-2">
                                     <Mail className="w-4 h-4" />
-                                    listing@linkmeu.com
+                                    linkmeucom@gmail.com
                                 </p>
                             </div>
                         </div>
