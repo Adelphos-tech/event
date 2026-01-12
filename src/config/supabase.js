@@ -1,12 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Supabase configuration
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://your_project_id.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+
+// Debug logging
+console.log('🔧 Supabase URL:', supabaseUrl);
+console.log('🔧 Supabase Key exists:', !!supabaseAnonKey);
 
 // Validate configuration
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('❌ Supabase configuration missing. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env');
+if (!supabaseUrl || supabaseUrl.includes('your_project_id')) {
+  console.error('❌ Supabase URL not configured! Current:', supabaseUrl);
+  console.error('Expected format: https://xxxxx.supabase.co');
 }
 
 // Create Supabase client
