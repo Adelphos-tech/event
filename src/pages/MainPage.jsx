@@ -6,7 +6,7 @@ import { convertImageToBase64 } from '../utils/imageUtils';
 
 const MainPage = () => {
     const navigate = useNavigate();
-    const [activeCategory, setActiveCategory] = useState('parttime');
+    const [activeCategory, setActiveCategory] = useState('business');
     const [formData, setFormData] = useState({
         fromDate: '',
         toDate: '',
@@ -27,10 +27,11 @@ const MainPage = () => {
     const [loadingListings, setLoadingListings] = useState(false);
 
     const categories = [
-        { id: 'parttime', label: 'Part-time Job' },
-        { id: 'business', label: 'Business for Sale' },
-        { id: 'property', label: 'Property for Rent' },
-        { id: 'wedding', label: 'Wedding Hall Booking' },
+        { id: 'business', label: 'Business', subtitle: 'Buy | Sell | Invest' },
+        { id: 'property', label: 'Properties', subtitle: 'Buy | Sell | Rent' },
+        { id: 'movies', label: 'Movies', subtitle: 'Buy | Sell | Distribute' },
+        { id: 'products', label: 'Products', subtitle: 'Buy | Sell | Distribute' },
+        { id: 'opportunity', label: 'Opportunity', subtitle: 'Hire | Join' },
         { id: 'events', label: 'Events', isLink: true }
     ];
 
@@ -88,10 +89,11 @@ const MainPage = () => {
 
     const getCategoryIcon = (category) => {
         switch (category) {
-            case 'parttime': return <Briefcase className="w-5 h-5" />;
             case 'business': return <DollarSign className="w-5 h-5" />;
             case 'property': return <Home className="w-5 h-5" />;
-            case 'wedding': return <Heart className="w-5 h-5" />;
+            case 'movies': return <Image className="w-5 h-5" />;
+            case 'products': return <Briefcase className="w-5 h-5" />;
+            case 'opportunity': return <Briefcase className="w-5 h-5" />;
             default: return <Briefcase className="w-5 h-5" />;
         }
     };
@@ -229,15 +231,16 @@ const MainPage = () => {
                             <button
                                 key={cat.id}
                                 onClick={() => handleCategoryClick(cat)}
-                                className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${activeCategory === cat.id
+                                className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 flex flex-col items-start ${activeCategory === cat.id
                                         ? 'bg-gradient-to-r from-gray-800 to-gray-900 text-white shadow-lg shadow-gray-900/20'
                                         : cat.isLink
                                             ? 'bg-gradient-to-r from-red-600 to-red-700 text-white hover:shadow-lg hover:shadow-red-600/20'
                                             : 'bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white hover:shadow-md border border-gray-200/50'
                                     }`}
                             >
-                                {cat.label}
-                                {cat.isLink && <span className="ml-1">→</span>}
+                                <span className="font-semibold">{cat.label}</span>
+                                {cat.subtitle && <span className={`text-xs ${activeCategory === cat.id ? 'text-gray-300' : 'text-gray-500'}`}>{cat.subtitle}</span>}
+                                {cat.isLink && <span className="text-xs">View All →</span>}
                             </button>
                         ))}
                     </div>

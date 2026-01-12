@@ -152,10 +152,28 @@ const EventDetails = () => {
       <header className="relative border-b border-gray-800/50 backdrop-blur-xl bg-gray-950/80 sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-14 sm:h-16">
-            <button onClick={() => navigate('/events')} className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
-              <ArrowLeft size={20} />
-              <span className="hidden sm:inline">Back</span>
-            </button>
+            <div className="flex items-center gap-4">
+              <button onClick={() => navigate('/events')} className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
+                <ArrowLeft size={20} />
+                <span className="hidden sm:inline">Back</span>
+              </button>
+              {/* LinkMeU Logo */}
+              <div className="hidden sm:flex items-center gap-2 cursor-pointer border-l border-gray-700 pl-4" onClick={() => navigate('/')}>
+                <svg className="h-8 w-8" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="18" cy="10" r="6" fill="#DC2626"/>
+                  <circle cx="42" cy="10" r="6" fill="#9CA3AF"/>
+                  <path d="M12 20 C12 16, 24 16, 24 20 L24 28 C24 32, 18 36, 18 40" stroke="#DC2626" strokeWidth="4" strokeLinecap="round" fill="none"/>
+                  <path d="M48 20 C48 16, 36 16, 36 20 L36 28 C36 32, 42 36, 42 40" stroke="#9CA3AF" strokeWidth="4" strokeLinecap="round" fill="none"/>
+                  <path d="M10 38 C5 30, 5 50, 18 50 C28 50, 30 42, 30 38 C30 34, 32 26, 42 26 C55 26, 55 50, 42 50 C32 50, 30 42, 30 38" 
+                        stroke="#DC2626" strokeWidth="3.5" fill="none" strokeLinecap="round"/>
+                </svg>
+                <div className="flex items-center">
+                  <span className="text-sm font-bold text-white">Link</span>
+                  <span className="text-sm font-bold text-red-500">Me</span>
+                  <span className="text-sm font-bold text-white">U</span>
+                </div>
+              </div>
+            </div>
             <div className="flex items-center gap-2 sm:gap-3">
               {canEditEvent(event?.ownerId) && (
                 <button onClick={() => navigate(`/${id}/edit`)} className="p-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg transition-all">
