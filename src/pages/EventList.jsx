@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Plus, Calendar, MapPin, LogIn, LogOut, Share2, Check } from 'lucide-react';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '../db/database';
+import { Plus, Calendar, MapPin, LogIn, LogOut, Share2, Check, RefreshCw, AlertCircle } from 'lucide-react';
+import { getAllEvents, getDatabaseStatus } from '../db/databaseAdapter';
 import { format, isToday, isFuture, isPast, startOfDay } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
 import Header from '../components/Header';
@@ -10,8 +9,35 @@ import Header from '../components/Header';
 const EventList = () => {
   const navigate = useNavigate();
   const { user, logout, isSuperAdmin } = useAuth();
-  const allEvents = useLiveQuery(() => db.events.toArray(), []);
+  const [allEvents, setAllEvents] = useState(undefined);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [dbStatus, setDbStatus] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
+
+  // Fetch events from database adapter (Neon or IndexedDB)
+  const fetchEvents = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const events = await getAllEvents();
+      setAllEvents(events || []);
+      
+      // Get database status for debugging
+      const status = await getDatabaseStatus();
+      setDbStatus(status);
+    } catch (err) {
+      console.error('Error fetching events:', err);
+      setError(err.message);
+      setAllEvents([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
   // Sort events: Today's first, then upcoming, then past
   const events = allEvents ? [...allEvents].sort((a, b) => {
@@ -121,12 +147,36 @@ const EventList = () => {
   };
 
   // Show loading state while events are being fetched
-  if (allEvents === undefined) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-black">
         <Header rightAction={getRightAction()} />
-        <div className="flex items-center justify-center py-20">
+        <div className="flex flex-col items-center justify-center py-20">
+          <RefreshCw className="w-8 h-8 text-primary animate-spin mb-4" />
           <p className="text-gray-400">Loading events...</p>
+          {dbStatus && (
+            <p className="text-xs text-gray-600 mt-2">Database: {dbStatus.mode}</p>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-black">
+        <Header rightAction={getRightAction()} />
+        <div className="flex flex-col items-center justify-center py-20">
+          <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+          <p className="text-red-400 mb-4">Error loading events: {error}</p>
+          <button
+            onClick={fetchEvents}
+            className="btn-primary flex items-center gap-2"
+          >
+            <RefreshCw size={18} />
+            Try Again
+          </button>
         </div>
       </div>
     );
@@ -138,9 +188,18 @@ const EventList = () => {
 
       <div className="max-w-4xl mx-auto px-4 py-6">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold">
-            {isSuperAdmin() ? 'All Events - Admin View' : 'Events'}
-          </h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold">
+              {isSuperAdmin() ? 'All Events - Admin View' : 'Events'}
+            </h1>
+            <button
+              onClick={fetchEvents}
+              className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+              title="Refresh events"
+            >
+              <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
+            </button>
+          </div>
           <p className="text-gray-400">
             {user ? (
               <>
@@ -151,6 +210,11 @@ const EventList = () => {
               'Browse, create, and register for events'
             )}
           </p>
+          {dbStatus && (
+            <p className="text-xs text-gray-600 mt-1">
+              Database: {dbStatus.mode === 'neon' ? '☁️ Cloud (Neon)' : '💾 Local (IndexedDB)'}
+            </p>
+          )}
         </div>
 
         {events.length === 0 ? (

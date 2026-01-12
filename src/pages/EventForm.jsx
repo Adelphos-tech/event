@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Upload, Calendar, MapPin, Users, Mail, Phone, CheckCircle, AlertCircle, Loader2, ArrowLeft } from 'lucide-react';
-import { saveEvent, getEvent, registerUser, loginUser } from '../db/database';
+import { addEvent, getEvent, registerUser, loginUser, getDatabaseStatus } from '../db/databaseAdapter';
 import { convertImageToBase64, resizeImage } from '../utils/imageUtils';
 import { useAuth } from '../context/AuthContext';
 import DynamicList from '../components/DynamicList';
@@ -465,7 +465,10 @@ const EventForm = () => {
         eventData.createdAt = new Date().toISOString();
       }
 
-      const savedId = await saveEvent(eventData);
+      const savedId = await addEvent(eventData);
+      
+      // Show success message
+      alert(`✅ Event "${formData.title}" created successfully!\n\nYour event has been saved and is pending admin approval.`);
       
       // Redirect to events page
       navigate('/events');
