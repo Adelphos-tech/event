@@ -40,3 +40,4 @@ export const checkDatabaseHealth = async () => {
 
 // Export for backward compatibility
 export default supabase;
+// Build timestamp: 1768203032
