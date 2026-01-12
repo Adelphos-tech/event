@@ -145,19 +145,21 @@ const EventList = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* LinkMeU Logo */}
-            <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
-              <svg className="h-10 w-10" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* Left person head */}
-                <circle cx="18" cy="10" r="6" fill="#DC2626"/>
-                {/* Right person head */}
-                <circle cx="42" cy="10" r="6" fill="#9CA3AF"/>
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+              <svg className="h-10 w-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Left person (red) - head */}
+                <circle cx="30" cy="18" r="8" fill="#DC2626"/>
+                {/* Right person (gray) - head */}
+                <circle cx="70" cy="18" r="8" fill="#9CA3AF"/>
                 {/* Left person body */}
-                <path d="M12 20 C12 16, 24 16, 24 20 L24 28 C24 32, 18 36, 18 40" stroke="#DC2626" strokeWidth="4" strokeLinecap="round" fill="none"/>
+                <path d="M30 28 C30 28, 22 32, 22 42 L22 50" stroke="#DC2626" strokeWidth="5" strokeLinecap="round" fill="none"/>
                 {/* Right person body */}
-                <path d="M48 20 C48 16, 36 16, 36 20 L36 28 C36 32, 42 36, 42 40" stroke="#9CA3AF" strokeWidth="4" strokeLinecap="round" fill="none"/>
-                {/* Infinity/heart link */}
-                <path d="M10 38 C5 30, 5 50, 18 50 C28 50, 30 42, 30 38 C30 34, 32 26, 42 26 C55 26, 55 50, 42 50 C32 50, 30 42, 30 38" 
-                      stroke="#DC2626" strokeWidth="3.5" fill="none" strokeLinecap="round"/>
+                <path d="M70 28 C70 28, 78 32, 78 42 L78 50" stroke="#9CA3AF" strokeWidth="5" strokeLinecap="round" fill="none"/>
+                {/* Interlinked arms */}
+                <path d="M30 32 C30 32, 38 36, 42 48 C46 60, 38 72, 28 72 C18 72, 12 62, 16 52 C20 42, 30 38, 38 42" stroke="#DC2626" strokeWidth="5" strokeLinecap="round" fill="none"/>
+                <path d="M70 32 C70 32, 62 36, 58 48 C54 60, 62 72, 72 72 C82 72, 88 62, 84 52 C80 42, 70 38, 62 42" stroke="#9CA3AF" strokeWidth="5" strokeLinecap="round" fill="none"/>
+                {/* Center link */}
+                <path d="M42 55 C48 50, 52 50, 58 55" stroke="#DC2626" strokeWidth="4" strokeLinecap="round" fill="none"/>
               </svg>
               <div>
                 <div className="flex items-center">
@@ -166,7 +168,7 @@ const EventList = () => {
                   <span className="text-lg font-bold text-white">U</span>
                   <span className="text-gray-500 text-sm ml-2">Events</span>
                 </div>
-                <p className="text-[10px] text-gray-500 -mt-0.5">Link Me. You Matter Most.</p>
+                <p className="text-[9px] text-gray-500 -mt-0.5 tracking-wide">Link Me You Matter Most.</p>
               </div>
             </div>
 
