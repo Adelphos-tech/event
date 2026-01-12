@@ -1,0 +1,2748 @@
+{
+  "timestamp": "2026-01-12T11:31:35.163Z",
+  "summary": {
+    "totalTests": 32,
+    "totalIterations": 640,
+    "passed": 20,
+    "failed": 620,
+    "successRate": "3.13%",
+    "duration": "67 seconds"
+  },
+  "tests": [
+    {
+      "name": "User Registration",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Registration failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 2,
+          "error": "Registration failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 3,
+          "error": "Registration failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 4,
+          "error": "Registration failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 5,
+          "error": "Registration failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 6,
+          "error": "Registration failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 7,
+          "error": "Registration failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 8,
+          "error": "Registration failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 9,
+          "error": "Registration failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 10,
+          "error": "Registration failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 11,
+          "error": "Registration failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 12,
+          "error": "Registration failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 13,
+          "error": "Registration failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 14,
+          "error": "Registration failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 15,
+          "error": "Registration failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 16,
+          "error": "Registration failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 17,
+          "error": "Registration failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 18,
+          "error": "Registration failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 19,
+          "error": "Registration failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 20,
+          "error": "Registration failed: TypeError: fetch failed"
+        }
+      ]
+    },
+    {
+      "name": "Duplicate Email Prevention",
+      "passed": 20,
+      "failed": 0,
+      "avgDuration": "4ms",
+      "errors": []
+    },
+    {
+      "name": "User Login Validation",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Valid user not found"
+        },
+        {
+          "iteration": 2,
+          "error": "Valid user not found"
+        },
+        {
+          "iteration": 3,
+          "error": "Valid user not found"
+        },
+        {
+          "iteration": 4,
+          "error": "Valid user not found"
+        },
+        {
+          "iteration": 5,
+          "error": "Valid user not found"
+        },
+        {
+          "iteration": 6,
+          "error": "Valid user not found"
+        },
+        {
+          "iteration": 7,
+          "error": "Valid user not found"
+        },
+        {
+          "iteration": 8,
+          "error": "Valid user not found"
+        },
+        {
+          "iteration": 9,
+          "error": "Valid user not found"
+        },
+        {
+          "iteration": 10,
+          "error": "Valid user not found"
+        },
+        {
+          "iteration": 11,
+          "error": "Valid user not found"
+        },
+        {
+          "iteration": 12,
+          "error": "Valid user not found"
+        },
+        {
+          "iteration": 13,
+          "error": "Valid user not found"
+        },
+        {
+          "iteration": 14,
+          "error": "Valid user not found"
+        },
+        {
+          "iteration": 15,
+          "error": "Valid user not found"
+        },
+        {
+          "iteration": 16,
+          "error": "Valid user not found"
+        },
+        {
+          "iteration": 17,
+          "error": "Valid user not found"
+        },
+        {
+          "iteration": 18,
+          "error": "Valid user not found"
+        },
+        {
+          "iteration": 19,
+          "error": "Valid user not found"
+        },
+        {
+          "iteration": 20,
+          "error": "Valid user not found"
+        }
+      ]
+    },
+    {
+      "name": "Case Insensitive Email",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Email case sensitivity failed for: test_1768217428661_vwaws0x0@test.com"
+        },
+        {
+          "iteration": 2,
+          "error": "Email case sensitivity failed for: test_1768217428661_rdxu26kt@test.com"
+        },
+        {
+          "iteration": 3,
+          "error": "Email case sensitivity failed for: test_1768217428661_mvzjjq03@test.com"
+        },
+        {
+          "iteration": 4,
+          "error": "Email case sensitivity failed for: test_1768217428661_nyfe6y5l@test.com"
+        },
+        {
+          "iteration": 5,
+          "error": "Email case sensitivity failed for: test_1768217428661_e99cby6e@test.com"
+        },
+        {
+          "iteration": 6,
+          "error": "Email case sensitivity failed for: test_1768217428661_l7kc70ie@test.com"
+        },
+        {
+          "iteration": 7,
+          "error": "Email case sensitivity failed for: test_1768217428661_pf3zarel@test.com"
+        },
+        {
+          "iteration": 8,
+          "error": "Email case sensitivity failed for: test_1768217428661_ltlyw613@test.com"
+        },
+        {
+          "iteration": 9,
+          "error": "Email case sensitivity failed for: test_1768217428661_imludn7z@test.com"
+        },
+        {
+          "iteration": 10,
+          "error": "Email case sensitivity failed for: test_1768217428661_in1f767t@test.com"
+        },
+        {
+          "iteration": 11,
+          "error": "Email case sensitivity failed for: test_1768217428661_jgehpfrk@test.com"
+        },
+        {
+          "iteration": 12,
+          "error": "Email case sensitivity failed for: test_1768217428661_2ae1973n@test.com"
+        },
+        {
+          "iteration": 13,
+          "error": "Email case sensitivity failed for: test_1768217428661_a1g0wobu@test.com"
+        },
+        {
+          "iteration": 14,
+          "error": "Email case sensitivity failed for: test_1768217428661_l94wrrzt@test.com"
+        },
+        {
+          "iteration": 15,
+          "error": "Email case sensitivity failed for: test_1768217428661_7hi6it2z@test.com"
+        },
+        {
+          "iteration": 16,
+          "error": "Email case sensitivity failed for: test_1768217428661_vr67nse6@test.com"
+        },
+        {
+          "iteration": 17,
+          "error": "Email case sensitivity failed for: test_1768217428661_qnht7b8j@test.com"
+        },
+        {
+          "iteration": 18,
+          "error": "Email case sensitivity failed for: test_1768217428661_l3lhhd0g@test.com"
+        },
+        {
+          "iteration": 19,
+          "error": "Email case sensitivity failed for: test_1768217428661_qz562az2@test.com"
+        },
+        {
+          "iteration": 20,
+          "error": "Email case sensitivity failed for: test_1768217428661_nlgado6m@test.com"
+        }
+      ]
+    },
+    {
+      "name": "Event Creation",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Event creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 2,
+          "error": "Event creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 3,
+          "error": "Event creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 4,
+          "error": "Event creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 5,
+          "error": "Event creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 6,
+          "error": "Event creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 7,
+          "error": "Event creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 8,
+          "error": "Event creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 9,
+          "error": "Event creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 10,
+          "error": "Event creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 11,
+          "error": "Event creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 12,
+          "error": "Event creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 13,
+          "error": "Event creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 14,
+          "error": "Event creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 15,
+          "error": "Event creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 16,
+          "error": "Event creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 17,
+          "error": "Event creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 18,
+          "error": "Event creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 19,
+          "error": "Event creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 20,
+          "error": "Event creation failed: TypeError: fetch failed"
+        }
+      ]
+    },
+    {
+      "name": "Event with Max Capacity",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Max capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 2,
+          "error": "Max capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 3,
+          "error": "Max capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 4,
+          "error": "Max capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 5,
+          "error": "Max capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 6,
+          "error": "Max capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 7,
+          "error": "Max capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 8,
+          "error": "Max capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 9,
+          "error": "Max capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 10,
+          "error": "Max capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 11,
+          "error": "Max capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 12,
+          "error": "Max capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 13,
+          "error": "Max capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 14,
+          "error": "Max capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 15,
+          "error": "Max capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 16,
+          "error": "Max capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 17,
+          "error": "Max capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 18,
+          "error": "Max capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 19,
+          "error": "Max capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 20,
+          "error": "Max capacity event failed: TypeError: fetch failed"
+        }
+      ]
+    },
+    {
+      "name": "Event with Zero Capacity",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Zero capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 2,
+          "error": "Zero capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 3,
+          "error": "Zero capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 4,
+          "error": "Zero capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 5,
+          "error": "Zero capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 6,
+          "error": "Zero capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 7,
+          "error": "Zero capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 8,
+          "error": "Zero capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 9,
+          "error": "Zero capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 10,
+          "error": "Zero capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 11,
+          "error": "Zero capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 12,
+          "error": "Zero capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 13,
+          "error": "Zero capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 14,
+          "error": "Zero capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 15,
+          "error": "Zero capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 16,
+          "error": "Zero capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 17,
+          "error": "Zero capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 18,
+          "error": "Zero capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 19,
+          "error": "Zero capacity event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 20,
+          "error": "Zero capacity event failed: TypeError: fetch failed"
+        }
+      ]
+    },
+    {
+      "name": "Event Date Validation",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Past date event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 2,
+          "error": "Past date event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 3,
+          "error": "Past date event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 4,
+          "error": "Past date event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 5,
+          "error": "Past date event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 6,
+          "error": "Past date event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 7,
+          "error": "Past date event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 8,
+          "error": "Past date event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 9,
+          "error": "Past date event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 10,
+          "error": "Past date event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 11,
+          "error": "Past date event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 12,
+          "error": "Past date event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 13,
+          "error": "Past date event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 14,
+          "error": "Past date event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 15,
+          "error": "Past date event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 16,
+          "error": "Past date event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 17,
+          "error": "Past date event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 18,
+          "error": "Past date event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 19,
+          "error": "Past date event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 20,
+          "error": "Past date event failed: TypeError: fetch failed"
+        }
+      ]
+    },
+    {
+      "name": "Event with Long Title",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Long title event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 2,
+          "error": "Long title event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 3,
+          "error": "Long title event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 4,
+          "error": "Long title event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 5,
+          "error": "Long title event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 6,
+          "error": "Long title event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 7,
+          "error": "Long title event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 8,
+          "error": "Long title event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 9,
+          "error": "Long title event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 10,
+          "error": "Long title event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 11,
+          "error": "Long title event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 12,
+          "error": "Long title event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 13,
+          "error": "Long title event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 14,
+          "error": "Long title event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 15,
+          "error": "Long title event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 16,
+          "error": "Long title event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 17,
+          "error": "Long title event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 18,
+          "error": "Long title event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 19,
+          "error": "Long title event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 20,
+          "error": "Long title event failed: TypeError: fetch failed"
+        }
+      ]
+    },
+    {
+      "name": "Event with Special Characters",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Special chars event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 2,
+          "error": "Special chars event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 3,
+          "error": "Special chars event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 4,
+          "error": "Special chars event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 5,
+          "error": "Special chars event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 6,
+          "error": "Special chars event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 7,
+          "error": "Special chars event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 8,
+          "error": "Special chars event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 9,
+          "error": "Special chars event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 10,
+          "error": "Special chars event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 11,
+          "error": "Special chars event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 12,
+          "error": "Special chars event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 13,
+          "error": "Special chars event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 14,
+          "error": "Special chars event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 15,
+          "error": "Special chars event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 16,
+          "error": "Special chars event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 17,
+          "error": "Special chars event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 18,
+          "error": "Special chars event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 19,
+          "error": "Special chars event failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 20,
+          "error": "Special chars event failed: TypeError: fetch failed"
+        }
+      ]
+    },
+    {
+      "name": "Event Update",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 2,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 3,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 4,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 5,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 6,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 7,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 8,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 9,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 10,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 11,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 12,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 13,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 14,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 15,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 16,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 17,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 18,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 19,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 20,
+          "error": "Cannot read properties of null (reading 'id')"
+        }
+      ]
+    },
+    {
+      "name": "Event Soft Delete",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 2,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 3,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 4,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 5,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 6,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 7,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 8,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 9,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 10,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 11,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 12,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 13,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 14,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 15,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 16,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 17,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 18,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 19,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 20,
+          "error": "Cannot read properties of null (reading 'id')"
+        }
+      ]
+    },
+    {
+      "name": "Concurrent Event Creation",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Concurrent creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 2,
+          "error": "Concurrent creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 3,
+          "error": "Concurrent creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 4,
+          "error": "Concurrent creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 5,
+          "error": "Concurrent creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 6,
+          "error": "Concurrent creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 7,
+          "error": "Concurrent creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 8,
+          "error": "Concurrent creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 9,
+          "error": "Concurrent creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 10,
+          "error": "Concurrent creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 11,
+          "error": "Concurrent creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 12,
+          "error": "Concurrent creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 13,
+          "error": "Concurrent creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 14,
+          "error": "Concurrent creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 15,
+          "error": "Concurrent creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 16,
+          "error": "Concurrent creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 17,
+          "error": "Concurrent creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 18,
+          "error": "Concurrent creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 19,
+          "error": "Concurrent creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 20,
+          "error": "Concurrent creation failed: TypeError: fetch failed"
+        }
+      ]
+    },
+    {
+      "name": "Attendee Registration",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 2,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 3,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 4,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 5,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 6,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 7,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 8,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 9,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 10,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 11,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 12,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 13,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 14,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 15,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 16,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 17,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 18,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 19,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 20,
+          "error": "Cannot read properties of null (reading 'id')"
+        }
+      ]
+    },
+    {
+      "name": "Attendee Check-In",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 2,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 3,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 4,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 5,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 6,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 7,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 8,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 9,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 10,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 11,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 12,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 13,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 14,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 15,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 16,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 17,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 18,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 19,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 20,
+          "error": "Cannot read properties of null (reading 'id')"
+        }
+      ]
+    },
+    {
+      "name": "Bulk Attendee Registration",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 2,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 3,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 4,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 5,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 6,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 7,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 8,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 9,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 10,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 11,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 12,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 13,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 14,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 15,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 16,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 17,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 18,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 19,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 20,
+          "error": "Cannot read properties of null (reading 'id')"
+        }
+      ]
+    },
+    {
+      "name": "Attendee Search",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 2,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 3,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 4,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 5,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 6,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 7,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 8,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 9,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 10,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 11,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 12,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 13,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 14,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 15,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 16,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 17,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 18,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 19,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 20,
+          "error": "Cannot read properties of null (reading 'id')"
+        }
+      ]
+    },
+    {
+      "name": "Listing Creation",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Listing creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 2,
+          "error": "Listing creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 3,
+          "error": "Listing creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 4,
+          "error": "Listing creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 5,
+          "error": "Listing creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 6,
+          "error": "Listing creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 7,
+          "error": "Listing creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 8,
+          "error": "Listing creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 9,
+          "error": "Listing creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 10,
+          "error": "Listing creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 11,
+          "error": "Listing creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 12,
+          "error": "Listing creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 13,
+          "error": "Listing creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 14,
+          "error": "Listing creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 15,
+          "error": "Listing creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 16,
+          "error": "Listing creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 17,
+          "error": "Listing creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 18,
+          "error": "Listing creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 19,
+          "error": "Listing creation failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 20,
+          "error": "Listing creation failed: TypeError: fetch failed"
+        }
+      ]
+    },
+    {
+      "name": "Listing with Images",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Listing with images failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 2,
+          "error": "Listing with images failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 3,
+          "error": "Listing with images failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 4,
+          "error": "Listing with images failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 5,
+          "error": "Listing with images failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 6,
+          "error": "Listing with images failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 7,
+          "error": "Listing with images failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 8,
+          "error": "Listing with images failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 9,
+          "error": "Listing with images failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 10,
+          "error": "Listing with images failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 11,
+          "error": "Listing with images failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 12,
+          "error": "Listing with images failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 13,
+          "error": "Listing with images failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 14,
+          "error": "Listing with images failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 15,
+          "error": "Listing with images failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 16,
+          "error": "Listing with images failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 17,
+          "error": "Listing with images failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 18,
+          "error": "Listing with images failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 19,
+          "error": "Listing with images failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 20,
+          "error": "Listing with images failed: TypeError: fetch failed"
+        }
+      ]
+    },
+    {
+      "name": "Listing Budget Range",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Budget listing failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 2,
+          "error": "Budget listing failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 3,
+          "error": "Budget listing failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 4,
+          "error": "Budget listing failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 5,
+          "error": "Budget listing failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 6,
+          "error": "Budget listing failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 7,
+          "error": "Budget listing failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 8,
+          "error": "Budget listing failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 9,
+          "error": "Budget listing failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 10,
+          "error": "Budget listing failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 11,
+          "error": "Budget listing failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 12,
+          "error": "Budget listing failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 13,
+          "error": "Budget listing failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 14,
+          "error": "Budget listing failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 15,
+          "error": "Budget listing failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 16,
+          "error": "Budget listing failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 17,
+          "error": "Budget listing failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 18,
+          "error": "Budget listing failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 19,
+          "error": "Budget listing failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 20,
+          "error": "Budget listing failed: TypeError: fetch failed"
+        }
+      ]
+    },
+    {
+      "name": "Listing Status Transitions",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 2,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 3,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 4,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 5,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 6,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 7,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 8,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 9,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 10,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 11,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 12,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 13,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 14,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 15,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 16,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 17,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 18,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 19,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 20,
+          "error": "Cannot read properties of null (reading 'id')"
+        }
+      ]
+    },
+    {
+      "name": "Listing Filter by Category",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 2,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 3,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 4,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 5,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 6,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 7,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 8,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 9,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 10,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 11,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 12,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 13,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 14,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 15,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 16,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 17,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 18,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 19,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 20,
+          "error": "Cannot read properties of null (reading 'id')"
+        }
+      ]
+    },
+    {
+      "name": "Null Field Handling",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Null field handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 2,
+          "error": "Null field handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 3,
+          "error": "Null field handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 4,
+          "error": "Null field handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 5,
+          "error": "Null field handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 6,
+          "error": "Null field handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 7,
+          "error": "Null field handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 8,
+          "error": "Null field handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 9,
+          "error": "Null field handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 10,
+          "error": "Null field handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 11,
+          "error": "Null field handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 12,
+          "error": "Null field handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 13,
+          "error": "Null field handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 14,
+          "error": "Null field handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 15,
+          "error": "Null field handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 16,
+          "error": "Null field handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 17,
+          "error": "Null field handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 18,
+          "error": "Null field handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 19,
+          "error": "Null field handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 20,
+          "error": "Null field handling failed: TypeError: fetch failed"
+        }
+      ]
+    },
+    {
+      "name": "Empty Array Fields",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Empty array handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 2,
+          "error": "Empty array handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 3,
+          "error": "Empty array handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 4,
+          "error": "Empty array handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 5,
+          "error": "Empty array handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 6,
+          "error": "Empty array handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 7,
+          "error": "Empty array handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 8,
+          "error": "Empty array handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 9,
+          "error": "Empty array handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 10,
+          "error": "Empty array handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 11,
+          "error": "Empty array handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 12,
+          "error": "Empty array handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 13,
+          "error": "Empty array handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 14,
+          "error": "Empty array handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 15,
+          "error": "Empty array handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 16,
+          "error": "Empty array handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 17,
+          "error": "Empty array handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 18,
+          "error": "Empty array handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 19,
+          "error": "Empty array handling failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 20,
+          "error": "Empty array handling failed: TypeError: fetch failed"
+        }
+      ]
+    },
+    {
+      "name": "Large JSON Payload",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Large JSON failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 2,
+          "error": "Large JSON failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 3,
+          "error": "Large JSON failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 4,
+          "error": "Large JSON failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 5,
+          "error": "Large JSON failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 6,
+          "error": "Large JSON failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 7,
+          "error": "Large JSON failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 8,
+          "error": "Large JSON failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 9,
+          "error": "Large JSON failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 10,
+          "error": "Large JSON failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 11,
+          "error": "Large JSON failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 12,
+          "error": "Large JSON failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 13,
+          "error": "Large JSON failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 14,
+          "error": "Large JSON failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 15,
+          "error": "Large JSON failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 16,
+          "error": "Large JSON failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 17,
+          "error": "Large JSON failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 18,
+          "error": "Large JSON failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 19,
+          "error": "Large JSON failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 20,
+          "error": "Large JSON failed: TypeError: fetch failed"
+        }
+      ]
+    },
+    {
+      "name": "Rapid Fire Operations",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Only 0/10 rapid operations succeeded"
+        },
+        {
+          "iteration": 2,
+          "error": "Only 0/10 rapid operations succeeded"
+        },
+        {
+          "iteration": 3,
+          "error": "Only 0/10 rapid operations succeeded"
+        },
+        {
+          "iteration": 4,
+          "error": "Only 0/10 rapid operations succeeded"
+        },
+        {
+          "iteration": 5,
+          "error": "Only 0/10 rapid operations succeeded"
+        },
+        {
+          "iteration": 6,
+          "error": "Only 0/10 rapid operations succeeded"
+        },
+        {
+          "iteration": 7,
+          "error": "Only 0/10 rapid operations succeeded"
+        },
+        {
+          "iteration": 8,
+          "error": "Only 0/10 rapid operations succeeded"
+        },
+        {
+          "iteration": 9,
+          "error": "Only 0/10 rapid operations succeeded"
+        },
+        {
+          "iteration": 10,
+          "error": "Only 0/10 rapid operations succeeded"
+        },
+        {
+          "iteration": 11,
+          "error": "Only 0/10 rapid operations succeeded"
+        },
+        {
+          "iteration": 12,
+          "error": "Only 0/10 rapid operations succeeded"
+        },
+        {
+          "iteration": 13,
+          "error": "Only 0/10 rapid operations succeeded"
+        },
+        {
+          "iteration": 14,
+          "error": "Only 0/10 rapid operations succeeded"
+        },
+        {
+          "iteration": 15,
+          "error": "Only 0/10 rapid operations succeeded"
+        },
+        {
+          "iteration": 16,
+          "error": "Only 0/10 rapid operations succeeded"
+        },
+        {
+          "iteration": 17,
+          "error": "Only 0/10 rapid operations succeeded"
+        },
+        {
+          "iteration": 18,
+          "error": "Only 0/10 rapid operations succeeded"
+        },
+        {
+          "iteration": 19,
+          "error": "Only 0/10 rapid operations succeeded"
+        },
+        {
+          "iteration": 20,
+          "error": "Only 0/10 rapid operations succeeded"
+        }
+      ]
+    },
+    {
+      "name": "Database Connection Resilience",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Connection test 0 failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 2,
+          "error": "Connection test 0 failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 3,
+          "error": "Connection test 0 failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 4,
+          "error": "Connection test 0 failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 5,
+          "error": "Connection test 0 failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 6,
+          "error": "Connection test 0 failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 7,
+          "error": "Connection test 0 failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 8,
+          "error": "Connection test 0 failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 9,
+          "error": "Connection test 0 failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 10,
+          "error": "Connection test 0 failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 11,
+          "error": "Connection test 0 failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 12,
+          "error": "Connection test 0 failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 13,
+          "error": "Connection test 0 failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 14,
+          "error": "Connection test 0 failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 15,
+          "error": "Connection test 0 failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 16,
+          "error": "Connection test 0 failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 17,
+          "error": "Connection test 0 failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 18,
+          "error": "Connection test 0 failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 19,
+          "error": "Connection test 0 failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 20,
+          "error": "Connection test 0 failed: TypeError: fetch failed"
+        }
+      ]
+    },
+    {
+      "name": "Timestamp Precision",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Timestamp test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 2,
+          "error": "Timestamp test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 3,
+          "error": "Timestamp test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 4,
+          "error": "Timestamp test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 5,
+          "error": "Timestamp test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 6,
+          "error": "Timestamp test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 7,
+          "error": "Timestamp test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 8,
+          "error": "Timestamp test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 9,
+          "error": "Timestamp test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 10,
+          "error": "Timestamp test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 11,
+          "error": "Timestamp test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 12,
+          "error": "Timestamp test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 13,
+          "error": "Timestamp test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 14,
+          "error": "Timestamp test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 15,
+          "error": "Timestamp test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 16,
+          "error": "Timestamp test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 17,
+          "error": "Timestamp test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 18,
+          "error": "Timestamp test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 19,
+          "error": "Timestamp test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 20,
+          "error": "Timestamp test failed: TypeError: fetch failed"
+        }
+      ]
+    },
+    {
+      "name": "Unicode Handling",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Unicode test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 2,
+          "error": "Unicode test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 3,
+          "error": "Unicode test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 4,
+          "error": "Unicode test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 5,
+          "error": "Unicode test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 6,
+          "error": "Unicode test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 7,
+          "error": "Unicode test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 8,
+          "error": "Unicode test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 9,
+          "error": "Unicode test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 10,
+          "error": "Unicode test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 11,
+          "error": "Unicode test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 12,
+          "error": "Unicode test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 13,
+          "error": "Unicode test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 14,
+          "error": "Unicode test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 15,
+          "error": "Unicode test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 16,
+          "error": "Unicode test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 17,
+          "error": "Unicode test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 18,
+          "error": "Unicode test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 19,
+          "error": "Unicode test failed: TypeError: fetch failed"
+        },
+        {
+          "iteration": 20,
+          "error": "Unicode test failed: TypeError: fetch failed"
+        }
+      ]
+    },
+    {
+      "name": "SQL Injection Prevention",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "SQL injection test failed for: '; DROP TABLE events; --"
+        },
+        {
+          "iteration": 2,
+          "error": "SQL injection test failed for: '; DROP TABLE events; --"
+        },
+        {
+          "iteration": 3,
+          "error": "SQL injection test failed for: '; DROP TABLE events; --"
+        },
+        {
+          "iteration": 4,
+          "error": "SQL injection test failed for: '; DROP TABLE events; --"
+        },
+        {
+          "iteration": 5,
+          "error": "SQL injection test failed for: '; DROP TABLE events; --"
+        },
+        {
+          "iteration": 6,
+          "error": "SQL injection test failed for: '; DROP TABLE events; --"
+        },
+        {
+          "iteration": 7,
+          "error": "SQL injection test failed for: '; DROP TABLE events; --"
+        },
+        {
+          "iteration": 8,
+          "error": "SQL injection test failed for: '; DROP TABLE events; --"
+        },
+        {
+          "iteration": 9,
+          "error": "SQL injection test failed for: '; DROP TABLE events; --"
+        },
+        {
+          "iteration": 10,
+          "error": "SQL injection test failed for: '; DROP TABLE events; --"
+        },
+        {
+          "iteration": 11,
+          "error": "SQL injection test failed for: '; DROP TABLE events; --"
+        },
+        {
+          "iteration": 12,
+          "error": "SQL injection test failed for: '; DROP TABLE events; --"
+        },
+        {
+          "iteration": 13,
+          "error": "SQL injection test failed for: '; DROP TABLE events; --"
+        },
+        {
+          "iteration": 14,
+          "error": "SQL injection test failed for: '; DROP TABLE events; --"
+        },
+        {
+          "iteration": 15,
+          "error": "SQL injection test failed for: '; DROP TABLE events; --"
+        },
+        {
+          "iteration": 16,
+          "error": "SQL injection test failed for: '; DROP TABLE events; --"
+        },
+        {
+          "iteration": 17,
+          "error": "SQL injection test failed for: '; DROP TABLE events; --"
+        },
+        {
+          "iteration": 18,
+          "error": "SQL injection test failed for: '; DROP TABLE events; --"
+        },
+        {
+          "iteration": 19,
+          "error": "SQL injection test failed for: '; DROP TABLE events; --"
+        },
+        {
+          "iteration": 20,
+          "error": "SQL injection test failed for: '; DROP TABLE events; --"
+        }
+      ]
+    },
+    {
+      "name": "Pagination Edge Cases",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 2,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 3,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 4,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 5,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 6,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 7,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 8,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 9,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 10,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 11,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 12,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 13,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 14,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 15,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 16,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 17,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 18,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 19,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 20,
+          "error": "Cannot read properties of null (reading 'id')"
+        }
+      ]
+    },
+    {
+      "name": "Ordering and Sorting",
+      "passed": 0,
+      "failed": 20,
+      "avgDuration": "N/A",
+      "errors": [
+        {
+          "iteration": 1,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 2,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 3,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 4,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 5,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 6,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 7,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 8,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 9,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 10,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 11,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 12,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 13,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 14,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 15,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 16,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 17,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 18,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 19,
+          "error": "Cannot read properties of null (reading 'id')"
+        },
+        {
+          "iteration": 20,
+          "error": "Cannot read properties of null (reading 'id')"
+        }
+      ]
+    }
+  ]
+}
