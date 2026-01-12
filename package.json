@@ -19,7 +19,7 @@
     "test:capacity:full": "npm run test:capacity && npm run test:excel"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^1.0.2",
+    "@supabase/supabase-js": "^2.90.1",
     "date-fns": "^2.30.0",
     "dexie": "^3.2.4",
     "dexie-react-hooks": "^1.1.7",

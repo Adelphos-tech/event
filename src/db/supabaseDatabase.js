@@ -1,0 +1,349 @@
+import { supabase } from '../config/supabase.js';
+
+// =====================================================
+// USER OPERATIONS
+// =====================================================
+
+export const registerUser = async (userData) => {
+  const { email, password, contact, role = 'owner', firstName, lastName } = userData;
+  
+  // Check if user exists
+  const { data: existing } = await supabase
+    .from('users')
+    .select('id')
+    .ilike('email', email)
+    .single();
+  
+  if (existing) {
+    throw new Error('User with this email already exists');
+  }
+  
+  const { data, error } = await supabase
+    .from('users')
+    .insert({
+      email: email.toLowerCase(),
+      password: password,
+      role: role,
+      contact: contact || '',
+      first_name: firstName || '',
+      last_name: lastName || ''
+    })
+    .select('id, email, role')
+    .single();
+  
+  if (error) {
+    console.error('Error registering user:', error);
+    throw new Error(error.message);
+  }
+  
+  return data.id;
+};
+
+export const loginUser = async (email, password) => {
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, email, password, role, contact, first_name, last_name')
+    .ilike('email', email)
+    .single();
+  
+  if (error || !data) {
+    throw new Error('User not found');
+  }
+  
+  if (data.password !== password) {
+    throw new Error('Invalid password');
+  }
+  
+  return {
+    id: data.id,
+    email: data.email,
+    role: data.role,
+    contact: data.contact,
+    firstName: data.first_name,
+    lastName: data.last_name
+  };
+};
+
+export const getUserByEmail = async (email) => {
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, email, role, contact, first_name, last_name')
+    .ilike('email', email)
+    .single();
+  
+  if (error) return null;
+  return data;
+};
+
+export const getAllUsers = async () => {
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, email, role, contact, first_name, last_name, created_at')
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('Error fetching users:', error);
+    return [];
+  }
+  
+  return data || [];
+};
+
+// =====================================================
+// EVENT OPERATIONS
+// =====================================================
+
+export const createEvent = async (eventData) => {
+  console.log('📝 Creating event in Supabase:', eventData.title);
+  
+  // Get or create owner
+  let ownerId = eventData.ownerId;
+  
+  if (!ownerId || typeof ownerId !== 'number') {
+    const email = eventData.creatorEmail || 'default@eventsx.com';
+    let user = await getUserByEmail(email);
+    
+    if (!user) {
+      try {
+        ownerId = await registerUser({
+          email: email,
+          password: eventData.creatorPassword || 'EventsX2024!',
+          contact: eventData.creatorContact || '',
+          role: 'owner'
+        });
+      } catch (e) {
+        user = await getUserByEmail(email);
+        ownerId = user?.id || null;
+      }
+    } else {
+      ownerId = user.id;
+    }
+  }
+  
+  const { data, error } = await supabase
+    .from('events')
+    .insert({
+      title: eventData.title || 'Untitled Event',
+      description: eventData.description || '',
+      event_type: eventData.eventType || 'conference',
+      start_date: eventData.startDate || new Date().toISOString().split('T')[0],
+      end_date: eventData.endDate || eventData.startDate || new Date().toISOString().split('T')[0],
+      venue: eventData.venue || '',
+      capacity: parseInt(eventData.capacity) || 100,
+      logo: eventData.logo || null,
+      image: eventData.image || null,
+      owner_id: ownerId,
+      organisers: eventData.organisers || [],
+      speakers: eventData.speakers || [],
+      sponsors: eventData.sponsors || [],
+      status: 'active'
+    })
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('❌ Error creating event:', error);
+    throw new Error(error.message);
+  }
+  
+  console.log('✅ Event created with ID:', data.id);
+  
+  // Return with mapped field names
+  return {
+    ...data,
+    startDate: data.start_date,
+    endDate: data.end_date,
+    eventType: data.event_type,
+    ownerId: data.owner_id
+  };
+};
+
+export const getEvent = async (eventId) => {
+  const { data, error } = await supabase
+    .from('events')
+    .select('*')
+    .eq('id', eventId)
+    .neq('status', 'deleted')
+    .single();
+  
+  if (error || !data) return null;
+  
+  // Map to frontend format
+  return {
+    ...data,
+    startDate: data.start_date,
+    endDate: data.end_date,
+    eventType: data.event_type,
+    ownerId: data.owner_id,
+    organisers: data.organisers || [],
+    speakers: data.speakers || [],
+    sponsors: data.sponsors || []
+  };
+};
+
+export const getAllEvents = async () => {
+  console.log('📊 Fetching all events from Supabase...');
+  
+  const { data, error } = await supabase
+    .from('events')
+    .select('*')
+    .neq('status', 'deleted')
+    .order('start_date', { ascending: true, nullsFirst: false });
+  
+  if (error) {
+    console.error('❌ Error fetching events:', error);
+    return [];
+  }
+  
+  console.log(`✅ Found ${data?.length || 0} events`);
+  
+  // Map to frontend format
+  return (data || []).map(event => ({
+    ...event,
+    startDate: event.start_date,
+    endDate: event.end_date,
+    eventType: event.event_type,
+    ownerId: event.owner_id,
+    organisers: event.organisers || [],
+    speakers: event.speakers || [],
+    sponsors: event.sponsors || []
+  }));
+};
+
+export const updateEvent = async (eventId, eventData) => {
+  const updateData = {};
+  
+  if (eventData.title !== undefined) updateData.title = eventData.title;
+  if (eventData.description !== undefined) updateData.description = eventData.description;
+  if (eventData.startDate !== undefined) updateData.start_date = eventData.startDate;
+  if (eventData.endDate !== undefined) updateData.end_date = eventData.endDate;
+  if (eventData.venue !== undefined) updateData.venue = eventData.venue;
+  if (eventData.capacity !== undefined) updateData.capacity = eventData.capacity;
+  if (eventData.logo !== undefined) updateData.logo = eventData.logo;
+  if (eventData.image !== undefined) updateData.image = eventData.image;
+  if (eventData.organisers !== undefined) updateData.organisers = eventData.organisers;
+  if (eventData.speakers !== undefined) updateData.speakers = eventData.speakers;
+  if (eventData.sponsors !== undefined) updateData.sponsors = eventData.sponsors;
+  
+  updateData.updated_at = new Date().toISOString();
+  
+  const { data, error } = await supabase
+    .from('events')
+    .update(updateData)
+    .eq('id', eventId)
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('Error updating event:', error);
+    throw new Error(error.message);
+  }
+  
+  return data;
+};
+
+export const deleteEvent = async (eventId) => {
+  const { error } = await supabase
+    .from('events')
+    .update({ status: 'deleted' })
+    .eq('id', eventId);
+  
+  if (error) {
+    console.error('Error deleting event:', error);
+    throw new Error(error.message);
+  }
+};
+
+// =====================================================
+// ATTENDEE OPERATIONS
+// =====================================================
+
+export const registerAttendee = async (attendeeData) => {
+  const { data, error } = await supabase
+    .from('attendees')
+    .insert({
+      event_id: attendeeData.eventId,
+      name: attendeeData.name,
+      email: attendeeData.email,
+      contact: attendeeData.contact || '',
+      notes: attendeeData.notes || '',
+      attended: false
+    })
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('Error registering attendee:', error);
+    throw new Error(error.message);
+  }
+  
+  return data;
+};
+
+export const getAttendeesByEvent = async (eventId) => {
+  const { data, error } = await supabase
+    .from('attendees')
+    .select('*')
+    .eq('event_id', eventId)
+    .order('registered_at', { ascending: false });
+  
+  if (error) {
+    console.error('Error fetching attendees:', error);
+    return [];
+  }
+  
+  return data || [];
+};
+
+export const updateAttendeeStatus = async (attendeeId, attended) => {
+  const { error } = await supabase
+    .from('attendees')
+    .update({ 
+      attended: attended,
+      check_in_time: attended ? new Date().toISOString() : null
+    })
+    .eq('id', attendeeId);
+  
+  if (error) {
+    console.error('Error updating attendee:', error);
+    throw new Error(error.message);
+  }
+};
+
+export const searchAttendees = async (eventId, query) => {
+  const { data, error } = await supabase
+    .from('attendees')
+    .select('*')
+    .eq('event_id', eventId)
+    .or(`name.ilike.%${query}%,email.ilike.%${query}%`)
+    .order('name');
+  
+  if (error) {
+    console.error('Error searching attendees:', error);
+    return [];
+  }
+  
+  return data || [];
+};
+
+// =====================================================
+// DATABASE STATUS
+// =====================================================
+
+export const getDatabaseStatus = async () => {
+  try {
+    const { data, error } = await supabase.from('events').select('count').limit(1);
+    
+    return {
+      mode: 'supabase',
+      connected: !error,
+      message: error ? error.message : 'Connected to Supabase'
+    };
+  } catch (e) {
+    return {
+      mode: 'supabase',
+      connected: false,
+      message: e.message
+    };
+  }
+};

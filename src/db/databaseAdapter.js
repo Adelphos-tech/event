@@ -1,352 +1,124 @@
-// Database Adapter - Switches between Neon and IndexedDB based on configuration
-import { checkDatabaseHealth } from '../config/database.js';
+// Database Adapter - Supabase for production
+import * as SupabaseDB from './supabaseDatabase.js';
 
-// Import Neon database functions
-import * as NeonDB from './neonDatabase.js';
+// Database mode - Always Supabase for production
+const databaseMode = 'supabase';
 
-// Import existing IndexedDB functions as fallback
-import * as IndexedDB from './database.js';
+console.log('🚀 Database Adapter initialized - Using Supabase');
 
-// Database mode detection - PRODUCTION: Neon only
-let databaseMode = 'neon';
-let neonAvailable = true;
+// ==================== USER OPERATIONS ====================
 
-// Check which database to use - Force Neon for production
-const detectDatabaseMode = async () => {
-  // Always use Neon in production
-  if (databaseMode === 'neon') {
-    try {
-      const health = await checkDatabaseHealth();
-      if (health.healthy) {
-        console.log('✅ Neon database connected - PRODUCTION MODE');
-        neonAvailable = true;
-      } else {
-        console.warn('⚠️ Neon health check failed, but continuing with Neon');
-      }
-    } catch (error) {
-      console.warn('⚠️ Neon check error:', error.message);
-    }
-  }
-  return 'neon';
+export const registerUser = async (userData) => {
+  return await SupabaseDB.registerUser(userData);
 };
 
-// Generic adapter function
-const createAdapter = (neonFunction, indexedFunction) => {
-  return async (...args) => {
-    const mode = await detectDatabaseMode();
-    
-    try {
-      if (mode === 'neon' && neonAvailable) {
-        return await neonFunction(...args);
-      } else {
-        return await indexedFunction(...args);
-      }
-    } catch (error) {
-      console.error(`Database operation failed in ${mode} mode:`, error);
-      
-      // If Neon fails, try IndexedDB as fallback
-      if (mode === 'neon') {
-        console.log('🔄 Neon operation failed, trying IndexedDB fallback...');
-        try {
-          return await indexedFunction(...args);
-        } catch (fallbackError) {
-          console.error('IndexedDB fallback also failed:', fallbackError);
-          throw new Error(`Both database modes failed: ${error.message}`);
-        }
-      } else {
-        throw error;
-      }
-    }
-  };
+export const loginUser = async (email, password) => {
+  return await SupabaseDB.loginUser(email, password);
 };
 
-// ==================== ADAPTED FUNCTIONS ====================
+export const getUserByEmail = async (email) => {
+  return await SupabaseDB.getUserByEmail(email);
+};
 
-// User operations
-export const registerUser = createAdapter(
-  NeonDB.registerUser,
-  IndexedDB.registerUser
-);
+export const getAllUsers = async () => {
+  return await SupabaseDB.getAllUsers();
+};
 
-export const loginUser = createAdapter(
-  NeonDB.loginUser,
-  IndexedDB.loginUser
-);
+// ==================== EVENT OPERATIONS ====================
 
-export const getUserByEmail = createAdapter(
-  NeonDB.getUserByEmail,
-  (email) => IndexedDB.db.users.where('email').equals(email).first()
-);
+export const addEvent = async (eventData) => {
+  return await SupabaseDB.createEvent(eventData);
+};
 
-export const getAllUsers = createAdapter(
-  NeonDB.getAllUsers,
-  () => IndexedDB.db.users.toArray()
-);
+export const createEvent = async (eventData) => {
+  return await SupabaseDB.createEvent(eventData);
+};
 
-// Event operations
-export const addEvent = createAdapter(
-  NeonDB.createEvent,
-  IndexedDB.addEvent
-);
+export const getEvent = async (eventId) => {
+  return await SupabaseDB.getEvent(eventId);
+};
 
-export const getEvent = createAdapter(
-  NeonDB.getEvent,
-  IndexedDB.getEvent
-);
-
-// getAllEvents - Neon only for production
 export const getAllEvents = async () => {
-  try {
-    console.log('📊 Fetching events from Neon...');
-    const events = await NeonDB.getAllEvents();
-    console.log(`✅ Fetched ${events?.length || 0} events from Neon`);
-    return Array.isArray(events) ? events : [];
-  } catch (error) {
-    console.error('❌ Error fetching events from Neon:', error);
-    throw error;
-  }
+  return await SupabaseDB.getAllEvents();
 };
 
-export const updateEvent = createAdapter(
-  NeonDB.updateEvent,
-  IndexedDB.updateEvent
-);
+export const updateEvent = async (eventId, eventData) => {
+  return await SupabaseDB.updateEvent(eventId, eventData);
+};
 
-export const deleteEvent = createAdapter(
-  NeonDB.deleteEvent,
-  IndexedDB.deleteEvent
-);
+export const deleteEvent = async (eventId) => {
+  return await SupabaseDB.deleteEvent(eventId);
+};
 
-// Attendee operations
-export const registerAttendee = createAdapter(
-  NeonDB.registerAttendee,
-  IndexedDB.addAttendee
-);
+// ==================== ATTENDEE OPERATIONS ====================
 
-export const getAttendeesByEvent = createAdapter(
-  NeonDB.getAttendeesByEvent,
-  IndexedDB.getAttendeesByEvent
-);
+export const registerAttendee = async (attendeeData) => {
+  return await SupabaseDB.registerAttendee(attendeeData);
+};
 
-export const updateAttendeeStatus = createAdapter(
-  NeonDB.updateAttendeeStatus,
-  IndexedDB.updateAttendeeStatus
-);
+export const addAttendee = async (attendeeData) => {
+  return await SupabaseDB.registerAttendee(attendeeData);
+};
 
-export const searchAttendees = createAdapter(
-  NeonDB.searchAttendees,
-  IndexedDB.searchAttendees
-);
+export const getAttendeesByEvent = async (eventId) => {
+  return await SupabaseDB.getAttendeesByEvent(eventId);
+};
 
-// Additional Neon-specific functions (with IndexedDB fallbacks)
-export const getEventAnalytics = createAdapter(
-  NeonDB.getEventAnalytics,
-  async (eventId) => {
-    // Fallback analytics calculation for IndexedDB
-    const attendees = await IndexedDB.getAttendeesByEvent(eventId);
-    return {
-      total_registered: attendees.length,
-      total_attended: attendees.filter(a => a.attended).length,
-      pending_registrations: attendees.filter(a => !a.attended).length,
-      recent_registrations: attendees.filter(a => {
-        const regDate = new Date(a.registrationDate || a.createdAt);
-        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-        return regDate > weekAgo;
-      }).length
-    };
-  }
-);
+export const updateAttendeeStatus = async (attendeeId, attended) => {
+  return await SupabaseDB.updateAttendeeStatus(attendeeId, attended);
+};
 
-export const getDashboardStats = createAdapter(
-  NeonDB.getDashboardStats,
-  async (userId = null) => {
-    // Fallback dashboard stats for IndexedDB
-    const events = await IndexedDB.getAllEvents();
-    const filteredEvents = userId ? events.filter(e => e.ownerId === userId) : events;
-    
-    let totalAttendees = 0;
-    let totalAttended = 0;
-    
-    for (const event of filteredEvents) {
-      const attendees = await IndexedDB.getAttendeesByEvent(event.id);
-      totalAttendees += attendees.length;
-      totalAttended += attendees.filter(a => a.attended).length;
-    }
-    
-    const upcomingEvents = filteredEvents.filter(e => {
-      const eventDate = new Date(e.date);
-      return eventDate >= new Date();
-    }).length;
-    
-    return {
-      total_events: filteredEvents.length,
-      total_attendees: totalAttendees,
-      total_attended: totalAttended,
-      upcoming_events: upcomingEvents
-    };
-  }
-);
+export const markAttendance = async (attendeeId, attended) => {
+  return await SupabaseDB.updateAttendeeStatus(attendeeId, attended);
+};
 
-// ==================== UTILITY FUNCTIONS ====================
+export const searchAttendees = async (eventId, query) => {
+  return await SupabaseDB.searchAttendees(eventId, query);
+};
 
-export const getDatabaseMode = async () => {
-  return await detectDatabaseMode();
+// ==================== DATABASE STATUS ====================
+
+export const getDatabaseMode = () => {
+  return databaseMode;
 };
 
 export const getDatabaseStatus = async () => {
-  const mode = await detectDatabaseMode();
+  return await SupabaseDB.getDatabaseStatus();
+};
+
+// ==================== ANALYTICS (Simplified) ====================
+
+export const getEventAnalytics = async (eventId) => {
+  const attendees = await SupabaseDB.getAttendeesByEvent(eventId);
+  return {
+    total_registered: attendees.length,
+    total_attended: attendees.filter(a => a.attended).length,
+    pending_registrations: attendees.filter(a => !a.attended).length
+  };
+};
+
+export const getDashboardStats = async (userId = null) => {
+  const events = await SupabaseDB.getAllEvents();
+  const filteredEvents = userId ? events.filter(e => e.ownerId === userId) : events;
   
-  if (mode === 'neon') {
-    const health = await checkDatabaseHealth();
-    return {
-      mode: 'neon',
-      status: health.healthy ? 'connected' : 'error',
-      message: health.healthy ? 'Neon database connected' : health.error,
-      timestamp: health.timestamp
-    };
-  } else {
-    return {
-      mode: 'indexeddb',
-      status: 'connected',
-      message: 'Using IndexedDB local storage',
-      timestamp: new Date().toISOString()
-    };
+  let totalAttendees = 0;
+  let totalAttended = 0;
+  
+  for (const event of filteredEvents) {
+    const attendees = await SupabaseDB.getAttendeesByEvent(event.id);
+    totalAttendees += attendees.length;
+    totalAttended += attendees.filter(a => a.attended).length;
   }
-};
-
-export const switchToNeon = async () => {
-  try {
-    const health = await checkDatabaseHealth();
-    if (health.healthy) {
-      databaseMode = 'neon';
-      neonAvailable = true;
-      console.log('✅ Switched to Neon database');
-      return { success: true, message: 'Switched to Neon database' };
-    } else {
-      throw new Error(health.error);
-    }
-  } catch (error) {
-    console.error('❌ Failed to switch to Neon:', error);
-    return { success: false, error: error.message };
-  }
-};
-
-export const switchToIndexedDB = () => {
-  databaseMode = 'indexeddb';
-  neonAvailable = false;
-  console.log('✅ Switched to IndexedDB');
-  return { success: true, message: 'Switched to IndexedDB' };
-};
-
-// ==================== MIGRATION UTILITIES ====================
-
-export const migrateFromIndexedDBToNeon = async () => {
-  try {
-    console.log('🔄 Starting migration from IndexedDB to Neon...');
-    
-    // Ensure Neon is available
-    const neonStatus = await switchToNeon();
-    if (!neonStatus.success) {
-      throw new Error('Neon database not available for migration');
-    }
-    
-    // Get all data from IndexedDB
-    const indexedEvents = await IndexedDB.getAllEvents();
-    const indexedUsers = await IndexedDB.db.users.toArray();
-    
-    console.log(`📊 Found ${indexedEvents.length} events and ${indexedUsers.length} users to migrate`);
-    
-    const migrationResults = {
-      users: { success: 0, failed: 0 },
-      events: { success: 0, failed: 0 },
-      attendees: { success: 0, failed: 0 }
-    };
-    
-    // Migrate users
-    for (const user of indexedUsers) {
-      try {
-        await NeonDB.createUser({
-          email: user.email,
-          password: user.password,
-          role: user.role,
-          contact: user.contact,
-          firstName: user.firstName || '',
-          lastName: user.lastName || ''
-        });
-        migrationResults.users.success++;
-      } catch (error) {
-        console.warn(`Failed to migrate user ${user.email}:`, error.message);
-        migrationResults.users.failed++;
-      }
-    }
-    
-    // Migrate events and attendees
-    for (const event of indexedEvents) {
-      try {
-        // Find owner in Neon database
-        const owner = await NeonDB.getUserByEmail(event.ownerEmail || 'Robocorpsg@gmail.com');
-        if (!owner) continue;
-        
-        const newEvent = await NeonDB.createEvent({
-          title: event.title,
-          description: event.description,
-          date: event.date,
-          venue: event.venue,
-          ownerId: owner.id
-        });
-        
-        migrationResults.events.success++;
-        
-        // Migrate attendees for this event
-        const attendees = await IndexedDB.getAttendeesByEvent(event.id);
-        for (const attendee of attendees) {
-          try {
-            await NeonDB.registerAttendee({
-              eventId: newEvent.id,
-              name: attendee.name,
-              email: attendee.email,
-              contact: attendee.contact,
-              company: attendee.company || '',
-              jobTitle: attendee.jobTitle || ''
-            });
-            
-            if (attendee.attended) {
-              // Update attendance status
-              const newAttendees = await NeonDB.getAttendeesByEvent(newEvent.id);
-              const newAttendee = newAttendees.find(a => a.email === attendee.email);
-              if (newAttendee) {
-                await NeonDB.updateAttendeeStatus(newAttendee.id, 'attended');
-              }
-            }
-            
-            migrationResults.attendees.success++;
-          } catch (error) {
-            console.warn(`Failed to migrate attendee ${attendee.email}:`, error.message);
-            migrationResults.attendees.failed++;
-          }
-        }
-        
-      } catch (error) {
-        console.warn(`Failed to migrate event ${event.title}:`, error.message);
-        migrationResults.events.failed++;
-      }
-    }
-    
-    console.log('✅ Migration completed:', migrationResults);
-    return { success: true, results: migrationResults };
-    
-  } catch (error) {
-    console.error('❌ Migration failed:', error);
-    return { success: false, error: error.message };
-  }
-};
-
-// Initialize database mode detection
-detectDatabaseMode();
-
-// Export compatibility functions for existing code
-export {
-  // Keep all existing function names for backward compatibility
-  addEvent as createEvent,
-  updateAttendeeStatus as markAttendance
+  
+  const upcomingEvents = filteredEvents.filter(e => {
+    const eventDate = new Date(e.startDate);
+    return eventDate >= new Date();
+  }).length;
+  
+  return {
+    total_events: filteredEvents.length,
+    total_attendees: totalAttendees,
+    total_attended: totalAttended,
+    upcoming_events: upcomingEvents
+  };
 };
