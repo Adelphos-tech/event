@@ -3,6 +3,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Upload, Calendar, MapPin, Users, Mail, Phone, CheckCircle, AlertCircle, Loader2, ArrowLeft } from 'lucide-react';
 import { addEvent, getEvent, registerUser, loginUser, getDatabaseStatus } from '../db/databaseAdapter';
 import { convertImageToBase64, resizeImage } from '../utils/imageUtils';
+import { detectCountryFromPhone, countryCodes, getPlaceholder, formatPhoneNumber } from '../utils/phoneUtils';
 import { useAuth } from '../context/AuthContext';
 import DynamicList from '../components/DynamicList';
 
@@ -721,24 +722,35 @@ const EventForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     <Phone className="inline w-4 h-4 mr-1" />Contact
+                    <span className="text-xs text-gray-400 ml-2">(Auto-detects country)</span>
                   </label>
                   <div className="flex gap-2">
                     <select
                       value={formData.creatorCountryCode}
                       onChange={(e) => handleChange('creatorCountryCode', e.target.value)}
-                      className="w-24 px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+                      className="w-28 px-2 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 text-sm"
                     >
-                      <option value="+65">+65</option>
-                      <option value="+1">+1</option>
-                      <option value="+44">+44</option>
-                      <option value="+91">+91</option>
+                      {countryCodes.map(c => (
+                        <option key={c.code} value={c.code}>
+                          {c.flag} {c.code}
+                        </option>
+                      ))}
                     </select>
                     <input
                       type="tel"
                       value={formData.creatorContact}
-                      onChange={(e) => handleChange('creatorContact', e.target.value)}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        handleChange('creatorContact', value);
+                        
+                        // Auto-detect country from phone number
+                        const detected = detectCountryFromPhone(value);
+                        if (detected && detected.code !== formData.creatorCountryCode) {
+                          handleChange('creatorCountryCode', detected.code);
+                        }
+                      }}
                       onBlur={() => handleBlur('creatorContact')}
-                      placeholder="Contact number"
+                      placeholder={getPlaceholder(formData.creatorCountryCode)}
                       className={`flex-1 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 ${
                         errors.creatorContact ? 'border-red-500 bg-red-50' : 'border-gray-300'
                       }`}
