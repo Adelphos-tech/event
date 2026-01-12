@@ -78,26 +78,70 @@ export const getAllUsers = async () => {
 export const createEvent = async (eventData) => {
   await ensureInitialized();
   
-  const {
-    title, description, date, venue, ownerId, startTime, endTime,
-    maxAttendees, registrationDeadline, imageUrl, logoUrl, registrationFee
-  } = eventData;
+  // First, ensure we have a valid owner - create default if needed
+  let ownerId = eventData.ownerId;
+  
+  // If ownerId is numeric (from IndexedDB), we need to find or create a Neon user
+  if (typeof ownerId === 'number' || !ownerId) {
+    // Try to get or create a default owner
+    const defaultEmail = eventData.creatorEmail || 'default@eventsx.com';
+    let owner = await getUserByEmail(defaultEmail);
+    
+    if (!owner) {
+      // Create a default user
+      try {
+        owner = await createUser({
+          email: defaultEmail,
+          password: 'EventsX2024!',
+          role: 'owner',
+          contact: eventData.creatorContact || '',
+          firstName: 'Event',
+          lastName: 'Owner'
+        });
+      } catch (e) {
+        // If user creation fails, try to get existing
+        owner = await getUserByEmail(defaultEmail);
+      }
+    }
+    ownerId = owner?.id;
+  }
+  
+  if (!ownerId) {
+    throw new Error('Could not determine event owner');
+  }
   
   const query = `
     INSERT INTO events (
-      title, description, event_date, venue, owner_id, start_time, end_time,
-      max_attendees, registration_deadline, image_url, logo_url, registration_fee
+      title, description, event_date, venue, owner_id, 
+      max_attendees, image_url, logo_url, is_public, status
     )
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, true, 'active')
     RETURNING *
   `;
   
   const result = await executeQuery(query, [
-    title, description, date, venue, ownerId, startTime, endTime,
-    maxAttendees, registrationDeadline, imageUrl, logoUrl, registrationFee
+    eventData.title || 'Untitled Event',
+    eventData.description || '',
+    eventData.startDate || eventData.date || new Date().toISOString().split('T')[0],
+    eventData.venue || '',
+    ownerId,
+    eventData.capacity || eventData.maxAttendees || 100,
+    eventData.image || eventData.imageUrl || null,
+    eventData.logo || eventData.logoUrl || null
   ]);
   
-  return result[0];
+  const savedEvent = result[0];
+  
+  // Return with mapped field names for frontend compatibility
+  return {
+    ...savedEvent,
+    id: savedEvent.id,
+    startDate: savedEvent.event_date,
+    endDate: savedEvent.event_date,
+    capacity: savedEvent.max_attendees,
+    image: savedEvent.image_url,
+    logo: savedEvent.logo_url
+  };
 };
 
 export const getEvent = async (eventId) => {
@@ -166,7 +210,24 @@ export const getAllEvents = async () => {
     `;
     
     const result = await executeQuery(query);
-    return Array.isArray(result) ? result : [];
+    
+    if (!Array.isArray(result)) return [];
+    
+    // Map Neon field names to frontend field names
+    return result.map(event => ({
+      ...event,
+      id: event.id,
+      title: event.title,
+      description: event.description,
+      startDate: event.event_date,
+      endDate: event.event_date,
+      venue: event.venue,
+      capacity: event.max_attendees,
+      image: event.image_url,
+      logo: event.logo_url,
+      ownerId: event.owner_id,
+      attendeeCount: event.attendee_count
+    }));
   } catch (error) {
     console.error('Error fetching all events from Neon:', error);
     return [];

@@ -7,36 +7,27 @@ import * as NeonDB from './neonDatabase.js';
 // Import existing IndexedDB functions as fallback
 import * as IndexedDB from './database.js';
 
-// Database mode detection
-let databaseMode = 'detecting';
-let neonAvailable = false;
+// Database mode detection - PRODUCTION: Neon only
+let databaseMode = 'neon';
+let neonAvailable = true;
 
-// Check which database to use
+// Check which database to use - Force Neon for production
 const detectDatabaseMode = async () => {
-  if (databaseMode !== 'detecting') {
-    return databaseMode;
-  }
-
-  try {
-    // Check if Neon database is configured and available
-    const health = await checkDatabaseHealth();
-    
-    if (health.healthy) {
-      console.log('✅ Neon database available - using production mode');
-      databaseMode = 'neon';
-      neonAvailable = true;
-    } else {
-      console.log('⚠️ Neon database not available - falling back to IndexedDB');
-      databaseMode = 'indexeddb';
-      neonAvailable = false;
+  // Always use Neon in production
+  if (databaseMode === 'neon') {
+    try {
+      const health = await checkDatabaseHealth();
+      if (health.healthy) {
+        console.log('✅ Neon database connected - PRODUCTION MODE');
+        neonAvailable = true;
+      } else {
+        console.warn('⚠️ Neon health check failed, but continuing with Neon');
+      }
+    } catch (error) {
+      console.warn('⚠️ Neon check error:', error.message);
     }
-  } catch (error) {
-    console.log('⚠️ Neon database check failed - using IndexedDB fallback');
-    databaseMode = 'indexeddb';
-    neonAvailable = false;
   }
-
-  return databaseMode;
+  return 'neon';
 };
 
 // Generic adapter function
@@ -103,10 +94,18 @@ export const getEvent = createAdapter(
   IndexedDB.getEvent
 );
 
-export const getAllEvents = createAdapter(
-  NeonDB.getAllEvents,
-  IndexedDB.getAllEvents
-);
+// getAllEvents - Neon only for production
+export const getAllEvents = async () => {
+  try {
+    console.log('📊 Fetching events from Neon...');
+    const events = await NeonDB.getAllEvents();
+    console.log(`✅ Fetched ${events?.length || 0} events from Neon`);
+    return Array.isArray(events) ? events : [];
+  } catch (error) {
+    console.error('❌ Error fetching events from Neon:', error);
+    throw error;
+  }
+};
 
 export const updateEvent = createAdapter(
   NeonDB.updateEvent,
