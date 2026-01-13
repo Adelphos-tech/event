@@ -95,8 +95,7 @@ const RegisterListing = () => {
                 contact: formData.contact,
                 email: formData.email,
                 password: formData.password,
-                images: formData.images,
-                isPaid: false // New listings are unpaid by default
+                images: formData.images
             });
 
             alert('Listing submitted successfully! Your listing will be reviewed by admin.');
