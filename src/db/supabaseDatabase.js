@@ -375,7 +375,6 @@ export const createListing = async (listingData) => {
       email: listingData.email || '',
       images: listingData.images || [],
       owner_id: ownerId,
-      is_paid: listingData.isPaid || false, // New field: false = show platform contact, true = show owner contact
       status: 'active' // Auto-approve for now, change to 'pending' for admin approval
     })
     .select()
@@ -498,7 +497,6 @@ const mapListingToFrontend = (listing) => ({
   email: listing.email,
   images: listing.images || [],
   ownerId: listing.owner_id,
-  isPaid: listing.is_paid || false, // Boolean: true = show owner contact, false = show platform contact
   status: listing.status,
   createdAt: listing.created_at,
   updatedAt: listing.updated_at

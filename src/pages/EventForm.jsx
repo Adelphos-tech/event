@@ -3,7 +3,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Upload, Calendar, MapPin, Users, Mail, Phone, CheckCircle, AlertCircle, Loader2, ArrowLeft } from 'lucide-react';
 import { addEvent, getEvent, registerUser, loginUser, getDatabaseStatus } from '../db/databaseAdapter';
 import { convertImageToBase64, resizeImage } from '../utils/imageUtils';
-import { detectCountryFromPhone, countryCodes, getPlaceholder, formatPhoneNumber } from '../utils/phoneUtils';
+import PhoneInput from '../components/PhoneInput';
 import { useAuth } from '../context/AuthContext';
 import DynamicList from '../components/DynamicList';
 
@@ -58,8 +58,7 @@ const EventForm = () => {
     // Creator registration info
     creatorEmail: '',
     creatorPassword: '',
-    creatorContact: '',
-    creatorCountryCode: '+65'
+    creatorContact: ''
   });
 
   const eventTypes = [
@@ -448,7 +447,7 @@ const EventForm = () => {
           ownerId = await registerUser({
             email: formData.creatorEmail,
             password: formData.creatorPassword,
-            contact: `${formData.creatorCountryCode} ${formData.creatorContact}`
+            contact: formData.creatorContact
           });
 
           // Auto-login the new user
@@ -480,8 +479,7 @@ const EventForm = () => {
         // Remove creator fields from event data
         creatorEmail: undefined,
         creatorPassword: undefined,
-        creatorContact: undefined,
-        creatorCountryCode: undefined
+        creatorContact: undefined
       };
 
       if (!isEdit) {
@@ -520,17 +518,22 @@ const EventForm = () => {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
+      <header className="bg-gradient-to-r from-gray-900 to-gray-800 border-b border-gray-700 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link to="/events" className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-800 transition-colors">
               <ArrowLeft className="w-5 h-5 text-gray-400" />
             </Link>
-            <Link to="/" className="flex items-center gap-1 hover:opacity-80 transition-opacity">
-              <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">EX</span>
+            <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <img src="/linkmeu-logo.png" alt="LinkMeU" className="h-8 w-auto" />
+              <div className="flex flex-col">
+                <div className="flex items-center">
+                  <span className="text-xl font-bold text-white">Link</span>
+                  <span className="text-xl font-bold text-red-500">Me</span>
+                  <span className="text-xl font-bold text-white">U</span>
+                </div>
+                <p className="text-[9px] text-gray-400 -mt-0.5 tracking-wide">Link Me You Matter Most.</p>
               </div>
-              <span className="text-xl font-bold text-white">EventsX</span>
             </Link>
           </div>
         </div>
@@ -746,41 +749,16 @@ const EventForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
                     <Phone className="inline w-4 h-4 mr-1" />Contact
-                    <span className="text-xs text-gray-400 ml-2">(Auto-detects country)</span>
                   </label>
-                  <div className="flex gap-2">
-                    <select
-                      value={formData.creatorCountryCode}
-                      onChange={(e) => handleChange('creatorCountryCode', e.target.value)}
-                      className="w-28 px-2 py-3 border border-gray-700 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-red-500 text-sm"
-                    >
-                      {countryCodes.map(c => (
-                        <option key={c.code} value={c.code}>
-                          {c.flag} {c.code}
-                        </option>
-                      ))}
-                    </select>
-                    <input
-                      type="tel"
-                      value={formData.creatorContact}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        handleChange('creatorContact', value);
-                        
-                        // Auto-detect country from phone number
-                        const detected = detectCountryFromPhone(value);
-                        if (detected && detected.code !== formData.creatorCountryCode) {
-                          handleChange('creatorCountryCode', detected.code);
-                        }
-                      }}
-                      onBlur={() => handleBlur('creatorContact')}
-                      placeholder={getPlaceholder(formData.creatorCountryCode)}
-                      className={`flex-1 px-4 py-3 border rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 ${
-                        errors.creatorContact ? 'border-red-500' : 'border-gray-700'
-                      }`}
-                      required={!user}
-                    />
-                  </div>
+                  <PhoneInput
+                    value={formData.creatorContact}
+                    onChange={(value) => handleChange('creatorContact', value || '')}
+                    onBlur={() => handleBlur('creatorContact')}
+                    defaultCountry="SG"
+                    placeholder="Phone number"
+                    error={!!errors.creatorContact}
+                    required={!user}
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">

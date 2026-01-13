@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Calendar, DollarSign, User, Mail, CheckCircle, Sparkles, Upload, X, MapPin, Briefcase, Home, Heart, Image, ArrowLeft, Film, Package } from 'lucide-react';
 import { createListing } from '../db/databaseAdapter';
 import { convertImageToBase64 } from '../utils/imageUtils';
+import PhoneInput from '../components/PhoneInput';
 
 const RegisterListing = () => {
     const navigate = useNavigate();
@@ -380,17 +381,14 @@ const RegisterListing = () => {
                             <label className="block text-sm font-semibold text-gray-700 mb-2">
                                 Contact Number <span className="text-red-500">*</span>
                             </label>
-                            <div className="relative">
-                                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                <input
-                                    type="text"
-                                    value={formData.contact}
-                                    onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-                                    className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
-                                    placeholder="+65 9XXX XXXX"
-                                    required
-                                />
-                            </div>
+                            <PhoneInput
+                                value={formData.contact}
+                                onChange={(value) => setFormData({ ...formData, contact: value || '' })}
+                                defaultCountry="SG"
+                                placeholder="Phone number"
+                                theme="light"
+                                required
+                            />
                         </div>
                     </div>
 
