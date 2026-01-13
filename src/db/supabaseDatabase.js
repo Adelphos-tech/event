@@ -510,6 +510,7 @@ const mapListingToFrontend = (listing) => ({
   email: listing.email,
   images: listing.images || [],
   ownerId: listing.owner_id,
+  isPaid: listing.is_paid || false,
   status: listing.status,
   createdAt: listing.created_at,
   updatedAt: listing.updated_at
