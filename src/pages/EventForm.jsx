@@ -525,7 +525,6 @@ const EventForm = () => {
               <ArrowLeft className="w-5 h-5 text-gray-400" />
             </Link>
             <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <img src="/linkmeu-logo.png" alt="LinkMeU" className="h-8 w-auto" />
               <div className="flex flex-col">
                 <div className="flex items-center">
                   <span className="text-xl font-bold text-white">Link</span>
