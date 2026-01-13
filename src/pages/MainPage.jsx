@@ -100,7 +100,9 @@ const MainPage = () => {
         const Icon = catInfo.icon;
 
         return (
-            <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-gray-200">
+            <div 
+                onClick={() => navigate(`/listing/${listing.id}`)}
+                className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-gray-200 cursor-pointer">
                 {/* Image */}
                 {listing.images && listing.images.length > 0 ? (
                     <div className="relative h-48 overflow-hidden">
@@ -153,7 +155,7 @@ const MainPage = () => {
                     </div>
                     
                     {/* Contact Info */}
-                    <div className="pt-3 border-t border-gray-100 space-y-2">
+                    <div className="pt-3 border-t border-gray-100 space-y-2" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center gap-2">
                             <Phone className="w-4 h-4 text-gray-400" />
                             <a href={`tel:${contact.phone}`} className="text-sm text-gray-700 hover:text-red-600 transition-colors">

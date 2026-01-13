@@ -15,6 +15,7 @@ import RegistrationForm from './pages/RegistrationForm';
 import CheckIn from './pages/CheckIn';
 import ListingsAdmin from './pages/ListingsAdmin';
 import ListingsLogin from './pages/ListingsLogin';
+import ListingDetail from './pages/ListingDetail';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/" element={<MainPage />} />
           <Route path="/landing" element={<LandingPage />} />
           <Route path="/register-listing" element={<RegisterListing />} />
+          <Route path="/listing/:listingId" element={<ListingDetail />} />
           <Route path="/login" element={<div className="min-h-screen bg-black text-white"><Login /></div>} />
           <Route path="/register" element={<div className="min-h-screen bg-black text-white"><Register /></div>} />
           <Route path="/admin" element={<div className="min-h-screen bg-black text-white"><AdminDashboard /></div>} />
