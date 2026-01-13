@@ -448,7 +448,7 @@ export const getAllListings = async () => {
   }
   
   console.log(`✅ Found ${data?.length || 0} listings`);
-  return (data || []).map(mapListingToFrontend);
+  return (data || []).map(mapListingToFrontend).filter(Boolean);
 };
 
 export const updateListing = async (listingId, listingData) => {
@@ -494,27 +494,30 @@ export const deleteListing = async (listingId) => {
 };
 
 // Helper to map database fields to frontend format
-const mapListingToFrontend = (listing) => ({
-  id: listing.id,
-  category: listing.category,
-  title: listing.title,
-  description: listing.description,
-  fromDate: listing.from_date,
-  toDate: listing.to_date,
-  budgetMin: listing.budget_min,
-  budgetMax: listing.budget_max,
-  currency: listing.currency,
-  revenue: listing.revenue,
-  location: listing.location,
-  contact: listing.contact,
-  email: listing.email,
-  images: listing.images || [],
-  ownerId: listing.owner_id,
-  isPaid: listing.is_paid || false,
-  status: listing.status,
-  createdAt: listing.created_at,
-  updatedAt: listing.updated_at
-});
+const mapListingToFrontend = (listing) => {
+  if (!listing) return null;
+  return {
+    id: listing.id,
+    category: listing.category,
+    title: listing.title,
+    description: listing.description,
+    fromDate: listing.from_date,
+    toDate: listing.to_date,
+    budgetMin: listing.budget_min,
+    budgetMax: listing.budget_max,
+    currency: listing.currency,
+    revenue: listing.revenue,
+    location: listing.location,
+    contact: listing.contact,
+    email: listing.email,
+    images: listing.images || [],
+    ownerId: listing.owner_id,
+    isPaid: listing.is_paid ?? false, // Use nullish coalescing for safety
+    status: listing.status,
+    createdAt: listing.created_at,
+    updatedAt: listing.updated_at
+  };
+};
 
 // =====================================================
 // DATABASE STATUS
