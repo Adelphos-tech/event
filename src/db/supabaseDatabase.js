@@ -439,15 +439,17 @@ export const getAllListings = async () => {
   const { data, error } = await supabase
     .from('listings')
     .select('*')
-    .eq('status', 'active')
+    .neq('status', 'deleted')
     .order('created_at', { ascending: false });
   
   if (error) {
     console.error('❌ Error fetching listings:', error);
+    console.error('Error details:', JSON.stringify(error));
     return [];
   }
   
   console.log(`✅ Found ${data?.length || 0} listings`);
+  console.log('Listings data:', data);
   return (data || []).map(mapListingToFrontend).filter(Boolean);
 };
 
