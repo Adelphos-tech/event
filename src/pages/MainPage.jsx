@@ -9,6 +9,22 @@ const PLATFORM_CONTACT = {
     email: 'linkmeucom@gmail.com'
 };
 
+// Mask contact info in text (phone numbers and emails) for unpaid listings
+const maskContactInfo = (text, isPaid) => {
+    if (!text || isPaid) return text;
+    
+    // Mask phone numbers (various formats)
+    let masked = text.replace(/(\+?\d{1,4}[-.\s]?)?\(?\d{2,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{3,4}/g, '***-****-****');
+    
+    // Mask emails
+    masked = masked.replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '****@****.***');
+    
+    // Mask WhatsApp/Telegram mentions with numbers
+    masked = masked.replace(/(whatsapp|telegram|wa|tele|call|contact|hp|phone|mobile|tel)[\s:]*(\+?\d[\d\s-]{6,})/gi, '$1: ***-****-****');
+    
+    return masked;
+};
+
 const MainPage = () => {
     const navigate = useNavigate();
     const [allListings, setAllListings] = useState([]);
@@ -121,12 +137,12 @@ const MainPage = () => {
                 {/* Content */}
                 <div className="p-4">
                     <h3 className="font-semibold text-gray-900 line-clamp-2 mb-2 group-hover:text-red-600 transition-colors">
-                        {listing.title}
+                        {maskContactInfo(listing.title, listing.isPaid)}
                     </h3>
                     
                     {listing.description && (
                         <p className="text-gray-500 text-sm line-clamp-2 mb-3">
-                            {listing.description}
+                            {maskContactInfo(listing.description, listing.isPaid)}
                         </p>
                     )}
                     
