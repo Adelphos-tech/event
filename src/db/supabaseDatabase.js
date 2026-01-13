@@ -358,6 +358,19 @@ export const createListing = async (listingData) => {
     }
   }
   
+  // Check for duplicate listing (same title and email)
+  const { data: existingListing } = await supabase
+    .from('listings')
+    .select('id')
+    .eq('title', listingData.title || 'Untitled Listing')
+    .eq('email', listingData.email || '')
+    .neq('status', 'deleted')
+    .single();
+  
+  if (existingListing) {
+    throw new Error('A listing with this title already exists for your account. Please use a different title.');
+  }
+  
   const { data, error } = await supabase
     .from('listings')
     .insert({
