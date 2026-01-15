@@ -458,6 +458,8 @@ export const updateListing = async (listingId, listingData) => {
   
   if (listingData.title !== undefined) updateData.title = listingData.title;
   if (listingData.description !== undefined) updateData.description = listingData.description;
+  if (listingData.category !== undefined) updateData.category = listingData.category;
+  if (listingData.location !== undefined) updateData.location = listingData.location;
   if (listingData.fromDate !== undefined) updateData.from_date = listingData.fromDate;
   if (listingData.toDate !== undefined) updateData.to_date = listingData.toDate;
   if (listingData.budgetMin !== undefined) updateData.budget_min = listingData.budgetMin;

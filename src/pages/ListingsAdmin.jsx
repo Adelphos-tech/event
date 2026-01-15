@@ -117,7 +117,35 @@ const ListingsAdmin = () => {
       contact: listing.contact || '',
       email: listing.email || '',
       revenue: listing.revenue || '',
+      images: listing.images || [],
     });
+  };
+
+  const handleImageUpload = async (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+
+    const newImages = [...(editForm.images || [])];
+    
+    for (const file of files) {
+      if (newImages.length >= 5) break; // Max 5 images
+      
+      const reader = new FileReader();
+      await new Promise((resolve) => {
+        reader.onload = (event) => {
+          newImages.push(event.target.result);
+          resolve();
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+    
+    setEditForm({ ...editForm, images: newImages });
+  };
+
+  const removeImage = (index) => {
+    const newImages = editForm.images.filter((_, i) => i !== index);
+    setEditForm({ ...editForm, images: newImages });
   };
 
   const handleSaveEdit = async () => {
@@ -127,9 +155,12 @@ const ListingsAdmin = () => {
       await updateListing(editingListing.id, {
         title: editForm.title,
         description: editForm.description,
+        category: editForm.category,
+        location: editForm.location,
         budgetMin: parseFloat(editForm.budgetMin) || null,
         budgetMax: parseFloat(editForm.budgetMax) || null,
         revenue: editForm.revenue,
+        images: editForm.images,
       });
       setListings(prev => prev.map(l => 
         l.id === editingListing.id 
@@ -732,6 +763,55 @@ const ListingsAdmin = () => {
                     className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-gray-500"
                   />
                 </div>
+              </div>
+
+              {/* Images Section */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Images</label>
+                
+                {/* Current Images */}
+                {editForm.images && editForm.images.length > 0 && (
+                  <div className="grid grid-cols-5 gap-3 mb-3">
+                    {editForm.images.map((img, index) => (
+                      <div key={index} className="relative group">
+                        <img 
+                          src={img} 
+                          alt={`Image ${index + 1}`} 
+                          className="w-full h-20 object-cover rounded-lg border border-gray-200"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                {/* Upload Button */}
+                {(!editForm.images || editForm.images.length < 5) && (
+                  <label className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-amber-400 hover:bg-amber-50 transition-colors">
+                    <Image className="w-5 h-5 text-gray-400" />
+                    <span className="text-sm text-gray-600">
+                      {editForm.images?.length > 0 
+                        ? `Add more images (${5 - editForm.images.length} remaining)` 
+                        : 'Upload images (max 5)'}
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                  </label>
+                )}
               </div>
             </div>
 
