@@ -199,23 +199,25 @@ const EventDetails = () => {
                 alt={event.title}
                 className="w-full h-48 sm:h-64 md:h-80 object-cover hover:scale-105 transition-transform duration-300"
               />
+              {/* Gradient overlay - pointer-events-none to allow clicks through */}
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/20 to-transparent pointer-events-none"></div>
+              
               {/* Tap to view hint */}
-              <div className="absolute top-4 right-4 px-2 py-1 bg-black/50 backdrop-blur-sm rounded-lg text-white text-xs flex items-center gap-1">
+              <div className="absolute top-4 right-4 px-2 py-1 bg-black/50 backdrop-blur-sm rounded-lg text-white text-xs flex items-center gap-1 pointer-events-none">
                 <ExternalLink size={12} />
                 Tap to view
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/20 to-transparent"></div>
               
               {/* Status Badge */}
-              <div className="absolute top-4 left-4">
+              <div className="absolute top-4 left-4 pointer-events-none">
                 <span className={`px-3 py-1.5 ${status.bg}/90 backdrop-blur-sm text-white text-xs sm:text-sm font-medium rounded-full flex items-center gap-2`}>
                   <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
                   {status.label}
                 </span>
               </div>
 
-              {/* Event Info Overlay */}
-              <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+              {/* Event Info Overlay - pointer-events-none to allow clicks through */}
+              <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 pointer-events-none">
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 line-clamp-2">{event.title}</h1>
                 <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-gray-300 text-sm sm:text-base">
                   {event.startDate && (
