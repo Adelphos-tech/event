@@ -22,6 +22,9 @@ const ListingsAdmin = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [editingListing, setEditingListing] = useState(null);
+  const [editForm, setEditForm] = useState({});
+  const [saving, setSaving] = useState(false);
   const itemsPerPage = 10;
 
   const categories = [
@@ -98,6 +101,47 @@ const ListingsAdmin = () => {
       setSelectedItems([]);
     } catch (error) {
       alert('Failed to delete listings: ' + error.message);
+    }
+  };
+
+  const handleEditListing = (listing) => {
+    setEditingListing(listing);
+    setEditForm({
+      title: listing.title || '',
+      description: listing.description || '',
+      category: listing.category || 'business',
+      budgetMin: listing.budgetMin || '',
+      budgetMax: listing.budgetMax || '',
+      currency: listing.currency || 'SGD',
+      location: listing.location || '',
+      contact: listing.contact || '',
+      email: listing.email || '',
+      revenue: listing.revenue || '',
+    });
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingListing) return;
+    setSaving(true);
+    try {
+      await updateListing(editingListing.id, {
+        title: editForm.title,
+        description: editForm.description,
+        budgetMin: parseFloat(editForm.budgetMin) || null,
+        budgetMax: parseFloat(editForm.budgetMax) || null,
+        revenue: editForm.revenue,
+      });
+      setListings(prev => prev.map(l => 
+        l.id === editingListing.id 
+          ? { ...l, ...editForm, budgetMin: parseFloat(editForm.budgetMin) || null, budgetMax: parseFloat(editForm.budgetMax) || null }
+          : l
+      ));
+      setEditingListing(null);
+      setEditForm({});
+    } catch (error) {
+      alert('Failed to save changes: ' + error.message);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -430,7 +474,14 @@ const ListingsAdmin = () => {
                             </span>
                           </td>
                           <td className="px-4 py-4">
-                            <div className="flex items-center justify-end">
+                            <div className="flex items-center justify-end gap-1">
+                              <button
+                                onClick={() => handleEditListing(listing)}
+                                className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-all"
+                                title="Edit"
+                              >
+                                <Edit size={16} />
+                              </button>
                               <button
                                 onClick={() => handleDeleteListing(listing)}
                                 className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all"
@@ -544,6 +595,172 @@ const ListingsAdmin = () => {
           )}
         </div>
       </main>
+
+      {/* Edit Listing Modal */}
+      {editingListing && (
+        <div className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-gray-900">Edit Listing</h2>
+              <button
+                onClick={() => { setEditingListing(null); setEditForm({}); }}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-4">
+              {/* Title */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                <input
+                  type="text"
+                  value={editForm.title}
+                  onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                />
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <textarea
+                  value={editForm.description}
+                  onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                  rows={4}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                />
+              </div>
+
+              {/* Category & Location */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                  <select
+                    value={editForm.category}
+                    onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                  >
+                    <option value="business">Business</option>
+                    <option value="property">Property</option>
+                    <option value="movies">Movies</option>
+                    <option value="products">Products</option>
+                    <option value="opportunity">Opportunity</option>
+                    <option value="wedding">Wedding</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                  <input
+                    type="text"
+                    value={editForm.location}
+                    onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                  />
+                </div>
+              </div>
+
+              {/* Budget */}
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
+                  <select
+                    value={editForm.currency}
+                    onChange={(e) => setEditForm({ ...editForm, currency: e.target.value })}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                  >
+                    <option value="SGD">SGD</option>
+                    <option value="USD">USD</option>
+                    <option value="MYR">MYR</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Min Budget</label>
+                  <input
+                    type="number"
+                    value={editForm.budgetMin}
+                    onChange={(e) => setEditForm({ ...editForm, budgetMin: e.target.value })}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Max Budget</label>
+                  <input
+                    type="number"
+                    value={editForm.budgetMax}
+                    onChange={(e) => setEditForm({ ...editForm, budgetMax: e.target.value })}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                  />
+                </div>
+              </div>
+
+              {/* Revenue */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Revenue (for business)</label>
+                <input
+                  type="text"
+                  value={editForm.revenue}
+                  onChange={(e) => setEditForm({ ...editForm, revenue: e.target.value })}
+                  placeholder="e.g., $25,000/month"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                />
+              </div>
+
+              {/* Contact Info (read-only) */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input
+                    type="email"
+                    value={editForm.email}
+                    disabled
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-gray-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Contact</label>
+                  <input
+                    type="text"
+                    value={editForm.contact}
+                    disabled
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-gray-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4 flex items-center justify-end gap-3">
+              <button
+                onClick={() => { setEditingListing(null); setEditForm({}); }}
+                className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveEdit}
+                disabled={saving}
+                className="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl font-medium transition-all disabled:opacity-50 flex items-center gap-2"
+              >
+                {saving ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Saving...
+                  </>
+                ) : (
+                  'Save Changes'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
