@@ -18,6 +18,7 @@ const EventDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [qrCodeDataURL, setQrCodeDataURL] = useState(null);
+  const [showImageModal, setShowImageModal] = useState(false);
 
   // Check if check-in is allowed (only on event day) - Customer feedback
   const isCheckInAllowed = () => {
@@ -189,12 +190,20 @@ const EventDetails = () => {
         <div className="mb-6 sm:mb-8">
           {/* Event Image */}
           {(event.image || event.logo) ? (
-            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden mb-6">
+            <div 
+              className="relative rounded-2xl sm:rounded-3xl overflow-hidden mb-6 cursor-pointer"
+              onClick={() => setShowImageModal(true)}
+            >
               <img
                 src={event.image || event.logo}
                 alt={event.title}
-                className="w-full h-48 sm:h-64 md:h-80 object-cover"
+                className="w-full h-48 sm:h-64 md:h-80 object-cover hover:scale-105 transition-transform duration-300"
               />
+              {/* Tap to view hint */}
+              <div className="absolute top-4 right-4 px-2 py-1 bg-black/50 backdrop-blur-sm rounded-lg text-white text-xs flex items-center gap-1">
+                <ExternalLink size={12} />
+                Tap to view
+              </div>
               <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/20 to-transparent"></div>
               
               {/* Status Badge */}
@@ -500,6 +509,38 @@ const EventDetails = () => {
           </div>
         </div>
       </main>
+
+      {/* Image Modal */}
+      {showImageModal && (event.image || event.logo) && (
+        <div 
+          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4"
+          onClick={() => setShowImageModal(false)}
+        >
+          {/* Close button */}
+          <button 
+            onClick={() => setShowImageModal(false)}
+            className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors z-10"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+          
+          {/* Image */}
+          <img
+            src={event.image || event.logo}
+            alt={event.title}
+            className="max-w-full max-h-[90vh] object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+          
+          {/* Tap anywhere to close hint */}
+          <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/60 text-sm">
+            Tap anywhere to close
+          </p>
+        </div>
+      )}
     </div>
   );
 };
