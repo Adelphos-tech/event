@@ -3,7 +3,7 @@
 
 const ADMIN_EMAIL = 'linkmeucom@gmail.com';
 const PLATFORM_NAME = 'LinkMeU';
-const RESEND_API_KEY = 're_XsUfMJhc_L95CUZDQyb7yrQA53CvQwku3';
+const RESEND_API_KEY = import.meta.env.VITE_RESEND_API_KEY || '';
 
 // Note: For production, you should use a verified domain in Resend
 // During development/testing, Resend allows sending to your own verified email
