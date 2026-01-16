@@ -784,15 +784,15 @@ const ListingsAdmin = () => {
                 />
               </div>
 
-              {/* Contact Info (read-only) */}
+              {/* Contact Info */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                   <input
                     type="email"
                     value={editForm.email}
-                    disabled
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-gray-500"
+                    onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
                   />
                 </div>
                 <div>
@@ -800,8 +800,8 @@ const ListingsAdmin = () => {
                   <input
                     type="text"
                     value={editForm.contact}
-                    disabled
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-gray-500"
+                    onChange={(e) => setEditForm({ ...editForm, contact: e.target.value })}
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
                   />
                 </div>
               </div>
