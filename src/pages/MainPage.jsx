@@ -130,20 +130,24 @@ const MainPage = () => {
         const contact = getContactInfo(listing);
         const catInfo = getCategoryInfo(listing.category);
         const Icon = catInfo.icon;
+        const isPending = listing.status === 'pending';
 
         return (
             <div 
-                onClick={() => navigate(`/listing/${listing.id}`)}
-                className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-gray-200 cursor-pointer">
+                onClick={() => !isPending && navigate(`/listing/${listing.id}`)}
+                className={`group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-gray-200 ${isPending ? 'cursor-default' : 'cursor-pointer'} relative`}>
+                
                 {/* Image */}
                 {listing.images && listing.images.length > 0 ? (
                     <div className="relative h-48 overflow-hidden">
                         <img 
                             src={listing.images[0]} 
                             alt={listing.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            className={`w-full h-full object-cover transition-transform duration-500 ${
+                                isPending ? 'blur-md scale-105' : 'group-hover:scale-105'
+                            }`}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                        <div className={`absolute inset-0 ${isPending ? 'bg-black/30' : 'bg-gradient-to-t from-black/60 via-transparent to-transparent'}`}></div>
                         
                         {/* Category Badge */}
                         <div className={`absolute top-3 left-3 px-3 py-1 bg-gradient-to-r ${catInfo.color} text-white text-xs font-medium rounded-full flex items-center gap-1.5`}>
@@ -151,25 +155,27 @@ const MainPage = () => {
                             {catInfo.label}
                         </div>
                         
-                        {/* Favorite Button */}
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                toggleFavorite(listing.id);
-                                toast.success(isFavorite(listing.id) ? 'Removed from favorites' : 'Added to favorites');
-                            }}
-                            className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-sm transition-all ${
-                                isFavorite(listing.id)
-                                    ? 'bg-red-500 text-white'
-                                    : 'bg-white/80 text-gray-600 hover:bg-white hover:text-red-500'
-                            }`}
-                        >
-                            <HeartIcon className={`w-4 h-4 ${isFavorite(listing.id) ? 'fill-current' : ''}`} />
-                        </button>
+                        {/* Favorite Button - hide for pending */}
+                        {!isPending && (
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleFavorite(listing.id);
+                                    toast.success(isFavorite(listing.id) ? 'Removed from favorites' : 'Added to favorites');
+                                }}
+                                className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-sm transition-all ${
+                                    isFavorite(listing.id)
+                                        ? 'bg-red-500 text-white'
+                                        : 'bg-white/80 text-gray-600 hover:bg-white hover:text-red-500'
+                                }`}
+                            >
+                                <HeartIcon className={`w-4 h-4 ${isFavorite(listing.id) ? 'fill-current' : ''}`} />
+                            </button>
+                        )}
                         
-                        {/* Price Badge */}
+                        {/* Price Badge - blur for pending */}
                         {(listing.budgetMin || listing.budgetMax) && (
-                            <div className="absolute bottom-3 left-3 px-3 py-1.5 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg">
+                            <div className={`absolute bottom-3 left-3 px-3 py-1.5 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg ${isPending ? 'blur-sm' : ''}`}>
                                 <span className="text-emerald-600 font-bold text-sm">
                                     {listing.currency === 'SGD' ? 'S$' : listing.currency === 'MYR' ? 'RM' : '$'}
                                     {listing.budgetMin?.toLocaleString() || '0'}
@@ -179,46 +185,56 @@ const MainPage = () => {
                         )}
                     </div>
                 ) : (
-                    <div className={`h-32 bg-gradient-to-br ${catInfo.color} flex items-center justify-center`}>
+                    <div className={`h-32 bg-gradient-to-br ${catInfo.color} flex items-center justify-center ${isPending ? 'opacity-50' : ''}`}>
                         <Icon className="w-12 h-12 text-white/50" />
                     </div>
                 )}
                 
                 {/* Content */}
                 <div className="p-4">
-                    <h3 className="font-semibold text-gray-900 line-clamp-2 mb-2 group-hover:text-red-600 transition-colors">
+                    {/* Title - always visible */}
+                    <h3 className={`font-semibold text-gray-900 line-clamp-2 mb-2 transition-colors ${!isPending && 'group-hover:text-red-600'}`}>
                         {maskContactInfo(listing.title, listing.isPaid)}
                     </h3>
                     
+                    {/* Description - blur for pending */}
                     {listing.description && (
-                        <p className="text-gray-500 text-sm line-clamp-2 mb-3">
-                            {maskContactInfo(listing.description, listing.isPaid)}
+                        <p className={`text-gray-500 text-sm line-clamp-2 mb-3 ${isPending ? 'blur-sm select-none' : ''}`}>
+                            {isPending ? 'Description hidden until approved...' : maskContactInfo(listing.description, listing.isPaid)}
                         </p>
                     )}
                     
-                    {/* Location */}
-                    <div className="flex items-center gap-1.5 text-gray-400 mb-3">
+                    {/* Location - blur for pending */}
+                    <div className={`flex items-center gap-1.5 text-gray-400 mb-3 ${isPending ? 'blur-sm' : ''}`}>
                         <MapPin className="w-4 h-4" />
-                        <span className="text-sm">{listing.location || 'Singapore'}</span>
+                        <span className="text-sm">{isPending ? '****' : (listing.location || 'Singapore')}</span>
                     </div>
                     
-                    {/* Contact Info */}
-                    <div className="pt-3 border-t border-gray-100 space-y-2" onClick={(e) => e.stopPropagation()}>
-                        <div className="flex items-center gap-2">
-                            <Phone className="w-4 h-4 text-gray-400" />
-                            <a href={`tel:${contact.phone}`} className="text-sm text-gray-700 hover:text-red-600 transition-colors">
-                                {contact.phone}
-                            </a>
-                            {!contact.isApproved && (
-                                <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Support</span>
-                            )}
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Mail className="w-4 h-4 text-gray-400" />
-                            <a href={`mailto:${contact.email}`} className="text-sm text-gray-700 hover:text-red-600 transition-colors truncate">
-                                {contact.email}
-                            </a>
-                        </div>
+                    {/* Contact Info - blur for pending */}
+                    <div className={`pt-3 border-t border-gray-100 space-y-2 ${isPending ? 'blur-sm select-none' : ''}`} onClick={(e) => e.stopPropagation()}>
+                        {isPending ? (
+                            <div className="text-center py-2">
+                                <p className="text-xs text-gray-400">Contact details hidden</p>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="flex items-center gap-2">
+                                    <Phone className="w-4 h-4 text-gray-400" />
+                                    <a href={`tel:${contact.phone}`} className="text-sm text-gray-700 hover:text-red-600 transition-colors">
+                                        {contact.phone}
+                                    </a>
+                                    {!contact.isApproved && (
+                                        <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Support</span>
+                                    )}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Mail className="w-4 h-4 text-gray-400" />
+                                    <a href={`mailto:${contact.email}`} className="text-sm text-gray-700 hover:text-red-600 transition-colors truncate">
+                                        {contact.email}
+                                    </a>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

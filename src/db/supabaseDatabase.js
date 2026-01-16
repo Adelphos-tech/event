@@ -434,7 +434,7 @@ export const getListingsByCategory = async (category) => {
 };
 
 export const getAllListings = async (includeAll = false) => {
-  console.log('📊 Fetching listings from Supabase...', includeAll ? '(all statuses)' : '(active only)');
+  console.log('📊 Fetching listings from Supabase...', includeAll ? '(all statuses)' : '(active + pending)');
   
   let query = supabase
     .from('listings')
@@ -442,9 +442,9 @@ export const getAllListings = async (includeAll = false) => {
     .neq('status', 'deleted')
     .order('created_at', { ascending: false });
   
-  // For public view, only show approved (active) listings
+  // For public view, show active and pending listings (pending shown blurred)
   if (!includeAll) {
-    query = query.eq('status', 'active');
+    query = query.in('status', ['active', 'pending']);
   }
   
   const { data, error } = await query;
