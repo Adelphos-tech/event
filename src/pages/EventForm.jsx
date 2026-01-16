@@ -6,6 +6,7 @@ import { convertImageToBase64, resizeImage } from '../utils/imageUtils';
 import PhoneInput from '../components/PhoneInput';
 import { useAuth } from '../context/AuthContext';
 import DynamicList from '../components/DynamicList';
+import { useToast } from '../components/Toast';
 
 // Constants for validation
 const MAX_TITLE_LENGTH = 200;
@@ -19,6 +20,7 @@ const EventForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { user, canEditEvent, login } = useAuth();
+  const toast = useToast();
   const isEdit = !!id;
 
   useEffect(() => {
@@ -32,7 +34,7 @@ const EventForm = () => {
       const event = await getEvent(parseInt(id));
       // Only super admin can edit events
       if (!user || !canEditEvent(event.ownerId)) {
-        alert('Only Super Admin can edit events. Events cannot be edited after creation.');
+        toast.error('Only Super Admin can edit events. Events cannot be edited after creation.');
         navigate('/events');
       }
     } catch (error) {
@@ -461,7 +463,7 @@ const EventForm = () => {
               login(existingUser);
               ownerId = existingUser.id;
             } catch (loginError) {
-              alert('Email already exists. Please use correct password or use a different email.');
+              toast.error('Email already exists. Please use correct password or use a different email.');
               setLoading(false);
               return;
             }
@@ -489,10 +491,10 @@ const EventForm = () => {
       const savedId = await addEvent(eventData);
       
       // Show success message
-      alert(`✅ Event "${formData.title}" created successfully!\n\nYour event has been saved and is pending admin approval.`);
+      toast.success(`Event "${formData.title}" created successfully!`, 'Your event has been saved and is pending admin approval.');
       
       // Redirect to events page
-      navigate('/events');
+      setTimeout(() => navigate('/events'), 1500);
     } catch (error) {
       console.error('Error saving event:', error);
       setErrors({ general: `Failed to save event: ${error.message}` });

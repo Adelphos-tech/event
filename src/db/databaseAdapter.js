@@ -90,8 +90,13 @@ export const getListingsByCategory = async (category) => {
   return await SupabaseDB.getListingsByCategory(category);
 };
 
-export const getAllListings = async () => {
-  return await SupabaseDB.getAllListings();
+export const getAllListings = async (includeAll = false) => {
+  return await SupabaseDB.getAllListings(includeAll);
+};
+
+// Get all listings including pending (for admin)
+export const getAllListingsAdmin = async () => {
+  return await SupabaseDB.getAllListings(true);
 };
 
 export const updateListing = async (listingId, listingData) => {

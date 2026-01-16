@@ -388,7 +388,7 @@ export const createListing = async (listingData) => {
       email: listingData.email || '',
       images: listingData.images || [],
       owner_id: ownerId,
-      status: 'active' // Auto-approve for now, change to 'pending' for admin approval
+      status: 'pending' // Requires admin approval before listing is visible
     })
     .select()
     .single();
@@ -433,14 +433,21 @@ export const getListingsByCategory = async (category) => {
   return (data || []).map(mapListingToFrontend);
 };
 
-export const getAllListings = async () => {
-  console.log('📊 Fetching all listings from Supabase...');
+export const getAllListings = async (includeAll = false) => {
+  console.log('📊 Fetching listings from Supabase...', includeAll ? '(all statuses)' : '(active only)');
   
-  const { data, error } = await supabase
+  let query = supabase
     .from('listings')
     .select('*')
     .neq('status', 'deleted')
     .order('created_at', { ascending: false });
+  
+  // For public view, only show approved (active) listings
+  if (!includeAll) {
+    query = query.eq('status', 'active');
+  }
+  
+  const { data, error } = await query;
   
   if (error) {
     console.error('❌ Error fetching listings:', error);
@@ -449,7 +456,6 @@ export const getAllListings = async () => {
   }
   
   console.log(`✅ Found ${data?.length || 0} listings`);
-  console.log('Listings data:', data);
   return (data || []).map(mapListingToFrontend).filter(Boolean);
 };
 

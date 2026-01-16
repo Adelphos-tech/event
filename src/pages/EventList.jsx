@@ -4,6 +4,7 @@ import { Plus, Calendar, MapPin, LogIn, LogOut, Share2, Check, RefreshCw, AlertC
 import { getAllEvents, getDatabaseStatus } from '../db/databaseAdapter';
 import { format, isToday, isFuture, isPast, startOfDay } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
+import { EventGridSkeleton } from '../components/Skeleton';
 
 const EventList = () => {
   const navigate = useNavigate();
@@ -100,13 +101,39 @@ const EventList = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
-        <div className="flex flex-col items-center justify-center min-h-screen">
-          <div className="relative">
-            <div className="w-16 h-16 border-4 border-red-500/30 rounded-full"></div>
-            <div className="w-16 h-16 border-4 border-red-500 border-t-transparent rounded-full animate-spin absolute top-0"></div>
-          </div>
-          <p className="text-gray-400 mt-6 text-lg">Loading events...</p>
+        {/* Decorative Elements */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-500/5 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/5 rounded-full blur-3xl"></div>
         </div>
+
+        {/* Header skeleton */}
+        <header className="relative border-b border-gray-800/50 backdrop-blur-xl bg-gray-950/80 sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <div className="flex items-center">
+                <span className="text-xl font-bold text-white">Link</span>
+                <span className="text-xl font-bold text-red-500">Me</span>
+                <span className="text-xl font-bold text-white">U</span>
+                <span className="text-gray-500 text-sm ml-2">Events</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-24 h-9 bg-gray-800 rounded-lg animate-pulse"></div>
+                <div className="w-9 h-9 bg-gray-800 rounded-lg animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Content skeleton */}
+        <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="mb-10">
+            <div className="h-10 bg-gray-800 rounded-xl w-64 mb-4 animate-pulse"></div>
+            <div className="h-5 bg-gray-800 rounded w-48 mb-6 animate-pulse"></div>
+            <div className="h-12 bg-gray-800 rounded-xl max-w-xl animate-pulse"></div>
+          </div>
+          <EventGridSkeleton count={6} />
+        </main>
       </div>
     );
   }
@@ -441,11 +468,9 @@ const EventList = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <span>Powered by</span>
-              <span className="text-red-500 font-semibold">EventsX</span>
-              {dbStatus && (
-                <span className="text-gray-600">• {dbStatus.mode === 'supabase' ? '☁️ Cloud' : '💾 Local'}</span>
-              )}
+              <span>© 2025</span>
+              <span className="text-red-500 font-semibold">LinkMeU</span>
+              <span className="text-gray-600">• Link Me. You Matter Most.</span>
             </div>
             <div className="flex items-center gap-4">
               <Link to="/" className="text-gray-500 hover:text-white text-sm transition-colors">Home</Link>

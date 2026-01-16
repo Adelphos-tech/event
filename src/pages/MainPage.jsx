@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DollarSign, MapPin, Briefcase, Home, Film, Package, Phone, Mail, Plus, Calendar, ChevronRight, Sparkles, Search, Filter } from 'lucide-react';
+import { DollarSign, MapPin, Briefcase, Home, Film, Package, Phone, Mail, Plus, Calendar, ChevronRight, Sparkles, Search, Filter, Heart as HeartIcon, ArrowUpDown, SlidersHorizontal } from 'lucide-react';
 import { getAllListings } from '../db/databaseAdapter';
+import { ListingGridSkeleton, CategoryTabsSkeleton } from '../components/Skeleton';
+import { useFavorites } from '../hooks/useFavorites';
+import { useToast } from '../components/Toast';
 
 // Platform support contact (shown for unpaid listings)
 const PLATFORM_CONTACT = {
@@ -31,6 +34,17 @@ const MainPage = () => {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
+    const [sortBy, setSortBy] = useState('newest');
+    const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+    const { toggleFavorite, isFavorite, favoritesCount } = useFavorites();
+    const toast = useToast();
+
+    const sortOptions = [
+        { id: 'newest', label: 'Newest First' },
+        { id: 'oldest', label: 'Oldest First' },
+        { id: 'price_low', label: 'Price: Low to High' },
+        { id: 'price_high', label: 'Price: High to Low' },
+    ];
 
     const categories = [
         { id: 'all', label: 'All Listings', icon: Sparkles, color: 'from-gray-600 to-gray-700' },
@@ -39,6 +53,7 @@ const MainPage = () => {
         { id: 'movies', label: 'Movies', subtitle: 'Buy | Sell | Distribute', icon: Film, color: 'from-purple-500 to-purple-600' },
         { id: 'products', label: 'Products', subtitle: 'Buy | Sell | Distribute', icon: Package, color: 'from-orange-500 to-orange-600' },
         { id: 'opportunity', label: 'Opportunity', subtitle: 'Hire | Join', icon: Briefcase, color: 'from-red-500 to-red-600' },
+        { id: 'wedding', label: 'Wedding', subtitle: 'Venues | Services', icon: HeartIcon, color: 'from-pink-500 to-pink-600' },
     ];
 
     // Fetch all listings on mount (public access - no auth required)
@@ -57,15 +72,30 @@ const MainPage = () => {
         fetchListings();
     }, []);
 
-    // Filter listings by category and search
-    const filteredListings = allListings.filter(listing => {
-        const matchesCategory = selectedCategory === 'all' || listing.category === selectedCategory;
-        const matchesSearch = !searchQuery || 
-            listing.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            listing.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            listing.location?.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCategory && matchesSearch;
-    });
+    // Filter listings by category, search, and favorites
+    const filteredListings = allListings
+        .filter(listing => {
+            const matchesCategory = selectedCategory === 'all' || listing.category === selectedCategory;
+            const matchesSearch = !searchQuery || 
+                listing.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                listing.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                listing.location?.toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesFavorites = !showFavoritesOnly || isFavorite(listing.id);
+            return matchesCategory && matchesSearch && matchesFavorites;
+        })
+        .sort((a, b) => {
+            switch (sortBy) {
+                case 'oldest':
+                    return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+                case 'price_low':
+                    return (a.budgetMin || 0) - (b.budgetMin || 0);
+                case 'price_high':
+                    return (b.budgetMax || b.budgetMin || 0) - (a.budgetMax || a.budgetMin || 0);
+                case 'newest':
+                default:
+                    return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+            }
+        });
 
     // Group listings by category for display
     const listingsByCategory = categories.slice(1).reduce((acc, cat) => {
@@ -73,19 +103,21 @@ const MainPage = () => {
         return acc;
     }, {});
 
-    // Get contact info based on is_paid status
+    // Get contact info based on approval status (active = approved)
+    // Only show listing owner's contact if the listing is approved (status === 'active')
     const getContactInfo = (listing) => {
-        if (listing.isPaid) {
+        const isApproved = listing.status === 'active';
+        if (isApproved) {
             return {
                 phone: listing.contact || PLATFORM_CONTACT.phone,
                 email: listing.email || PLATFORM_CONTACT.email,
-                isPaid: true
+                isApproved: true
             };
         }
         return {
             phone: PLATFORM_CONTACT.phone,
             email: PLATFORM_CONTACT.email,
-            isPaid: false
+            isApproved: false
         };
     };
 
@@ -118,6 +150,22 @@ const MainPage = () => {
                             <Icon className="w-3 h-3" />
                             {catInfo.label}
                         </div>
+                        
+                        {/* Favorite Button */}
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                toggleFavorite(listing.id);
+                                toast.success(isFavorite(listing.id) ? 'Removed from favorites' : 'Added to favorites');
+                            }}
+                            className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-sm transition-all ${
+                                isFavorite(listing.id)
+                                    ? 'bg-red-500 text-white'
+                                    : 'bg-white/80 text-gray-600 hover:bg-white hover:text-red-500'
+                            }`}
+                        >
+                            <HeartIcon className={`w-4 h-4 ${isFavorite(listing.id) ? 'fill-current' : ''}`} />
+                        </button>
                         
                         {/* Price Badge */}
                         {(listing.budgetMin || listing.budgetMax) && (
@@ -161,7 +209,7 @@ const MainPage = () => {
                             <a href={`tel:${contact.phone}`} className="text-sm text-gray-700 hover:text-red-600 transition-colors">
                                 {contact.phone}
                             </a>
-                            {!contact.isPaid && (
+                            {!contact.isApproved && (
                                 <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Support</span>
                             )}
                         </div>
@@ -177,14 +225,43 @@ const MainPage = () => {
         );
     };
 
-    // Loading state
+    // Loading state - show skeleton
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-[#faf8f5] via-[#f5f0eb] to-[#ebe5dc] flex items-center justify-center">
-                <div className="text-center">
-                    <div className="w-16 h-16 border-4 border-red-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-gray-600">Loading listings...</p>
-                </div>
+            <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-[#faf8f5] via-[#f5f0eb] to-[#ebe5dc]">
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(180,120,80,0.08)_0%,_transparent_50%)]"></div>
+                
+                {/* Header skeleton */}
+                <header className="relative bg-white/80 backdrop-blur-md border-b border-gray-200/50 sticky top-0 z-50">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex items-center justify-between h-16">
+                            <div className="flex items-center">
+                                <span className="text-2xl font-bold text-gray-900">Link</span>
+                                <span className="text-2xl font-bold text-red-600">Me</span>
+                                <span className="text-2xl font-bold text-gray-900">U</span>
+                            </div>
+                            <div className="w-32 h-10 bg-gray-200 rounded-xl animate-pulse"></div>
+                        </div>
+                    </div>
+                </header>
+                
+                {/* Content skeleton */}
+                <section className="relative py-12 px-4 sm:px-6 lg:px-8">
+                    <div className="max-w-7xl mx-auto text-center">
+                        <div className="h-12 bg-gray-200 rounded-xl w-96 mx-auto mb-4 animate-pulse"></div>
+                        <div className="h-6 bg-gray-200 rounded w-64 mx-auto mb-8 animate-pulse"></div>
+                        <div className="max-w-2xl mx-auto mb-8">
+                            <div className="h-14 bg-gray-200 rounded-2xl animate-pulse"></div>
+                        </div>
+                        <div className="flex justify-center mb-8">
+                            <CategoryTabsSkeleton />
+                        </div>
+                    </div>
+                </section>
+                
+                <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+                    <ListingGridSkeleton count={8} />
+                </main>
             </div>
         );
     }
@@ -252,44 +329,85 @@ const MainPage = () => {
                     </p>
 
                     {/* Search Bar */}
-                    <div className="max-w-2xl mx-auto mb-8">
-                        <div className="relative">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                            <input
-                                type="text"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Search listings..."
-                                className="w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-2xl shadow-lg focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all text-gray-800"
-                            />
+                    <div className="max-w-3xl mx-auto mb-6">
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <div className="relative flex-1">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    placeholder="Search listings..."
+                                    className="w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-2xl shadow-lg focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all text-gray-800"
+                                />
+                            </div>
+                            
+                            {/* Sort Dropdown */}
+                            <div className="relative">
+                                <select
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value)}
+                                    className="appearance-none w-full sm:w-auto px-4 py-4 pl-10 pr-10 bg-white border border-gray-200 rounded-2xl shadow-lg focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all text-gray-700 font-medium cursor-pointer"
+                                >
+                                    {sortOptions.map(opt => (
+                                        <option key={opt.id} value={opt.id}>{opt.label}</option>
+                                    ))}
+                                </select>
+                                <ArrowUpDown className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                            </div>
+                            
+                            {/* Favorites Filter */}
+                            <button
+                                onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                                className={`flex items-center justify-center gap-2 px-4 py-4 rounded-2xl font-medium transition-all shadow-lg ${
+                                    showFavoritesOnly
+                                        ? 'bg-red-500 text-white'
+                                        : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
+                                }`}
+                            >
+                                <HeartIcon className={`w-5 h-5 ${showFavoritesOnly ? 'fill-current' : ''}`} />
+                                <span className="sm:hidden">Favorites</span>
+                                {favoritesCount > 0 && (
+                                    <span className={`px-2 py-0.5 rounded-full text-xs ${
+                                        showFavoritesOnly ? 'bg-white/20' : 'bg-red-100 text-red-600'
+                                    }`}>
+                                        {favoritesCount}
+                                    </span>
+                                )}
+                            </button>
                         </div>
                     </div>
 
-                    {/* Category Filter Tabs */}
-                    <div className="flex flex-wrap justify-center gap-2 mb-8">
-                        {categories.map((cat) => {
-                            const Icon = cat.icon;
-                            const count = cat.id === 'all' ? filteredListings.length : listingsByCategory[cat.id]?.length || 0;
-                            return (
-                                <button
-                                    key={cat.id}
-                                    onClick={() => setSelectedCategory(cat.id)}
-                                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                                        selectedCategory === cat.id
-                                            ? `bg-gradient-to-r ${cat.color} text-white shadow-lg`
-                                            : 'bg-white/80 text-gray-700 hover:bg-white hover:shadow-md border border-gray-200/50'
-                                    }`}
-                                >
-                                    <Icon className="w-4 h-4" />
-                                    {cat.label}
-                                    <span className={`px-2 py-0.5 rounded-full text-xs ${
-                                        selectedCategory === cat.id ? 'bg-white/20' : 'bg-gray-100'
-                                    }`}>
-                                        {count}
-                                    </span>
-                                </button>
-                            );
-                        })}
+                    {/* Category Filter Tabs - Horizontal scroll on mobile */}
+                    <div className="relative -mx-4 sm:mx-0 px-4 sm:px-0 mb-8">
+                        <div className="flex sm:flex-wrap sm:justify-center gap-2 overflow-x-auto scrollbar-hide pb-2 sm:pb-0">
+                            {categories.map((cat) => {
+                                const Icon = cat.icon;
+                                const count = cat.id === 'all' ? filteredListings.length : listingsByCategory[cat.id]?.length || 0;
+                                return (
+                                    <button
+                                        key={cat.id}
+                                        onClick={() => setSelectedCategory(cat.id)}
+                                        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
+                                            selectedCategory === cat.id
+                                                ? `bg-gradient-to-r ${cat.color} text-white shadow-lg`
+                                                : 'bg-white/80 text-gray-700 hover:bg-white hover:shadow-md border border-gray-200/50'
+                                        }`}
+                                    >
+                                        <Icon className="w-4 h-4" />
+                                        <span className="hidden sm:inline">{cat.label}</span>
+                                        <span className="sm:hidden">{cat.label.split(' ')[0]}</span>
+                                        <span className={`px-2 py-0.5 rounded-full text-xs ${
+                                            selectedCategory === cat.id ? 'bg-white/20' : 'bg-gray-100'
+                                        }`}>
+                                            {count}
+                                        </span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        {/* Fade indicator for scroll */}
+                        <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-[#f5f0eb] to-transparent pointer-events-none sm:hidden"></div>
                     </div>
                 </div>
             </section>

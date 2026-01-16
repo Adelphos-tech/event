@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, DollarSign, User, Mail, CheckCircle, Sparkles, Upload, X, MapPin, Briefcase, Home, Heart, Image, ArrowLeft, Film, Package } from 'lucide-react';
+import { Calendar, DollarSign, User, Mail, CheckCircle, Sparkles, Upload, X, MapPin, Briefcase, Home, Heart, Image, ArrowLeft, Film, Package, Eye, EyeOff } from 'lucide-react';
 import { createListing } from '../db/databaseAdapter';
 import { convertImageToBase64 } from '../utils/imageUtils';
 import PhoneInput from '../components/PhoneInput';
+import { useToast } from '../components/Toast';
+import { notifyAdminNewListing } from '../utils/emailService';
 
 const RegisterListing = () => {
     const navigate = useNavigate();
+    const toast = useToast();
     const [activeCategory, setActiveCategory] = useState('business');
+    const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         fromDate: '',
         toDate: '',
@@ -24,6 +28,50 @@ const RegisterListing = () => {
         images: []
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [touched, setTouched] = useState({});
+    const [errors, setErrors] = useState({});
+
+    // Validation functions
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    const validateField = (field, value) => {
+        switch (field) {
+            case 'title':
+                if (!value || value.trim().length < 3) return 'Title must be at least 3 characters';
+                return '';
+            case 'email':
+                if (!value) return 'Email is required';
+                if (!validateEmail(value)) return 'Please enter a valid email';
+                return '';
+            case 'password':
+                if (!value) return 'Password is required';
+                if (value.length < 6) return 'Password must be at least 6 characters';
+                return '';
+            case 'contact':
+                if (!value) return 'Contact number is required';
+                return '';
+            default:
+                return '';
+        }
+    };
+
+    const handleBlur = (field) => {
+        setTouched(prev => ({ ...prev, [field]: true }));
+        const error = validateField(field, formData[field]);
+        setErrors(prev => ({ ...prev, [field]: error }));
+    };
+
+    const handleFieldChange = (field, value) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+        // Clear error when user starts typing
+        if (touched[field]) {
+            const error = validateField(field, value);
+            setErrors(prev => ({ ...prev, [field]: error }));
+        }
+    };
 
     const categories = [
         { id: 'business', label: 'Business', subtitle: 'Buy | Sell | Invest', icon: DollarSign },
@@ -31,12 +79,13 @@ const RegisterListing = () => {
         { id: 'movies', label: 'Movies', subtitle: 'Buy | Sell | Distribute', icon: Film },
         { id: 'products', label: 'Products', subtitle: 'Buy | Sell | Distribute', icon: Package },
         { id: 'opportunity', label: 'Opportunity', subtitle: 'Hire | Join', icon: Briefcase },
+        { id: 'wedding', label: 'Wedding', subtitle: 'Venues | Services', icon: Heart },
     ];
 
     const handleImageUpload = async (e) => {
         const files = Array.from(e.target.files);
         if (formData.images.length + files.length > 5) {
-            alert('Maximum 5 images allowed');
+            toast.warning('Maximum 5 images allowed');
             return;
         }
         
@@ -64,24 +113,24 @@ const RegisterListing = () => {
         e.preventDefault();
         
         if (!formData.email || !formData.password || !formData.contact) {
-            alert('Please fill in all required fields: Email, Password, and Contact');
+            toast.error('Please fill in all required fields: Email, Password, and Contact');
             return;
         }
         
         if (formData.password.length < 6) {
-            alert('Password must be at least 6 characters');
+            toast.error('Password must be at least 6 characters');
             return;
         }
         
         if (!formData.title) {
-            alert('Please enter a title for your listing');
+            toast.error('Please enter a title for your listing');
             return;
         }
         
         setIsSubmitting(true);
 
         try {
-            await createListing({
+            const listingData = {
                 category: activeCategory,
                 title: formData.title,
                 description: formData.description || formData.title,
@@ -96,13 +145,21 @@ const RegisterListing = () => {
                 email: formData.email,
                 password: formData.password,
                 images: formData.images
+            };
+            
+            const newListing = await createListing(listingData);
+
+            // Notify admin about new listing submission
+            await notifyAdminNewListing({
+                ...listingData,
+                id: newListing?.id
             });
 
-            alert('Listing submitted successfully! Your listing will be reviewed by admin.');
-            navigate('/');
+            toast.success('Listing submitted for approval!', 'Your listing will be visible once approved by our admin team. You will be notified via email.');
+            setTimeout(() => navigate('/'), 2000);
         } catch (error) {
             console.error('Error submitting listing:', error);
-            alert('Error submitting listing: ' + error.message);
+            toast.error('Error submitting listing: ' + error.message);
         }
 
         setIsSubmitting(false);
@@ -142,9 +199,34 @@ const RegisterListing = () => {
                 <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3 tracking-tight">
                     Create Your Listing
                 </h1>
-                <p className="text-gray-600 mb-8 text-lg">
+                <p className="text-gray-600 mb-6 text-lg">
                     Post your business, property, movie, product, or opportunity listing.
                 </p>
+
+                {/* Progress Indicator */}
+                <div className="mb-8">
+                    <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-600">Form Progress</span>
+                        <span className="text-sm font-medium text-amber-600">
+                            {Math.round(((formData.title ? 1 : 0) + (formData.email ? 1 : 0) + (formData.password ? 1 : 0) + (formData.contact ? 1 : 0) + (formData.images.length > 0 ? 1 : 0)) / 5 * 100)}% Complete
+                        </span>
+                    </div>
+                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div 
+                            className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-500"
+                            style={{ 
+                                width: `${((formData.title ? 1 : 0) + (formData.email ? 1 : 0) + (formData.password ? 1 : 0) + (formData.contact ? 1 : 0) + (formData.images.length > 0 ? 1 : 0)) / 5 * 100}%` 
+                            }}
+                        />
+                    </div>
+                    <div className="flex justify-between mt-2 text-xs text-gray-500">
+                        <span className={formData.images.length > 0 ? 'text-emerald-600 font-medium' : ''}>Photos</span>
+                        <span className={formData.title ? 'text-emerald-600 font-medium' : ''}>Title</span>
+                        <span className={formData.email ? 'text-emerald-600 font-medium' : ''}>Email</span>
+                        <span className={formData.password ? 'text-emerald-600 font-medium' : ''}>Password</span>
+                        <span className={formData.contact ? 'text-emerald-600 font-medium' : ''}>Contact</span>
+                    </div>
+                </div>
 
                 {/* Category Selection */}
                 <div className="mb-8">
@@ -236,11 +318,26 @@ const RegisterListing = () => {
                             <input
                                 type="text"
                                 value={formData.title}
-                                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm text-gray-800"
+                                onChange={(e) => handleFieldChange('title', e.target.value)}
+                                onBlur={() => handleBlur('title')}
+                                className={`w-full px-4 py-3.5 bg-white border rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm text-gray-800 ${
+                                    touched.title && errors.title ? 'border-red-400 bg-red-50' : 'border-gray-200'
+                                } ${touched.title && !errors.title && formData.title ? 'border-emerald-400 bg-emerald-50' : ''}`}
                                 placeholder="e.g., Premium Cafe Business for Sale"
                                 required
                             />
+                            {touched.title && errors.title && (
+                                <p className="mt-1.5 text-sm text-red-500 flex items-center gap-1">
+                                    <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                                    {errors.title}
+                                </p>
+                            )}
+                            {touched.title && !errors.title && formData.title && (
+                                <p className="mt-1.5 text-sm text-emerald-600 flex items-center gap-1">
+                                    <CheckCircle className="w-3.5 h-3.5" />
+                                    Looks good!
+                                </p>
+                            )}
                         </div>
 
                         <div>
@@ -349,30 +446,57 @@ const RegisterListing = () => {
                                     Email <span className="text-red-500">*</span>
                                 </label>
                                 <div className="relative">
-                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                    <Mail className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${touched.email && errors.email ? 'text-red-400' : touched.email && !errors.email && formData.email ? 'text-emerald-500' : 'text-gray-400'}`} />
                                     <input
                                         type="email"
                                         value={formData.email}
-                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                        className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
+                                        onChange={(e) => handleFieldChange('email', e.target.value)}
+                                        onBlur={() => handleBlur('email')}
+                                        className={`w-full pl-12 pr-4 py-3 bg-white border rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm ${
+                                            touched.email && errors.email ? 'border-red-400 bg-red-50' : 'border-gray-200'
+                                        } ${touched.email && !errors.email && formData.email ? 'border-emerald-400 bg-emerald-50' : ''}`}
                                         placeholder="your@email.com"
                                         required
                                     />
                                 </div>
+                                {touched.email && errors.email && (
+                                    <p className="mt-1 text-xs text-red-500">{errors.email}</p>
+                                )}
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                                     Password <span className="text-red-500">*</span>
                                 </label>
-                                <input
-                                    type="password"
-                                    value={formData.password}
-                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
-                                    placeholder="Min 6 characters"
-                                    minLength={6}
-                                    required
-                                />
+                                <div className="relative">
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        value={formData.password}
+                                        onChange={(e) => handleFieldChange('password', e.target.value)}
+                                        onBlur={() => handleBlur('password')}
+                                        className={`w-full px-4 py-3 pr-12 bg-white border rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm ${
+                                            touched.password && errors.password ? 'border-red-400 bg-red-50' : 'border-gray-200'
+                                        } ${touched.password && !errors.password && formData.password ? 'border-emerald-400 bg-emerald-50' : ''}`}
+                                        placeholder="Min 6 characters"
+                                        minLength={6}
+                                        required
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                                        tabIndex={-1}
+                                    >
+                                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                    </button>
+                                </div>
+                                {touched.password && errors.password && (
+                                    <p className="mt-1 text-xs text-red-500">{errors.password}</p>
+                                )}
+                                {touched.password && !errors.password && formData.password && (
+                                    <p className="mt-1 text-xs text-emerald-600 flex items-center gap-1">
+                                        <CheckCircle className="w-3 h-3" /> Strong password
+                                    </p>
+                                )}
                             </div>
                         </div>
                         
@@ -382,19 +506,29 @@ const RegisterListing = () => {
                             </label>
                             <PhoneInput
                                 value={formData.contact}
-                                onChange={(value) => setFormData({ ...formData, contact: value || '' })}
+                                onChange={(value) => {
+                                    handleFieldChange('contact', value || '');
+                                }}
+                                onBlur={() => handleBlur('contact')}
                                 defaultCountry="SG"
                                 placeholder="Phone number"
                                 theme="light"
                                 required
                             />
+                            {touched.contact && errors.contact && (
+                                <p className="mt-1 text-xs text-red-500">{errors.contact}</p>
+                            )}
                         </div>
                     </div>
 
                     {/* Info text */}
-                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-2">
                         <p className="text-blue-800 text-sm">
-                            <strong>Note:</strong> Your contact details will only be visible after payment verification. 
+                            <strong>📋 Approval Process:</strong> Your listing will be reviewed by our admin team within 24-48 hours. 
+                            Once approved, it will be visible to all users on the platform.
+                        </p>
+                        <p className="text-blue-800 text-sm">
+                            <strong>📞 Contact Visibility:</strong> Your contact details will only be visible after approval. 
                             Until then, interested parties will contact our support team at <strong>+65 9019 1311</strong>.
                         </p>
                     </div>

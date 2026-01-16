@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   ArrowLeft, MapPin, Phone, Mail, Calendar, DollarSign, 
   Share2, Heart, ChevronLeft, ChevronRight, Building2,
-  Home, Film, Package, Briefcase, Clock, User
+  Home, Film, Package, Briefcase, Clock, User, AlertCircle
 } from 'lucide-react';
 import { getListing } from '../db/databaseAdapter';
 
@@ -27,6 +27,7 @@ const ListingDetail = () => {
     movies: { label: 'Movies', icon: Film, color: 'from-purple-500 to-purple-600' },
     products: { label: 'Products', icon: Package, color: 'from-orange-500 to-orange-600' },
     opportunity: { label: 'Opportunity', icon: Briefcase, color: 'from-red-500 to-red-600' },
+    wedding: { label: 'Wedding', icon: Heart, color: 'from-pink-500 to-pink-600' },
   };
 
   useEffect(() => {
@@ -48,18 +49,21 @@ const ListingDetail = () => {
     fetchListing();
   }, [listingId]);
 
+  // Get contact info based on approval status (active = approved)
+  // Only show listing owner's contact if the listing is approved (status === 'active')
   const getContactInfo = () => {
-    if (listing?.isPaid) {
+    const isApproved = listing?.status === 'active';
+    if (isApproved) {
       return {
         phone: listing.contact || PLATFORM_CONTACT.phone,
         email: listing.email || PLATFORM_CONTACT.email,
-        isPaid: true
+        isApproved: true
       };
     }
     return {
       phone: PLATFORM_CONTACT.phone,
       email: PLATFORM_CONTACT.email,
-      isPaid: false
+      isApproved: false
     };
   };
 
@@ -258,11 +262,14 @@ const ListingDetail = () => {
         <div className="bg-white rounded-2xl p-6 shadow-sm mb-4">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Contact Information</h2>
           
-          {!contact.isPaid && (
+          {!contact.isApproved && (
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
-              <p className="text-amber-800 text-sm">
-                Contact our support team for more information about this listing.
-              </p>
+              <div className="flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                <p className="text-amber-800 text-sm">
+                  This listing is pending approval. Contact our support team for more information.
+                </p>
+              </div>
             </div>
           )}
           

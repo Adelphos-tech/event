@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ToastProvider } from './components/Toast';
 import MainPage from './pages/MainPage';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
@@ -20,6 +21,7 @@ import ListingDetail from './pages/ListingDetail';
 function App() {
   return (
     <AuthProvider>
+      <ToastProvider>
       <Router basename="/">
         <Routes>
           <Route path="/" element={<MainPage />} />
@@ -41,6 +43,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
+      </ToastProvider>
     </AuthProvider>
   );
 }

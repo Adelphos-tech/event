@@ -4,15 +4,19 @@ import {
   Shield, LogOut, Plus, Search, RefreshCw, Trash2, Edit, Eye, 
   ChevronLeft, ChevronRight, Users, Briefcase, Home, Heart, 
   DollarSign, Calendar, MapPin, Mail, Phone, CheckCircle, XCircle,
-  MoreVertical, Filter, Download, Image, Clock, TrendingUp, AlertCircle, Sparkles
+  MoreVertical, Filter, Download, Image, Clock, TrendingUp, AlertCircle, Sparkles, Bell
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { getAllListings, deleteListing, updateListing, getAllUsers } from '../db/databaseAdapter';
+import { getAllListingsAdmin, deleteListing, updateListing, getAllUsers } from '../db/databaseAdapter';
 import { format } from 'date-fns';
+import { notifyUserListingStatus } from '../utils/emailService';
+import { useToast } from '../components/Toast';
+import NotificationCenter from '../components/NotificationCenter';
 
 const ListingsAdmin = () => {
   const navigate = useNavigate();
   const { user, logout, isSuperAdmin } = useAuth();
+  const toast = useToast();
   const [activeTab, setActiveTab] = useState('listings');
   const [listings, setListings] = useState([]);
   const [users, setUsers] = useState([]);
@@ -46,7 +50,7 @@ const ListingsAdmin = () => {
     setLoading(true);
     try {
       const [listingsData, usersData] = await Promise.all([
-        getAllListings(),
+        getAllListingsAdmin(),
         getAllUsers()
       ]);
       setListings(listingsData || []);
@@ -86,8 +90,17 @@ const ListingsAdmin = () => {
     try {
       await updateListing(listing.id, { status: newStatus });
       setListings(prev => prev.map(l => l.id === listing.id ? { ...l, status: newStatus } : l));
+      
+      // Notify user about status change
+      if (listing.email && (newStatus === 'active' || newStatus === 'rejected')) {
+        await notifyUserListingStatus(listing, newStatus);
+        toast.success(
+          newStatus === 'active' ? 'Listing approved!' : 'Listing rejected',
+          `Notification sent to ${listing.email}`
+        );
+      }
     } catch (error) {
-      alert('Failed to update status: ' + error.message);
+      toast.error('Failed to update status: ' + error.message);
     }
   };
 
@@ -255,6 +268,9 @@ const ListingsAdmin = () => {
             </div>
 
             <div className="flex items-center gap-3">
+              {/* Notification Center */}
+              <NotificationCenter pendingListingsCount={stats.pendingListings} />
+              
               <button
                 onClick={() => navigate('/')}
                 className="px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 rounded-xl text-sm font-medium transition-all border border-gray-200 shadow-sm"
@@ -286,20 +302,30 @@ const ListingsAdmin = () => {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           {[
-            { label: 'Total Listings', value: stats.totalListings, icon: Briefcase, color: 'amber' },
-            { label: 'Active', value: stats.activeListings, icon: CheckCircle, color: 'emerald' },
-            { label: 'Pending', value: stats.pendingListings, icon: Clock, color: 'orange' },
-            { label: 'Total Users', value: stats.totalUsers, icon: Users, color: 'blue' },
-            { label: 'New Today', value: stats.todayUsers, icon: TrendingUp, color: 'purple' },
+            { label: 'Total Listings', value: stats.totalListings, icon: Briefcase, color: 'amber', highlight: false },
+            { label: 'Active', value: stats.activeListings, icon: CheckCircle, color: 'emerald', highlight: false },
+            { label: 'Pending Approval', value: stats.pendingListings, icon: Bell, color: 'orange', highlight: stats.pendingListings > 0 },
+            { label: 'Total Users', value: stats.totalUsers, icon: Users, color: 'blue', highlight: false },
+            { label: 'New Today', value: stats.todayUsers, icon: TrendingUp, color: 'purple', highlight: false },
           ].map((stat, i) => (
-            <div key={i} className="bg-white/70 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all">
+            <div 
+              key={i} 
+              className={`backdrop-blur-sm border rounded-2xl p-5 shadow-sm hover:shadow-md transition-all ${
+                stat.highlight 
+                  ? 'bg-gradient-to-br from-orange-50 to-amber-50 border-orange-300 ring-2 ring-orange-200 animate-pulse' 
+                  : 'bg-white/70 border-gray-200/50'
+              }`}
+            >
               <div className="flex items-center gap-3">
-                <div className={`w-11 h-11 bg-${stat.color}-100 rounded-xl flex items-center justify-center`}>
-                  <stat.icon className={`w-5 h-5 text-${stat.color}-600`} />
+                <div className={`w-11 h-11 ${stat.highlight ? 'bg-orange-200' : `bg-${stat.color}-100`} rounded-xl flex items-center justify-center relative`}>
+                  <stat.icon className={`w-5 h-5 ${stat.highlight ? 'text-orange-600' : `text-${stat.color}-600`}`} />
+                  {stat.highlight && (
+                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping"></span>
+                  )}
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                  <p className="text-xs text-gray-500">{stat.label}</p>
+                  <p className={`text-2xl font-bold ${stat.highlight ? 'text-orange-700' : 'text-gray-900'}`}>{stat.value}</p>
+                  <p className={`text-xs ${stat.highlight ? 'text-orange-600 font-medium' : 'text-gray-500'}`}>{stat.label}</p>
                 </div>
               </div>
             </div>
@@ -324,6 +350,21 @@ const ListingsAdmin = () => {
                   {tab} ({tab === 'listings' ? listings.length : users.length})
                 </button>
               ))}
+              
+              {/* Quick filter for pending */}
+              {stats.pendingListings > 0 && activeTab === 'listings' && (
+                <button
+                  onClick={() => { setStatusFilter('pending'); setCurrentPage(1); }}
+                  className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center gap-2 ${
+                    statusFilter === 'pending'
+                      ? 'bg-orange-500 text-white shadow-lg'
+                      : 'bg-orange-100 text-orange-700 hover:bg-orange-200 border border-orange-200'
+                  }`}
+                >
+                  <Bell className="w-4 h-4" />
+                  {stats.pendingListings} Pending
+                </button>
+              )}
             </div>
 
             <div className="flex-1 flex flex-col sm:flex-row gap-3">
