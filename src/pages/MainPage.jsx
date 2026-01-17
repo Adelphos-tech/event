@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DollarSign, MapPin, Briefcase, Home, Film, Package, Phone, Mail, Plus, Calendar, ChevronRight, Sparkles, Search, Filter, Heart as HeartIcon, ArrowUpDown, SlidersHorizontal, Shield } from 'lucide-react';
+import { DollarSign, MapPin, Briefcase, Home, Film, Package, Phone, Mail, Plus, Calendar, ChevronRight, Sparkles, Search, Filter, Heart as HeartIcon, ArrowUpDown, SlidersHorizontal, Shield, GraduationCap, ExternalLink } from 'lucide-react';
 import { getAllListings } from '../db/databaseAdapter';
 import { ListingGridSkeleton, CategoryTabsSkeleton } from '../components/Skeleton';
 import { useFavorites } from '../hooks/useFavorites';
@@ -324,6 +324,17 @@ const MainPage = () => {
                                 <Shield className="w-4 h-4" />
                                 Membership
                             </button>
+                            
+                            <a
+                                href="https://tutor.linkmeu.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="hidden sm:flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
+                            >
+                                <GraduationCap className="w-4 h-4" />
+                                AI Tutor
+                                <ExternalLink className="w-3 h-3 opacity-50" />
+                            </a>
                             
                             {/* Register Button - Prominent */}
                             <button
