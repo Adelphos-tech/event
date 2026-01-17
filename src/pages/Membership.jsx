@@ -4,7 +4,7 @@ import {
   Shield, Plus, Users, Search, Upload, Download, Calendar, 
   Phone, Mail, DollarSign, CheckCircle, XCircle, Clock,
   Edit2, Trash2, Eye, X, ChevronDown, FileSpreadsheet,
-  Building2, UserPlus, CreditCard, AlertCircle
+  Building2, UserPlus, CreditCard, AlertCircle, Crown, Gem
 } from 'lucide-react';
 import { useToast } from '../components/Toast';
 import { format } from 'date-fns';
@@ -286,51 +286,56 @@ const Membership = () => {
   const getPaymentStatusBadge = (status) => {
     switch (status) {
       case 'paid':
-        return <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full flex items-center gap-1"><CheckCircle className="w-3 h-3" /> Paid</span>;
+        return <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-lg flex items-center gap-1.5 border border-emerald-500/20"><CheckCircle className="w-3 h-3" /> Paid</span>;
       case 'partial':
-        return <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs rounded-full flex items-center gap-1"><Clock className="w-3 h-3" /> Partial</span>;
+        return <span className="px-2.5 py-1 bg-amber-500/10 text-amber-400 text-xs rounded-lg flex items-center gap-1.5 border border-amber-500/20"><Clock className="w-3 h-3" /> Partial</span>;
       default:
-        return <span className="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full flex items-center gap-1"><XCircle className="w-3 h-3" /> Not Paid</span>;
+        return <span className="px-2.5 py-1 bg-red-500/10 text-red-400 text-xs rounded-lg flex items-center gap-1.5 border border-red-500/20"><XCircle className="w-3 h-3" /> Not Paid</span>;
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-16 h-16 border-2 border-amber-500/20 border-t-amber-500 rounded-full animate-spin"></div>
+          <p className="text-gray-500 text-sm tracking-wide">Loading...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <div className="min-h-screen bg-[#0a0a0f]">
+      {/* Premium Header */}
+      <header className="bg-[#0f0f15]/95 backdrop-blur-xl border-b border-white/5 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <button onClick={() => navigate('/')} className="flex items-center">
-                <span className="text-2xl font-bold text-gray-900">Link</span>
-                <span className="text-2xl font-bold text-red-600">Me</span>
-                <span className="text-2xl font-bold text-gray-900">U</span>
+            <div className="flex items-center gap-5">
+              <button onClick={() => navigate('/')} className="flex items-center group">
+                <span className="text-2xl font-bold text-white">Link</span>
+                <span className="text-2xl font-bold text-amber-500">Me</span>
+                <span className="text-2xl font-bold text-white">U</span>
               </button>
-              <div className="h-6 w-px bg-gray-300"></div>
-              <div className="flex items-center gap-2">
-                <Shield className="w-5 h-5 text-indigo-600" />
-                <span className="font-semibold text-gray-800">Membership</span>
+              <div className="h-6 w-px bg-white/10"></div>
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 bg-gradient-to-br from-amber-500/20 to-amber-600/10 rounded-lg flex items-center justify-center border border-amber-500/20">
+                  <Crown className="w-4 h-4 text-amber-500" />
+                </div>
+                <span className="font-medium text-white/90 tracking-wide">Membership</span>
               </div>
             </div>
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1">
               <button
                 onClick={() => navigate('/events')}
-                className="px-4 py-2 text-gray-600 hover:text-gray-900 font-medium"
+                className="px-4 py-2 text-gray-400 hover:text-white font-medium text-sm transition-colors"
               >
                 Events
               </button>
               <button
                 onClick={() => navigate('/')}
-                className="px-4 py-2 text-gray-600 hover:text-gray-900 font-medium"
+                className="px-4 py-2 text-gray-400 hover:text-white font-medium text-sm transition-colors"
               >
                 Listings
               </button>
@@ -339,37 +344,47 @@ const Membership = () => {
         </div>
       </header>
 
-      {/* Tabs */}
-      <div className="bg-white border-b border-gray-200">
+      {/* Premium Tabs */}
+      <div className="bg-[#0f0f15] border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-8">
+          <div className="flex gap-1">
             <button
               onClick={() => { setActiveTab('clubs'); setSelectedClub(null); }}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+              className={`py-4 px-5 font-medium text-sm transition-all relative ${
                 activeTab === 'clubs'
-                  ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'text-amber-500'
+                  : 'text-gray-500 hover:text-gray-300'
               }`}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <Building2 className="w-4 h-4" />
                 Clubs
-                <span className="px-2 py-0.5 bg-gray-100 rounded-full text-xs">{clubs.length}</span>
+                <span className={`px-2 py-0.5 rounded text-xs ${
+                  activeTab === 'clubs' ? 'bg-amber-500/10 text-amber-500' : 'bg-white/5 text-gray-500'
+                }`}>{clubs.length}</span>
               </div>
+              {activeTab === 'clubs' && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-500 to-amber-600"></div>
+              )}
             </button>
             <button
               onClick={() => setActiveTab('members')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+              className={`py-4 px-5 font-medium text-sm transition-all relative ${
                 activeTab === 'members'
-                  ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'text-amber-500'
+                  : 'text-gray-500 hover:text-gray-300'
               }`}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <Users className="w-4 h-4" />
                 Members
-                <span className="px-2 py-0.5 bg-gray-100 rounded-full text-xs">{members.length}</span>
+                <span className={`px-2 py-0.5 rounded text-xs ${
+                  activeTab === 'members' ? 'bg-amber-500/10 text-amber-500' : 'bg-white/5 text-gray-500'
+                }`}>{members.length}</span>
               </div>
+              {activeTab === 'members' && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-500 to-amber-600"></div>
+              )}
             </button>
           </div>
         </div>
@@ -378,23 +393,23 @@ const Membership = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Search and Actions */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row gap-4 mb-8">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
             <input
               type="text"
               placeholder={activeTab === 'clubs' ? 'Search clubs...' : 'Search members...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+              className="w-full pl-12 pr-4 py-3 bg-[#15151f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
             />
           </div>
           
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             {activeTab === 'clubs' ? (
               <button
                 onClick={() => { setEditingClub(null); setShowClubModal(true); }}
-                className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors"
+                className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-semibold rounded-xl hover:from-amber-400 hover:to-amber-500 transition-all shadow-lg shadow-amber-500/20"
               >
                 <Plus className="w-4 h-4" />
                 Create Club
@@ -404,7 +419,7 @@ const Membership = () => {
                 {selectedClub && (
                   <button
                     onClick={() => setShowBulkUploadModal(true)}
-                    className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-2 px-5 py-3 bg-[#15151f] border border-white/10 text-gray-300 rounded-xl hover:bg-[#1a1a25] hover:border-white/20 transition-all"
                   >
                     <Upload className="w-4 h-4" />
                     Bulk Upload
@@ -420,7 +435,7 @@ const Membership = () => {
                     setEditingMember(null);
                     setShowMemberModal(true);
                   }}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors"
+                  className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-semibold rounded-xl hover:from-amber-400 hover:to-amber-500 transition-all shadow-lg shadow-amber-500/20"
                 >
                   <UserPlus className="w-4 h-4" />
                   Register Member
@@ -432,15 +447,15 @@ const Membership = () => {
 
         {/* Club Filter for Members Tab */}
         {activeTab === 'members' && (
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Select Club</label>
+          <div className="mb-8">
+            <label className="block text-sm font-medium text-gray-400 mb-3 tracking-wide">Select Club</label>
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setSelectedClub(null)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
                   !selectedClub
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
+                    ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-lg shadow-amber-500/20'
+                    : 'bg-[#15151f] border border-white/10 text-gray-400 hover:border-white/20 hover:text-white'
                 }`}
               >
                 All Clubs
@@ -449,16 +464,16 @@ const Membership = () => {
                 <button
                   key={club.id}
                   onClick={() => setSelectedClub(club)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+                  className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center gap-2 ${
                     selectedClub?.id === club.id
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
+                      ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-lg shadow-amber-500/20'
+                      : 'bg-[#15151f] border border-white/10 text-gray-400 hover:border-white/20 hover:text-white'
                   }`}
                 >
                   <Shield className="w-4 h-4" />
                   {club.name}
-                  <span className={`px-1.5 py-0.5 rounded text-xs ${
-                    selectedClub?.id === club.id ? 'bg-white/20' : 'bg-gray-100'
+                  <span className={`px-2 py-0.5 rounded text-xs ${
+                    selectedClub?.id === club.id ? 'bg-black/20' : 'bg-white/5'
                   }`}>
                     {members.filter(m => m.clubId === club.id).length}
                   </span>
@@ -472,13 +487,15 @@ const Membership = () => {
         {activeTab === 'clubs' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredClubs.length === 0 ? (
-              <div className="col-span-full text-center py-16">
-                <Shield className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No clubs yet</h3>
-                <p className="text-gray-500 mb-4">Create your first club to get started</p>
+              <div className="col-span-full text-center py-20">
+                <div className="w-20 h-20 bg-[#15151f] rounded-2xl flex items-center justify-center mx-auto mb-6 border border-white/5">
+                  <Shield className="w-10 h-10 text-gray-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">No clubs yet</h3>
+                <p className="text-gray-500 mb-6">Create your first club to get started</p>
                 <button
                   onClick={() => setShowClubModal(true)}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                  className="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-semibold rounded-xl hover:from-amber-400 hover:to-amber-500 transition-all"
                 >
                   Create Club
                 </button>
@@ -487,36 +504,39 @@ const Membership = () => {
               filteredClubs.map(club => {
                 const stats = getClubStats(club.id);
                 return (
-                  <div key={club.id} className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+                  <div key={club.id} className="group bg-[#12121a] rounded-2xl border border-white/5 overflow-hidden hover:border-amber-500/30 transition-all duration-300">
+                    {/* Card Header with gradient */}
+                    <div className="h-2 bg-gradient-to-r from-amber-500/50 via-amber-600/30 to-transparent"></div>
+                    
                     <div className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
+                      <div className="flex items-start justify-between mb-5">
+                        <div className="flex items-center gap-4">
                           {club.logo ? (
-                            <img src={club.logo} alt={club.name} className="w-12 h-12 rounded-xl object-cover" />
+                            <img src={club.logo} alt={club.name} className="w-14 h-14 rounded-xl object-cover ring-2 ring-white/10" />
                           ) : (
-                            <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-                              <Shield className="w-6 h-6 text-white" />
+                            <div className="w-14 h-14 bg-gradient-to-br from-amber-500/20 to-amber-600/10 rounded-xl flex items-center justify-center border border-amber-500/20">
+                              <Crown className="w-7 h-7 text-amber-500" />
                             </div>
                           )}
                           <div>
-                            <h3 className="font-semibold text-gray-900">{club.name}</h3>
+                            <h3 className="font-semibold text-white text-lg">{club.name}</h3>
                             <p className="text-sm text-gray-500">{stats.total} members</p>
                           </div>
                         </div>
-                        <div className="flex gap-1">
+                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={() => {
                               setEditingClub(club);
                               setClubForm(club);
                               setShowClubModal(true);
                             }}
-                            className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg"
+                            className="p-2 text-gray-500 hover:text-amber-500 hover:bg-amber-500/10 rounded-lg transition-colors"
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleDeleteClub(club.id)}
-                            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                            className="p-2 text-gray-500 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -524,34 +544,34 @@ const Membership = () => {
                       </div>
                       
                       {club.description && (
-                        <p className="text-sm text-gray-600 mb-4 line-clamp-2">{club.description}</p>
+                        <p className="text-sm text-gray-400 mb-5 line-clamp-2">{club.description}</p>
                       )}
                       
-                      <div className="space-y-2 text-sm">
-                        <div className="flex items-center gap-2 text-gray-600">
-                          <Users className="w-4 h-4" />
+                      <div className="space-y-3 text-sm">
+                        <div className="flex items-center gap-3 text-gray-400">
+                          <Users className="w-4 h-4 text-gray-500" />
                           <span>{club.contactPerson || 'No contact person'}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-gray-600">
-                          <Mail className="w-4 h-4" />
+                        <div className="flex items-center gap-3 text-gray-400">
+                          <Mail className="w-4 h-4 text-gray-500" />
                           <span>{club.email}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-gray-600">
-                          <DollarSign className="w-4 h-4" />
-                          <span>Annual Fee: ${club.annualFee}</span>
+                        <div className="flex items-center gap-3">
+                          <DollarSign className="w-4 h-4 text-amber-500" />
+                          <span className="text-amber-500 font-medium">${club.annualFee}/year</span>
                         </div>
                       </div>
                       
-                      <div className="mt-4 pt-4 border-t border-gray-100">
-                        <div className="flex justify-between text-xs">
-                          <span className="text-green-600">{stats.paid} Paid</span>
-                          <span className="text-amber-600">{stats.partial} Partial</span>
-                          <span className="text-red-600">{stats.unpaid} Unpaid</span>
+                      <div className="mt-5 pt-5 border-t border-white/5">
+                        <div className="flex justify-between text-xs mb-2">
+                          <span className="text-emerald-400">{stats.paid} Paid</span>
+                          <span className="text-amber-400">{stats.partial} Partial</span>
+                          <span className="text-red-400">{stats.unpaid} Unpaid</span>
                         </div>
-                        <div className="mt-2 h-2 bg-gray-100 rounded-full overflow-hidden flex">
-                          <div className="bg-green-500 h-full" style={{ width: `${(stats.paid / stats.total) * 100 || 0}%` }}></div>
+                        <div className="h-1.5 bg-white/5 rounded-full overflow-hidden flex">
+                          <div className="bg-emerald-500 h-full" style={{ width: `${(stats.paid / stats.total) * 100 || 0}%` }}></div>
                           <div className="bg-amber-500 h-full" style={{ width: `${(stats.partial / stats.total) * 100 || 0}%` }}></div>
-                          <div className="bg-red-500 h-full" style={{ width: `${(stats.unpaid / stats.total) * 100 || 0}%` }}></div>
+                          <div className="bg-red-500/50 h-full" style={{ width: `${(stats.unpaid / stats.total) * 100 || 0}%` }}></div>
                         </div>
                       </div>
                       
@@ -560,7 +580,7 @@ const Membership = () => {
                           setSelectedClub(club);
                           setActiveTab('members');
                         }}
-                        className="mt-4 w-full py-2 text-indigo-600 hover:bg-indigo-50 rounded-lg text-sm font-medium transition-colors"
+                        className="mt-5 w-full py-2.5 text-amber-500 hover:bg-amber-500/10 rounded-xl text-sm font-medium transition-colors border border-amber-500/20 hover:border-amber-500/40"
                       >
                         View Members →
                       </button>
@@ -574,11 +594,13 @@ const Membership = () => {
 
         {/* Members Table */}
         {activeTab === 'members' && (
-          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+          <div className="bg-[#12121a] rounded-2xl border border-white/5 overflow-hidden">
             {filteredMembers.length === 0 ? (
-              <div className="text-center py-16">
-                <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No members yet</h3>
+              <div className="text-center py-20">
+                <div className="w-20 h-20 bg-[#15151f] rounded-2xl flex items-center justify-center mx-auto mb-6 border border-white/5">
+                  <Users className="w-10 h-10 text-gray-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">No members yet</h3>
                 <p className="text-gray-500 mb-4">
                   {selectedClub ? `Add members to ${selectedClub.name}` : 'Select a club and add members'}
                 </p>
@@ -586,43 +608,47 @@ const Membership = () => {
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
+                  <thead className="bg-[#0f0f15] border-b border-white/5">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Member</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Club</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Registration</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fee</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Member</th>
+                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Club</th>
+                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registration</th>
+                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fee</th>
+                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment</th>
+                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200">
+                  <tbody className="divide-y divide-white/5">
                     {filteredMembers.map(member => {
                       const club = clubs.find(c => c.id === member.clubId);
                       return (
-                        <tr key={member.id} className="hover:bg-gray-50">
+                        <tr key={member.id} className="hover:bg-white/[0.02] transition-colors">
                           <td className="px-6 py-4">
-                            <div>
-                              <p className="font-medium text-gray-900">{member.name}</p>
-                              <p className="text-sm text-gray-500">{member.email}</p>
-                              {member.contact && <p className="text-xs text-gray-400">{member.contact}</p>}
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-gradient-to-br from-amber-500/20 to-amber-600/10 rounded-full flex items-center justify-center border border-amber-500/20">
+                                <span className="text-amber-500 font-semibold text-sm">{member.name?.charAt(0).toUpperCase()}</span>
+                              </div>
+                              <div>
+                                <p className="font-medium text-white">{member.name}</p>
+                                <p className="text-sm text-gray-500">{member.email}</p>
+                              </div>
                             </div>
                           </td>
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-2">
-                              <Shield className="w-4 h-4 text-indigo-600" />
-                              <span className="text-sm text-gray-700">{club?.name || 'Unknown'}</span>
+                              <Crown className="w-4 h-4 text-amber-500" />
+                              <span className="text-sm text-gray-300">{club?.name || 'Unknown'}</span>
                             </div>
                           </td>
                           <td className="px-6 py-4">
                             <div className="text-sm">
-                              <p className="text-gray-900">{format(new Date(member.registrationDate), 'MMM d, yyyy')}</p>
+                              <p className="text-gray-300">{format(new Date(member.registrationDate), 'MMM d, yyyy')}</p>
                               <p className="text-xs text-gray-500 capitalize">{member.membershipType}</p>
                             </div>
                           </td>
                           <td className="px-6 py-4">
                             <div className="text-sm">
-                              <p className="font-medium text-gray-900">${member.prorataFee?.toFixed(2) || '0.00'}</p>
+                              <p className="font-semibold text-amber-500">${member.prorataFee?.toFixed(2) || '0.00'}</p>
                               <p className="text-xs text-gray-500">Prorata</p>
                             </div>
                           </td>
@@ -642,13 +668,13 @@ const Membership = () => {
                                   setMemberForm(member);
                                   setShowMemberModal(true);
                                 }}
-                                className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg"
+                                className="p-2 text-gray-500 hover:text-amber-500 hover:bg-amber-500/10 rounded-lg transition-colors"
                               >
                                 <Edit2 className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => handleDeleteMember(member.id)}
-                                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                                className="p-2 text-gray-500 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -667,109 +693,114 @@ const Membership = () => {
 
       {/* Club Modal */}
       {showClubModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[#12121a] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto border border-white/10">
+            <div className="p-6 border-b border-white/5">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  {editingClub ? 'Edit Club' : 'Create New Club'}
-                </h2>
-                <button onClick={resetClubForm} className="p-2 hover:bg-gray-100 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-amber-500/20 to-amber-600/10 rounded-xl flex items-center justify-center border border-amber-500/20">
+                    <Crown className="w-5 h-5 text-amber-500" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-white">
+                    {editingClub ? 'Edit Club' : 'Create New Club'}
+                  </h2>
+                </div>
+                <button onClick={resetClubForm} className="p-2 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white transition-colors">
                   <X className="w-5 h-5" />
                 </button>
               </div>
             </div>
             
-            <div className="p-6 space-y-4">
+            <div className="p-6 space-y-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Club Name *</label>
+                <label className="block text-sm font-medium text-gray-400 mb-2">Club Name *</label>
                 <input
                   type="text"
                   value={clubForm.name}
                   onChange={(e) => setClubForm({ ...clubForm, name: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
                   placeholder="e.g., Singapore Tech Club"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <label className="block text-sm font-medium text-gray-400 mb-2">Description</label>
                 <textarea
                   value={clubForm.description}
                   onChange={(e) => setClubForm({ ...clubForm, description: e.target.value })}
                   rows={3}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all resize-none"
                   placeholder="Brief description of the club..."
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Logo URL</label>
+                <label className="block text-sm font-medium text-gray-400 mb-2">Logo URL</label>
                 <input
                   type="url"
                   value={clubForm.logo}
                   onChange={(e) => setClubForm({ ...clubForm, logo: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
                   placeholder="https://example.com/logo.png"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Contact Person</label>
+                <label className="block text-sm font-medium text-gray-400 mb-2">Contact Person</label>
                 <input
                   type="text"
                   value={clubForm.contactPerson}
                   onChange={(e) => setClubForm({ ...clubForm, contactPerson: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
                   placeholder="John Doe"
                 />
               </div>
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Contact Number</label>
                   <input
                     type="tel"
                     value={clubForm.contact}
                     onChange={(e) => setClubForm({ ...clubForm, contact: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                    className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
                     placeholder="+65 9123 4567"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Email *</label>
                   <input
                     type="email"
                     value={clubForm.email}
                     onChange={(e) => setClubForm({ ...clubForm, email: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                    className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
                     placeholder="club@example.com"
                   />
                 </div>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Annual Membership Fee ($)</label>
+                <label className="block text-sm font-medium text-gray-400 mb-2">Annual Membership Fee ($)</label>
                 <input
                   type="number"
                   value={clubForm.annualFee}
                   onChange={(e) => setClubForm({ ...clubForm, annualFee: parseFloat(e.target.value) || 0 })}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
                   placeholder="120"
                 />
               </div>
             </div>
             
-            <div className="p-6 border-t border-gray-200 flex gap-3">
+            <div className="p-6 border-t border-white/5 flex gap-3">
               <button
                 onClick={resetClubForm}
-                className="flex-1 py-2.5 border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50"
+                className="flex-1 py-3 border border-white/10 text-gray-400 rounded-xl hover:bg-white/5 hover:text-white transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveClub}
-                className="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700"
+                className="flex-1 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-semibold rounded-xl hover:from-amber-400 hover:to-amber-500 transition-all"
               >
                 {editingClub ? 'Save Changes' : 'Create Club'}
               </button>
@@ -780,26 +811,31 @@ const Membership = () => {
 
       {/* Member Modal */}
       {showMemberModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[#12121a] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto border border-white/10">
+            <div className="p-6 border-b border-white/5">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  {editingMember ? 'Edit Member' : 'Register Member'}
-                </h2>
-                <button onClick={resetMemberForm} className="p-2 hover:bg-gray-100 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-amber-500/20 to-amber-600/10 rounded-xl flex items-center justify-center border border-amber-500/20">
+                    <UserPlus className="w-5 h-5 text-amber-500" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-white">
+                    {editingMember ? 'Edit Member' : 'Register Member'}
+                  </h2>
+                </div>
+                <button onClick={resetMemberForm} className="p-2 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white transition-colors">
                   <X className="w-5 h-5" />
                 </button>
               </div>
             </div>
             
-            <div className="p-6 space-y-4">
+            <div className="p-6 space-y-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Club *</label>
+                <label className="block text-sm font-medium text-gray-400 mb-2">Club *</label>
                 <select
                   value={memberForm.clubId || ''}
                   onChange={(e) => setMemberForm({ ...memberForm, clubId: parseInt(e.target.value) })}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
                 >
                   <option value="">Select a club</option>
                   {clubs.map(club => (
@@ -809,66 +845,66 @@ const Membership = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                <label className="block text-sm font-medium text-gray-400 mb-2">Name *</label>
                 <input
                   type="text"
                   value={memberForm.name}
                   onChange={(e) => setMemberForm({ ...memberForm, name: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
                   placeholder="Full name"
                 />
               </div>
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Contact</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Contact</label>
                   <input
                     type="tel"
                     value={memberForm.contact}
                     onChange={(e) => setMemberForm({ ...memberForm, contact: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                    className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
                     placeholder="+65 9123 4567"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Email *</label>
                   <input
                     type="email"
                     value={memberForm.email}
                     onChange={(e) => setMemberForm({ ...memberForm, email: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                    className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
                     placeholder="member@example.com"
                   />
                 </div>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Comments</label>
+                <label className="block text-sm font-medium text-gray-400 mb-2">Comments</label>
                 <textarea
                   value={memberForm.comments}
                   onChange={(e) => setMemberForm({ ...memberForm, comments: e.target.value })}
                   rows={2}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all resize-none"
                   placeholder="Any notes or remarks..."
                 />
               </div>
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Registration Date</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Registration Date</label>
                   <input
                     type="date"
                     value={memberForm.registrationDate}
                     onChange={(e) => setMemberForm({ ...memberForm, registrationDate: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                    className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Membership Type</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Membership Type</label>
                   <select
                     value={memberForm.membershipType}
                     onChange={(e) => setMemberForm({ ...memberForm, membershipType: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                    className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
                   >
                     <option value="annual">Annual</option>
                     <option value="lifetime">Lifetime</option>
@@ -879,13 +915,13 @@ const Membership = () => {
               
               {/* Prorata Fee Display */}
               {memberForm.clubId && (
-                <div className="bg-indigo-50 p-4 rounded-xl">
-                  <div className="flex items-center gap-2 text-indigo-700 mb-2">
+                <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl">
+                  <div className="flex items-center gap-2 text-amber-500 mb-2">
                     <CreditCard className="w-4 h-4" />
                     <span className="font-medium">Prorata Calculation</span>
                   </div>
-                  <p className="text-sm text-indigo-600">
-                    Fee for remaining months: <strong>${calculateProrataFee(
+                  <p className="text-sm text-amber-400">
+                    Fee for remaining months: <strong className="text-amber-300">${calculateProrataFee(
                       clubs.find(c => c.id === memberForm.clubId)?.annualFee || 120,
                       memberForm.registrationDate
                     ).toFixed(2)}</strong>
@@ -895,11 +931,11 @@ const Membership = () => {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Payment Status</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Payment Status</label>
                   <select
                     value={memberForm.paymentStatus}
                     onChange={(e) => setMemberForm({ ...memberForm, paymentStatus: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                    className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
                   >
                     <option value="not_paid">Not Paid</option>
                     <option value="partial">Partial</option>
@@ -907,28 +943,28 @@ const Membership = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Amount Paid ($)</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Amount Paid ($)</label>
                   <input
                     type="number"
                     value={memberForm.amountPaid}
                     onChange={(e) => setMemberForm({ ...memberForm, amountPaid: parseFloat(e.target.value) || 0 })}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                    className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
                     placeholder="0.00"
                   />
                 </div>
               </div>
             </div>
             
-            <div className="p-6 border-t border-gray-200 flex gap-3">
+            <div className="p-6 border-t border-white/5 flex gap-3">
               <button
                 onClick={resetMemberForm}
-                className="flex-1 py-2.5 border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50"
+                className="flex-1 py-3 border border-white/10 text-gray-400 rounded-xl hover:bg-white/5 hover:text-white transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveMember}
-                className="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700"
+                className="flex-1 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-semibold rounded-xl hover:from-amber-400 hover:to-amber-500 transition-all"
               >
                 {editingMember ? 'Save Changes' : 'Register Member'}
               </button>
@@ -939,39 +975,44 @@ const Membership = () => {
 
       {/* Bulk Upload Modal */}
       {showBulkUploadModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md">
-            <div className="p-6 border-b border-gray-200">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[#12121a] rounded-2xl w-full max-w-md border border-white/10">
+            <div className="p-6 border-b border-white/5">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-gray-900">Bulk Upload Members</h2>
-                <button onClick={() => setShowBulkUploadModal(false)} className="p-2 hover:bg-gray-100 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-amber-500/20 to-amber-600/10 rounded-xl flex items-center justify-center border border-amber-500/20">
+                    <Upload className="w-5 h-5 text-amber-500" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-white">Bulk Upload Members</h2>
+                </div>
+                <button onClick={() => setShowBulkUploadModal(false)} className="p-2 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white transition-colors">
                   <X className="w-5 h-5" />
                 </button>
               </div>
             </div>
             
-            <div className="p-6 space-y-4">
-              <div className="bg-amber-50 p-4 rounded-xl">
-                <div className="flex items-start gap-2">
-                  <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5" />
-                  <div className="text-sm text-amber-700">
-                    <p className="font-medium mb-1">CSV Format Required</p>
-                    <p>Columns: name, email, contact, comments, date</p>
+            <div className="p-6 space-y-5">
+              <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5" />
+                  <div className="text-sm">
+                    <p className="font-medium text-amber-400 mb-1">CSV Format Required</p>
+                    <p className="text-amber-500/70">Columns: name, email, contact, comments, date</p>
                   </div>
                 </div>
               </div>
               
               <button
                 onClick={downloadTemplate}
-                className="w-full flex items-center justify-center gap-2 py-2.5 border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50"
+                className="w-full flex items-center justify-center gap-2 py-3 border border-white/10 text-gray-300 rounded-xl hover:bg-white/5 hover:text-white transition-all"
               >
                 <Download className="w-4 h-4" />
                 Download Template
               </button>
               
-              <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center">
-                <FileSpreadsheet className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 mb-4">Upload CSV file</p>
+              <div className="border-2 border-dashed border-white/10 rounded-xl p-8 text-center hover:border-amber-500/30 transition-colors">
+                <FileSpreadsheet className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+                <p className="text-gray-400 mb-4">Upload CSV file</p>
                 <label className="cursor-pointer">
                   <input
                     type="file"
@@ -979,7 +1020,7 @@ const Membership = () => {
                     onChange={handleBulkUpload}
                     className="hidden"
                   />
-                  <span className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                  <span className="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-semibold rounded-xl hover:from-amber-400 hover:to-amber-500 transition-all inline-block">
                     Choose File
                   </span>
                 </label>
