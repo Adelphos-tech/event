@@ -339,8 +339,8 @@ const MainPage = () => {
                 </div>
             </header>
 
-            {/* Hero Section */}
-            <section className="relative py-12 px-4 sm:px-6 lg:px-8">
+            {/* Hero Section - Hidden on mobile, shown on desktop */}
+            <section className="relative py-12 px-4 sm:px-6 lg:px-8 hidden sm:block">
                 <div className="max-w-7xl mx-auto text-center">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/50 rounded-full mb-6">
                         <Sparkles className="w-4 h-4 text-amber-600" />
@@ -439,8 +439,80 @@ const MainPage = () => {
                 </div>
             </section>
 
+            {/* Mobile-Only Compact Search & Filters - Shows at top on mobile */}
+            <section className="sm:hidden sticky top-16 z-40 bg-gradient-to-b from-[#faf8f5] via-[#faf8f5] to-transparent pb-4 pt-4 px-4">
+                {/* Search Bar */}
+                <div className="relative mb-3">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search listings..."
+                        className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all text-gray-800 text-sm"
+                    />
+                </div>
+                
+                {/* Category Pills - Horizontal scroll */}
+                <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
+                    {categories.map((cat) => {
+                        const Icon = cat.icon;
+                        const count = cat.id === 'all' ? filteredListings.length : listingsByCategory[cat.id]?.length || 0;
+                        return (
+                            <button
+                                key={cat.id}
+                                onClick={() => setSelectedCategory(cat.id)}
+                                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap flex-shrink-0 ${
+                                    selectedCategory === cat.id
+                                        ? `bg-gradient-to-r ${cat.color} text-white shadow-md`
+                                        : 'bg-white text-gray-600 border border-gray-200'
+                                }`}
+                            >
+                                <Icon className="w-3.5 h-3.5" />
+                                {cat.label.split(' ')[0]}
+                                <span className={`px-1.5 py-0.5 rounded text-[10px] ${
+                                    selectedCategory === cat.id ? 'bg-white/20' : 'bg-gray-100'
+                                }`}>
+                                    {count}
+                                </span>
+                            </button>
+                        );
+                    })}
+                </div>
+                
+                {/* Sort & Favorites Row */}
+                <div className="flex gap-2 mt-3">
+                    <select
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        className="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-lg text-xs text-gray-700 font-medium"
+                    >
+                        {sortOptions.map(opt => (
+                            <option key={opt.id} value={opt.id}>{opt.label}</option>
+                        ))}
+                    </select>
+                    <button
+                        onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                        className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                            showFavoritesOnly
+                                ? 'bg-red-500 text-white'
+                                : 'bg-white border border-gray-200 text-gray-600'
+                        }`}
+                    >
+                        <HeartIcon className={`w-3.5 h-3.5 ${showFavoritesOnly ? 'fill-current' : ''}`} />
+                        {favoritesCount > 0 && (
+                            <span className={`px-1.5 py-0.5 rounded text-[10px] ${
+                                showFavoritesOnly ? 'bg-white/20' : 'bg-red-100 text-red-600'
+                            }`}>
+                                {favoritesCount}
+                            </span>
+                        )}
+                    </button>
+                </div>
+            </section>
+
             {/* Listings Grid */}
-            <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+            <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 pt-2 sm:pt-0">
                 {selectedCategory === 'all' ? (
                     // Show listings grouped by category
                     <div className="space-y-12">
