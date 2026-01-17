@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DollarSign, MapPin, Briefcase, Home, Film, Package, Phone, Mail, Plus, Calendar, ChevronRight, Sparkles, Search, Filter, Heart as HeartIcon, ArrowUpDown, SlidersHorizontal } from 'lucide-react';
+import { DollarSign, MapPin, Briefcase, Home, Film, Package, Phone, Mail, Plus, Calendar, ChevronRight, Sparkles, Search, Filter, Heart as HeartIcon, ArrowUpDown, SlidersHorizontal, Shield } from 'lucide-react';
 import { getAllListings } from '../db/databaseAdapter';
 import { ListingGridSkeleton, CategoryTabsSkeleton } from '../components/Skeleton';
 import { useFavorites } from '../hooks/useFavorites';
@@ -315,6 +315,14 @@ const MainPage = () => {
                             >
                                 <Calendar className="w-4 h-4" />
                                 Events
+                            </button>
+                            
+                            <button
+                                onClick={() => navigate('/membership')}
+                                className="hidden sm:flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
+                            >
+                                <Shield className="w-4 h-4" />
+                                Membership
                             </button>
                             
                             {/* Register Button - Prominent */}

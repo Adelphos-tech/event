@@ -17,6 +17,7 @@ import CheckIn from './pages/CheckIn';
 import ListingsAdmin from './pages/ListingsAdmin';
 import ListingsLogin from './pages/ListingsLogin';
 import ListingDetail from './pages/ListingDetail';
+import Membership from './pages/Membership';
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           <Route path="/listings-admin" element={<ListingsAdmin />} />
           <Route path="/listings-login" element={<ListingsLogin />} />
           <Route path="/events" element={<div className="min-h-screen bg-black text-white"><EventList /></div>} />
+          <Route path="/membership" element={<Membership />} />
           <Route path="/new" element={<EventForm />} />
           <Route path="/:id/edit" element={<EventForm />} />
           <Route path="/:id" element={<div className="min-h-screen bg-black text-white"><EventDetails /></div>} />
