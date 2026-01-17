@@ -8,6 +8,17 @@ import {
 } from 'lucide-react';
 import { useToast } from '../components/Toast';
 import { format } from 'date-fns';
+import {
+  getAllClubs,
+  createClub,
+  updateClub,
+  deleteClub as deleteClubFromDB,
+  getAllClubMembers,
+  createClubMember,
+  updateClubMember,
+  deleteClubMember as deleteMemberFromDB,
+  bulkCreateClubMembers
+} from '../db/supabaseDatabase';
 
 // Membership year runs from Jan 1 to Dec 31
 const MEMBERSHIP_YEAR_START = 1; // January
@@ -63,11 +74,13 @@ const Membership = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      // Load from localStorage for now (will be replaced with Supabase)
-      const savedClubs = JSON.parse(localStorage.getItem('linkmeu_clubs') || '[]');
-      const savedMembers = JSON.parse(localStorage.getItem('linkmeu_members') || '[]');
-      setClubs(savedClubs);
-      setMembers(savedMembers);
+      // Load from Supabase
+      const [clubsData, membersData] = await Promise.all([
+        getAllClubs(),
+        getAllClubMembers()
+      ]);
+      setClubs(clubsData);
+      setMembers(membersData);
     } catch (error) {
       console.error('Error loading data:', error);
       toast.error('Failed to load data');
@@ -85,44 +98,43 @@ const Membership = () => {
   };
 
   // Club CRUD operations
-  const handleSaveClub = () => {
+  const handleSaveClub = async () => {
     if (!clubForm.name || !clubForm.email) {
       toast.error('Please fill in club name and email');
       return;
     }
 
-    const newClub = {
-      ...clubForm,
-      id: editingClub?.id || Date.now(),
-      createdAt: editingClub?.createdAt || new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    let updatedClubs;
-    if (editingClub) {
-      updatedClubs = clubs.map(c => c.id === editingClub.id ? newClub : c);
-      toast.success('Club updated successfully');
-    } else {
-      updatedClubs = [...clubs, newClub];
-      toast.success('Club created successfully');
+    try {
+      if (editingClub) {
+        // Update existing club
+        const updatedClub = await updateClub(editingClub.id, clubForm);
+        setClubs(clubs.map(c => c.id === editingClub.id ? updatedClub : c));
+        toast.success('Club updated successfully');
+      } else {
+        // Create new club
+        const newClub = await createClub(clubForm);
+        setClubs([newClub, ...clubs]);
+        toast.success('Club created successfully');
+      }
+      resetClubForm();
+    } catch (error) {
+      console.error('Error saving club:', error);
+      toast.error('Failed to save club: ' + error.message);
     }
-
-    setClubs(updatedClubs);
-    localStorage.setItem('linkmeu_clubs', JSON.stringify(updatedClubs));
-    resetClubForm();
   };
 
-  const handleDeleteClub = (clubId) => {
+  const handleDeleteClub = async (clubId) => {
     if (!window.confirm('Are you sure you want to delete this club? All members will also be removed.')) return;
     
-    const updatedClubs = clubs.filter(c => c.id !== clubId);
-    const updatedMembers = members.filter(m => m.clubId !== clubId);
-    
-    setClubs(updatedClubs);
-    setMembers(updatedMembers);
-    localStorage.setItem('linkmeu_clubs', JSON.stringify(updatedClubs));
-    localStorage.setItem('linkmeu_members', JSON.stringify(updatedMembers));
-    toast.success('Club deleted successfully');
+    try {
+      await deleteClubFromDB(clubId);
+      setClubs(clubs.filter(c => c.id !== clubId));
+      setMembers(members.filter(m => m.clubId !== clubId));
+      toast.success('Club deleted successfully');
+    } catch (error) {
+      console.error('Error deleting club:', error);
+      toast.error('Failed to delete club: ' + error.message);
+    }
   };
 
   const resetClubForm = () => {
@@ -140,7 +152,7 @@ const Membership = () => {
   };
 
   // Member CRUD operations
-  const handleSaveMember = () => {
+  const handleSaveMember = async () => {
     if (!memberForm.name || !memberForm.email || !memberForm.clubId) {
       toast.error('Please fill in name, email, and select a club');
       return;
@@ -149,35 +161,39 @@ const Membership = () => {
     const club = clubs.find(c => c.id === memberForm.clubId);
     const prorataFee = calculateProrataFee(club?.annualFee || 120, memberForm.registrationDate);
 
-    const newMember = {
+    const memberData = {
       ...memberForm,
-      id: editingMember?.id || Date.now(),
       prorataFee,
-      createdAt: editingMember?.createdAt || new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
     };
 
-    let updatedMembers;
-    if (editingMember) {
-      updatedMembers = members.map(m => m.id === editingMember.id ? newMember : m);
-      toast.success('Member updated successfully');
-    } else {
-      updatedMembers = [...members, newMember];
-      toast.success('Member registered successfully');
+    try {
+      if (editingMember) {
+        const updatedMember = await updateClubMember(editingMember.id, memberData);
+        setMembers(members.map(m => m.id === editingMember.id ? updatedMember : m));
+        toast.success('Member updated successfully');
+      } else {
+        const newMember = await createClubMember(memberData);
+        setMembers([newMember, ...members]);
+        toast.success('Member registered successfully');
+      }
+      resetMemberForm();
+    } catch (error) {
+      console.error('Error saving member:', error);
+      toast.error('Failed to save member: ' + error.message);
     }
-
-    setMembers(updatedMembers);
-    localStorage.setItem('linkmeu_members', JSON.stringify(updatedMembers));
-    resetMemberForm();
   };
 
-  const handleDeleteMember = (memberId) => {
+  const handleDeleteMember = async (memberId) => {
     if (!window.confirm('Are you sure you want to remove this member?')) return;
     
-    const updatedMembers = members.filter(m => m.id !== memberId);
-    setMembers(updatedMembers);
-    localStorage.setItem('linkmeu_members', JSON.stringify(updatedMembers));
-    toast.success('Member removed successfully');
+    try {
+      await deleteMemberFromDB(memberId);
+      setMembers(members.filter(m => m.id !== memberId));
+      toast.success('Member removed successfully');
+    } catch (error) {
+      console.error('Error deleting member:', error);
+      toast.error('Failed to delete member: ' + error.message);
+    }
   };
 
   const resetMemberForm = () => {
@@ -197,12 +213,12 @@ const Membership = () => {
   };
 
   // Bulk upload handler
-  const handleBulkUpload = (e) => {
+  const handleBulkUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = async (event) => {
       try {
         const text = event.target.result;
         const lines = text.split('\n').filter(line => line.trim());
@@ -212,7 +228,6 @@ const Membership = () => {
         for (let i = 1; i < lines.length; i++) {
           const values = lines[i].split(',').map(v => v.trim());
           const member = {
-            id: Date.now() + i,
             name: values[headers.indexOf('name')] || '',
             contact: values[headers.indexOf('contact')] || values[headers.indexOf('phone')] || '',
             email: values[headers.indexOf('email')] || '',
@@ -222,7 +237,6 @@ const Membership = () => {
             paymentStatus: 'not_paid',
             amountPaid: 0,
             clubId: selectedClub?.id,
-            createdAt: new Date().toISOString(),
           };
           
           if (member.name && member.email) {
@@ -233,16 +247,15 @@ const Membership = () => {
         }
 
         if (newMembers.length > 0) {
-          const updatedMembers = [...members, ...newMembers];
-          setMembers(updatedMembers);
-          localStorage.setItem('linkmeu_members', JSON.stringify(updatedMembers));
-          toast.success(`${newMembers.length} members imported successfully`);
+          const createdMembers = await bulkCreateClubMembers(newMembers);
+          setMembers([...createdMembers, ...members]);
+          toast.success(`${createdMembers.length} members imported successfully`);
         } else {
           toast.error('No valid members found in file');
         }
       } catch (error) {
-        console.error('Error parsing CSV:', error);
-        toast.error('Failed to parse CSV file');
+        console.error('Error parsing/uploading CSV:', error);
+        toast.error('Failed to import members: ' + error.message);
       }
     };
     reader.readAsText(file);
@@ -349,7 +362,7 @@ const Membership = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-1">
             <button
-              onClick={() => { setActiveTab('clubs'); setSelectedClub(null); }}
+              onClick={() => { setActiveTab('clubs'); setSelectedClub(null); loadData(); }}
               className={`py-4 px-5 font-medium text-sm transition-all relative ${
                 activeTab === 'clubs'
                   ? 'text-amber-500'
@@ -368,7 +381,7 @@ const Membership = () => {
               )}
             </button>
             <button
-              onClick={() => setActiveTab('members')}
+              onClick={() => { setActiveTab('members'); loadData(); }}
               className={`py-4 px-5 font-medium text-sm transition-all relative ${
                 activeTab === 'members'
                   ? 'text-amber-500'

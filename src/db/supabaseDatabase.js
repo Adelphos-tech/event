@@ -530,6 +530,289 @@ const mapListingToFrontend = (listing) => {
 };
 
 // =====================================================
+// CLUB OPERATIONS
+// =====================================================
+
+export const createClub = async (clubData) => {
+  console.log('📝 Creating club in Supabase:', clubData.name);
+  
+  const { data, error } = await supabase
+    .from('clubs')
+    .insert({
+      name: clubData.name,
+      description: clubData.description || '',
+      logo: clubData.logo || null,
+      contact_person: clubData.contactPerson || '',
+      contact: clubData.contact || '',
+      email: clubData.email,
+      annual_fee: clubData.annualFee || 120
+    })
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('❌ Error creating club:', error);
+    throw new Error(error.message);
+  }
+  
+  console.log('✅ Club created with ID:', data.id);
+  return mapClubToFrontend(data);
+};
+
+export const updateClub = async (clubId, clubData) => {
+  console.log('📝 Updating club:', clubId);
+  
+  const { data, error } = await supabase
+    .from('clubs')
+    .update({
+      name: clubData.name,
+      description: clubData.description || '',
+      logo: clubData.logo || null,
+      contact_person: clubData.contactPerson || '',
+      contact: clubData.contact || '',
+      email: clubData.email,
+      annual_fee: clubData.annualFee || 120,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', clubId)
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('❌ Error updating club:', error);
+    throw new Error(error.message);
+  }
+  
+  return mapClubToFrontend(data);
+};
+
+export const deleteClub = async (clubId) => {
+  console.log('🗑️ Deleting club:', clubId);
+  
+  // First delete all members of this club
+  await supabase
+    .from('club_members')
+    .delete()
+    .eq('club_id', clubId);
+  
+  const { error } = await supabase
+    .from('clubs')
+    .delete()
+    .eq('id', clubId);
+  
+  if (error) {
+    console.error('❌ Error deleting club:', error);
+    throw new Error(error.message);
+  }
+  
+  console.log('✅ Club deleted');
+};
+
+export const getAllClubs = async () => {
+  console.log('📊 Fetching all clubs from Supabase...');
+  
+  const { data, error } = await supabase
+    .from('clubs')
+    .select('*')
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('❌ Error fetching clubs:', error);
+    return [];
+  }
+  
+  console.log(`✅ Found ${data?.length || 0} clubs`);
+  return (data || []).map(mapClubToFrontend);
+};
+
+export const getClub = async (clubId) => {
+  const { data, error } = await supabase
+    .from('clubs')
+    .select('*')
+    .eq('id', clubId)
+    .single();
+  
+  if (error || !data) return null;
+  return mapClubToFrontend(data);
+};
+
+const mapClubToFrontend = (club) => {
+  if (!club) return null;
+  return {
+    id: club.id,
+    name: club.name,
+    description: club.description,
+    logo: club.logo,
+    contactPerson: club.contact_person,
+    contact: club.contact,
+    email: club.email,
+    annualFee: club.annual_fee,
+    createdAt: club.created_at,
+    updatedAt: club.updated_at
+  };
+};
+
+// =====================================================
+// CLUB MEMBER OPERATIONS
+// =====================================================
+
+export const createClubMember = async (memberData) => {
+  console.log('📝 Creating club member in Supabase:', memberData.name);
+  
+  const { data, error } = await supabase
+    .from('club_members')
+    .insert({
+      club_id: memberData.clubId,
+      name: memberData.name,
+      contact: memberData.contact || '',
+      email: memberData.email,
+      comments: memberData.comments || '',
+      registration_date: memberData.registrationDate,
+      membership_type: memberData.membershipType || 'annual',
+      payment_status: memberData.paymentStatus || 'not_paid',
+      amount_paid: memberData.amountPaid || 0,
+      prorata_fee: memberData.prorataFee || 0
+    })
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('❌ Error creating club member:', error);
+    throw new Error(error.message);
+  }
+  
+  console.log('✅ Club member created with ID:', data.id);
+  return mapMemberToFrontend(data);
+};
+
+export const updateClubMember = async (memberId, memberData) => {
+  console.log('📝 Updating club member:', memberId);
+  
+  const { data, error } = await supabase
+    .from('club_members')
+    .update({
+      club_id: memberData.clubId,
+      name: memberData.name,
+      contact: memberData.contact || '',
+      email: memberData.email,
+      comments: memberData.comments || '',
+      registration_date: memberData.registrationDate,
+      membership_type: memberData.membershipType || 'annual',
+      payment_status: memberData.paymentStatus || 'not_paid',
+      amount_paid: memberData.amountPaid || 0,
+      prorata_fee: memberData.prorataFee || 0,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', memberId)
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('❌ Error updating club member:', error);
+    throw new Error(error.message);
+  }
+  
+  return mapMemberToFrontend(data);
+};
+
+export const deleteClubMember = async (memberId) => {
+  console.log('🗑️ Deleting club member:', memberId);
+  
+  const { error } = await supabase
+    .from('club_members')
+    .delete()
+    .eq('id', memberId);
+  
+  if (error) {
+    console.error('❌ Error deleting club member:', error);
+    throw new Error(error.message);
+  }
+  
+  console.log('✅ Club member deleted');
+};
+
+export const getAllClubMembers = async () => {
+  console.log('📊 Fetching all club members from Supabase...');
+  
+  const { data, error } = await supabase
+    .from('club_members')
+    .select('*')
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('❌ Error fetching club members:', error);
+    return [];
+  }
+  
+  console.log(`✅ Found ${data?.length || 0} club members`);
+  return (data || []).map(mapMemberToFrontend);
+};
+
+export const getClubMembers = async (clubId) => {
+  const { data, error } = await supabase
+    .from('club_members')
+    .select('*')
+    .eq('club_id', clubId)
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('❌ Error fetching club members:', error);
+    return [];
+  }
+  
+  return (data || []).map(mapMemberToFrontend);
+};
+
+export const bulkCreateClubMembers = async (members) => {
+  console.log('📝 Bulk creating club members:', members.length);
+  
+  const membersToInsert = members.map(m => ({
+    club_id: m.clubId,
+    name: m.name,
+    contact: m.contact || '',
+    email: m.email,
+    comments: m.comments || '',
+    registration_date: m.registrationDate,
+    membership_type: m.membershipType || 'annual',
+    payment_status: m.paymentStatus || 'not_paid',
+    amount_paid: m.amountPaid || 0,
+    prorata_fee: m.prorataFee || 0
+  }));
+  
+  const { data, error } = await supabase
+    .from('club_members')
+    .insert(membersToInsert)
+    .select();
+  
+  if (error) {
+    console.error('❌ Error bulk creating club members:', error);
+    throw new Error(error.message);
+  }
+  
+  console.log(`✅ Created ${data?.length || 0} club members`);
+  return (data || []).map(mapMemberToFrontend);
+};
+
+const mapMemberToFrontend = (member) => {
+  if (!member) return null;
+  return {
+    id: member.id,
+    clubId: member.club_id,
+    name: member.name,
+    contact: member.contact,
+    email: member.email,
+    comments: member.comments,
+    registrationDate: member.registration_date,
+    membershipType: member.membership_type,
+    paymentStatus: member.payment_status,
+    amountPaid: member.amount_paid,
+    prorataFee: member.prorata_fee,
+    createdAt: member.created_at,
+    updatedAt: member.updated_at
+  };
+};
+
+// =====================================================
 // DATABASE STATUS
 // =====================================================
 
