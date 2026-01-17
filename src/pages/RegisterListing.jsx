@@ -384,29 +384,45 @@ const RegisterListing = () => {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">Budget / Price Range</label>
-                                <div className="flex gap-2">
-                                    <div className="relative flex-1">
+                                {/* Currency selector on top for mobile */}
+                                <div className="flex sm:hidden mb-2">
+                                    <select 
+                                        value={formData.currency}
+                                        onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                                        className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-gray-600 shadow-sm cursor-pointer font-medium text-sm"
+                                    >
+                                        <option value="SGD">S$ - Singapore Dollar</option>
+                                        <option value="USD">$ - US Dollar</option>
+                                        <option value="MYR">RM - Malaysian Ringgit</option>
+                                    </select>
+                                </div>
+                                {/* Price inputs */}
+                                <div className="flex gap-2 items-center">
+                                    <div className="relative flex-1 min-w-0">
                                         <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                                         <input
                                             type="text"
                                             value={formData.budgetMin}
                                             onChange={(e) => setFormData({ ...formData, budgetMin: e.target.value })}
-                                            className="w-full pl-8 pr-3 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
+                                            className="w-full pl-8 pr-2 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm text-sm"
                                             placeholder="Min"
                                         />
                                     </div>
-                                    <span className="flex items-center text-gray-400">-</span>
-                                    <input
-                                        type="text"
-                                        value={formData.budgetMax}
-                                        onChange={(e) => setFormData({ ...formData, budgetMax: e.target.value })}
-                                        className="flex-1 px-3 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
-                                        placeholder="Max"
-                                    />
+                                    <span className="flex items-center text-gray-400 flex-shrink-0">-</span>
+                                    <div className="relative flex-1 min-w-0">
+                                        <input
+                                            type="text"
+                                            value={formData.budgetMax}
+                                            onChange={(e) => setFormData({ ...formData, budgetMax: e.target.value })}
+                                            className="w-full px-3 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm text-sm"
+                                            placeholder="Max"
+                                        />
+                                    </div>
+                                    {/* Currency selector inline for desktop */}
                                     <select 
                                         value={formData.currency}
                                         onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                                        className="px-3 py-3.5 bg-white border border-gray-200 rounded-xl text-gray-600 shadow-sm cursor-pointer font-medium"
+                                        className="hidden sm:block px-3 py-3.5 bg-white border border-gray-200 rounded-xl text-gray-600 shadow-sm cursor-pointer font-medium flex-shrink-0"
                                     >
                                         <option value="SGD">S$</option>
                                         <option value="USD">$</option>
