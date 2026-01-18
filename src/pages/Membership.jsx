@@ -997,13 +997,20 @@ const Membership = () => {
                         <input
                           type="checkbox"
                           checked={!clubForm.openingHours?.[day]?.closed}
-                          onChange={(e) => setClubForm({
-                            ...clubForm,
-                            openingHours: {
-                              ...clubForm.openingHours,
-                              [day]: { ...clubForm.openingHours?.[day], closed: !e.target.checked }
-                            }
-                          })}
+                          onChange={(e) => {
+                            const isOpen = e.target.checked;
+                            setClubForm({
+                              ...clubForm,
+                              openingHours: {
+                                ...clubForm.openingHours,
+                                [day]: {
+                                  open: isOpen ? (clubForm.openingHours?.[day]?.open || '09:00') : '',
+                                  close: isOpen ? (clubForm.openingHours?.[day]?.close || '18:00') : '',
+                                  closed: !isOpen
+                                }
+                              }
+                            });
+                          }}
                           className="w-4 h-4 rounded border-white/20 bg-[#0a0a0f] text-amber-500 focus:ring-amber-500/20"
                         />
                         <span className="text-xs text-gray-500">Open</span>
