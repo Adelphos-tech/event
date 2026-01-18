@@ -59,6 +59,7 @@ const Membership = () => {
     name: '',
     contact: '',
     email: '',
+    photo: '',
     comments: '',
     registrationDate: format(new Date(), 'yyyy-MM-dd'),
     membershipType: 'annual',
@@ -202,6 +203,7 @@ const Membership = () => {
       name: '',
       contact: '',
       email: '',
+      photo: '',
       comments: '',
       registrationDate: format(new Date(), 'yyyy-MM-dd'),
       membershipType: 'annual',
@@ -905,15 +907,69 @@ const Membership = () => {
                 </select>
               </div>
               
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">Name *</label>
-                <input
-                  type="text"
-                  value={memberForm.name}
-                  onChange={(e) => setMemberForm({ ...memberForm, name: e.target.value })}
-                  className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
-                  placeholder="Full name"
-                />
+              <div className="flex gap-4">
+                {/* Photo Upload */}
+                <div className="flex-shrink-0">
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Photo</label>
+                  <div className="relative">
+                    <div className="w-16 h-16 rounded-full bg-[#0a0a0f] border border-white/10 flex items-center justify-center overflow-hidden">
+                      {memberForm.photo ? (
+                        <img 
+                          src={memberForm.photo} 
+                          alt="Member" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <Users className="w-6 h-6 text-gray-600" />
+                      )}
+                    </div>
+                    <label className="absolute -bottom-1 -right-1 w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center cursor-pointer hover:bg-amber-400 transition-colors">
+                      <Upload className="w-3 h-3 text-black" />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            try {
+                              if (file.size > 2 * 1024 * 1024) {
+                                toast.error('Image must be less than 2MB');
+                                return;
+                              }
+                              const base64 = await convertImageToBase64(file);
+                              const resized = await resizeImage(base64, 300, 300);
+                              setMemberForm({ ...memberForm, photo: resized });
+                            } catch (error) {
+                              toast.error('Failed to upload photo');
+                            }
+                          }
+                        }}
+                      />
+                    </label>
+                    {memberForm.photo && (
+                      <button
+                        type="button"
+                        onClick={() => setMemberForm({ ...memberForm, photo: '' })}
+                        className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center hover:bg-red-400 transition-colors"
+                      >
+                        <X className="w-3 h-3 text-white" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Name Field */}
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Name *</label>
+                  <input
+                    type="text"
+                    value={memberForm.name}
+                    onChange={(e) => setMemberForm({ ...memberForm, name: e.target.value })}
+                    className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
+                    placeholder="Full name"
+                  />
+                </div>
               </div>
               
               <div className="grid grid-cols-2 gap-4">

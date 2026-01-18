@@ -664,6 +664,7 @@ export const createClubMember = async (memberData) => {
     .insert({
       club_id: memberData.clubId,
       name: memberData.name,
+      photo: memberData.photo || null,
       contact: memberData.contact || '',
       email: memberData.email,
       comments: memberData.comments || '',
@@ -693,6 +694,7 @@ export const updateClubMember = async (memberId, memberData) => {
     .update({
       club_id: memberData.clubId,
       name: memberData.name,
+      photo: memberData.photo || null,
       contact: memberData.contact || '',
       email: memberData.email,
       comments: memberData.comments || '',
@@ -799,6 +801,7 @@ const mapMemberToFrontend = (member) => {
     id: member.id,
     clubId: member.club_id,
     name: member.name,
+    photo: member.photo || '',
     contact: member.contact,
     email: member.email,
     comments: member.comments,

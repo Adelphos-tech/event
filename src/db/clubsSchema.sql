@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS club_members (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   club_id UUID NOT NULL REFERENCES clubs(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
+  photo TEXT,
   contact VARCHAR(100) DEFAULT '',
   email VARCHAR(255) NOT NULL,
   comments TEXT DEFAULT '',
@@ -38,6 +39,10 @@ CREATE TABLE IF NOT EXISTS club_members (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Migration: Add photo column if it doesn't exist
+-- Run this if table already exists:
+-- ALTER TABLE club_members ADD COLUMN IF NOT EXISTS photo TEXT;
 
 -- Create indexes for faster lookups
 CREATE INDEX IF NOT EXISTS idx_club_members_club_id ON club_members(club_id);
