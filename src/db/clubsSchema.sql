@@ -10,10 +10,24 @@ CREATE TABLE IF NOT EXISTS clubs (
   contact_person VARCHAR(255) DEFAULT '',
   contact VARCHAR(100) DEFAULT '',
   email VARCHAR(255) NOT NULL,
+  -- Address fields
+  address TEXT DEFAULT '',
+  postal_code VARCHAR(20) DEFAULT '',
+  -- Website & Social
+  website VARCHAR(500) DEFAULT '',
+  -- Opening Hours (JSON format)
+  opening_hours JSONB DEFAULT '{}',
+  -- Additional info
   annual_fee DECIMAL(10, 2) DEFAULT 120.00,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Migration: Add new columns if table already exists
+-- ALTER TABLE clubs ADD COLUMN IF NOT EXISTS address TEXT DEFAULT '';
+-- ALTER TABLE clubs ADD COLUMN IF NOT EXISTS postal_code VARCHAR(20) DEFAULT '';
+-- ALTER TABLE clubs ADD COLUMN IF NOT EXISTS website VARCHAR(500) DEFAULT '';
+-- ALTER TABLE clubs ADD COLUMN IF NOT EXISTS opening_hours JSONB DEFAULT '{}';
 
 -- Create index for faster lookups
 CREATE INDEX IF NOT EXISTS idx_clubs_email ON clubs(email);

@@ -4,7 +4,8 @@ import {
   Shield, Plus, Users, Search, Upload, Download, Calendar, 
   Phone, Mail, DollarSign, CheckCircle, XCircle, Clock,
   Edit2, Trash2, Eye, X, ChevronDown, FileSpreadsheet,
-  Building2, UserPlus, CreditCard, AlertCircle, Crown, Gem, Image as ImageIcon
+  Building2, UserPlus, CreditCard, AlertCircle, Crown, Gem, Image as ImageIcon,
+  MapPin, Globe, Share2, QrCode, Copy, ExternalLink
 } from 'lucide-react';
 import { useToast } from '../components/Toast';
 import { format } from 'date-fns';
@@ -52,6 +53,18 @@ const Membership = () => {
     contactPerson: '',
     contact: '',
     email: '',
+    address: '',
+    postalCode: '',
+    website: '',
+    openingHours: {
+      monday: { open: '09:00', close: '18:00', closed: false },
+      tuesday: { open: '09:00', close: '18:00', closed: false },
+      wednesday: { open: '09:00', close: '18:00', closed: false },
+      thursday: { open: '09:00', close: '18:00', closed: false },
+      friday: { open: '09:00', close: '18:00', closed: false },
+      saturday: { open: '09:00', close: '13:00', closed: false },
+      sunday: { open: '', close: '', closed: true },
+    },
     annualFee: 120,
   });
   
@@ -147,6 +160,18 @@ const Membership = () => {
       contactPerson: '',
       contact: '',
       email: '',
+      address: '',
+      postalCode: '',
+      website: '',
+      openingHours: {
+        monday: { open: '09:00', close: '18:00', closed: false },
+        tuesday: { open: '09:00', close: '18:00', closed: false },
+        wednesday: { open: '09:00', close: '18:00', closed: false },
+        thursday: { open: '09:00', close: '18:00', closed: false },
+        friday: { open: '09:00', close: '18:00', closed: false },
+        saturday: { open: '09:00', close: '13:00', closed: false },
+        sunday: { open: '', close: '', closed: true },
+      },
       annualFee: 120,
     });
     setEditingClub(null);
@@ -563,19 +588,93 @@ const Membership = () => {
                         <p className="text-sm text-gray-400 mb-5 line-clamp-2">{club.description}</p>
                       )}
                       
-                      <div className="space-y-3 text-sm">
+                      <div className="space-y-2.5 text-sm">
                         <div className="flex items-center gap-3 text-gray-400">
-                          <Users className="w-4 h-4 text-gray-500" />
+                          <Users className="w-4 h-4 text-gray-500 flex-shrink-0" />
                           <span>{club.contactPerson || 'No contact person'}</span>
                         </div>
                         <div className="flex items-center gap-3 text-gray-400">
-                          <Mail className="w-4 h-4 text-gray-500" />
-                          <span>{club.email}</span>
+                          <Mail className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                          <span className="truncate">{club.email}</span>
                         </div>
+                        {club.contact && (
+                          <div className="flex items-center gap-3 text-gray-400">
+                            <Phone className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                            <span>{club.contact}</span>
+                          </div>
+                        )}
+                        {club.address && (
+                          <div className="flex items-start gap-3 text-gray-400">
+                            <MapPin className="w-4 h-4 text-gray-500 flex-shrink-0 mt-0.5" />
+                            <span className="line-clamp-2">{club.address}{club.postalCode ? `, ${club.postalCode}` : ''}</span>
+                          </div>
+                        )}
+                        {club.website && (
+                          <div className="flex items-center gap-3 text-gray-400">
+                            <Globe className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                            <a 
+                              href={club.website.startsWith('http') ? club.website : `https://${club.website}`} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-amber-500 hover:text-amber-400 truncate flex items-center gap-1"
+                            >
+                              {club.website.replace(/^https?:\/\//, '')}
+                              <ExternalLink className="w-3 h-3" />
+                            </a>
+                          </div>
+                        )}
+                        {club.openingHours && Object.keys(club.openingHours).length > 0 && (
+                          <div className="flex items-start gap-3 text-gray-400">
+                            <Clock className="w-4 h-4 text-gray-500 flex-shrink-0 mt-0.5" />
+                            <div className="text-xs">
+                              {(() => {
+                                const today = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][new Date().getDay()];
+                                const hours = club.openingHours[today];
+                                if (hours?.closed) return <span className="text-red-400">Closed today</span>;
+                                if (hours?.open && hours?.close) return <span className="text-emerald-400">Open · {hours.open} - {hours.close}</span>;
+                                return <span className="text-gray-500">Hours not set</span>;
+                              })()}
+                            </div>
+                          </div>
+                        )}
                         <div className="flex items-center gap-3">
-                          <DollarSign className="w-4 h-4 text-amber-500" />
+                          <DollarSign className="w-4 h-4 text-amber-500 flex-shrink-0" />
                           <span className="text-amber-500 font-medium">${club.annualFee}/year</span>
                         </div>
+                      </div>
+                      
+                      {/* Quick Actions - Share & Copy */}
+                      <div className="flex gap-2 mt-4">
+                        <button
+                          onClick={() => {
+                            const shareUrl = `${window.location.origin}/membership?club=${club.id}`;
+                            navigator.clipboard.writeText(shareUrl);
+                            toast.success('Club link copied!');
+                          }}
+                          className="flex-1 flex items-center justify-center gap-2 py-2 text-xs text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors border border-white/5"
+                        >
+                          <Copy className="w-3.5 h-3.5" />
+                          Copy Link
+                        </button>
+                        <button
+                          onClick={() => {
+                            const shareData = {
+                              title: club.name,
+                              text: `Check out ${club.name} on LinkMeU`,
+                              url: `${window.location.origin}/membership?club=${club.id}`
+                            };
+                            if (navigator.share) {
+                              navigator.share(shareData);
+                            } else {
+                              navigator.clipboard.writeText(shareData.url);
+                              toast.success('Link copied!');
+                            }
+                          }}
+                          className="flex-1 flex items-center justify-center gap-2 py-2 text-xs text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors border border-white/5"
+                        >
+                          <Share2 className="w-3.5 h-3.5" />
+                          Share
+                        </button>
                       </div>
                       
                       <div className="mt-5 pt-5 border-t border-white/5">
@@ -839,6 +938,110 @@ const Membership = () => {
                     className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
                     placeholder="club@example.com"
                   />
+                </div>
+              </div>
+              
+              {/* Address Section */}
+              <div className="border-t border-white/5 pt-4 mt-2">
+                <h4 className="text-sm font-medium text-amber-500 mb-3 flex items-center gap-2">
+                  <MapPin className="w-4 h-4" />
+                  Location Details
+                </h4>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">Address</label>
+                    <input
+                      type="text"
+                      value={clubForm.address}
+                      onChange={(e) => setClubForm({ ...clubForm, address: e.target.value })}
+                      className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
+                      placeholder="48 Serangoon Rd, #02-16 Arcade, Singapore"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-400 mb-2">Postal Code</label>
+                      <input
+                        type="text"
+                        value={clubForm.postalCode}
+                        onChange={(e) => setClubForm({ ...clubForm, postalCode: e.target.value })}
+                        className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
+                        placeholder="217959"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-400 mb-2">Website</label>
+                      <input
+                        type="url"
+                        value={clubForm.website}
+                        onChange={(e) => setClubForm({ ...clubForm, website: e.target.value })}
+                        className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
+                        placeholder="https://example.org"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Opening Hours Section */}
+              <div className="border-t border-white/5 pt-4 mt-2">
+                <h4 className="text-sm font-medium text-amber-500 mb-3 flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  Opening Hours
+                </h4>
+                <div className="space-y-2">
+                  {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
+                    <div key={day} className="flex items-center gap-3">
+                      <span className="w-20 text-sm text-gray-400 capitalize">{day.slice(0, 3)}</span>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={!clubForm.openingHours?.[day]?.closed}
+                          onChange={(e) => setClubForm({
+                            ...clubForm,
+                            openingHours: {
+                              ...clubForm.openingHours,
+                              [day]: { ...clubForm.openingHours?.[day], closed: !e.target.checked }
+                            }
+                          })}
+                          className="w-4 h-4 rounded border-white/20 bg-[#0a0a0f] text-amber-500 focus:ring-amber-500/20"
+                        />
+                        <span className="text-xs text-gray-500">Open</span>
+                      </label>
+                      {!clubForm.openingHours?.[day]?.closed && (
+                        <>
+                          <input
+                            type="time"
+                            value={clubForm.openingHours?.[day]?.open || '09:00'}
+                            onChange={(e) => setClubForm({
+                              ...clubForm,
+                              openingHours: {
+                                ...clubForm.openingHours,
+                                [day]: { ...clubForm.openingHours?.[day], open: e.target.value }
+                              }
+                            })}
+                            className="px-2 py-1 bg-[#0a0a0f] border border-white/10 rounded-lg text-white text-sm focus:ring-2 focus:ring-amber-500/20"
+                          />
+                          <span className="text-gray-500">-</span>
+                          <input
+                            type="time"
+                            value={clubForm.openingHours?.[day]?.close || '18:00'}
+                            onChange={(e) => setClubForm({
+                              ...clubForm,
+                              openingHours: {
+                                ...clubForm.openingHours,
+                                [day]: { ...clubForm.openingHours?.[day], close: e.target.value }
+                              }
+                            })}
+                            className="px-2 py-1 bg-[#0a0a0f] border border-white/10 rounded-lg text-white text-sm focus:ring-2 focus:ring-amber-500/20"
+                          />
+                        </>
+                      )}
+                      {clubForm.openingHours?.[day]?.closed && (
+                        <span className="text-sm text-red-400">Closed</span>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
               

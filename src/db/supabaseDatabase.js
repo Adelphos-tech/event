@@ -545,6 +545,10 @@ export const createClub = async (clubData) => {
       contact_person: clubData.contactPerson || '',
       contact: clubData.contact || '',
       email: clubData.email,
+      address: clubData.address || '',
+      postal_code: clubData.postalCode || '',
+      website: clubData.website || '',
+      opening_hours: clubData.openingHours || {},
       annual_fee: clubData.annualFee || 120
     })
     .select()
@@ -571,6 +575,10 @@ export const updateClub = async (clubId, clubData) => {
       contact_person: clubData.contactPerson || '',
       contact: clubData.contact || '',
       email: clubData.email,
+      address: clubData.address || '',
+      postal_code: clubData.postalCode || '',
+      website: clubData.website || '',
+      opening_hours: clubData.openingHours || {},
       annual_fee: clubData.annualFee || 120,
       updated_at: new Date().toISOString()
     })
@@ -646,6 +654,10 @@ const mapClubToFrontend = (club) => {
     contactPerson: club.contact_person,
     contact: club.contact,
     email: club.email,
+    address: club.address || '',
+    postalCode: club.postal_code || '',
+    website: club.website || '',
+    openingHours: club.opening_hours || {},
     annualFee: club.annual_fee,
     createdAt: club.created_at,
     updatedAt: club.updated_at
