@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Shield, Plus, Users, Search, Upload, Download, Calendar, 
   Phone, Mail, DollarSign, CheckCircle, XCircle, Clock,
   Edit2, Trash2, Eye, X, ChevronDown, FileSpreadsheet,
-  Building2, UserPlus, CreditCard, AlertCircle, Crown, Gem
+  Building2, UserPlus, CreditCard, AlertCircle, Crown, Gem, Image as ImageIcon
 } from 'lucide-react';
 import { useToast } from '../components/Toast';
 import { format } from 'date-fns';
+import { convertImageToBase64, resizeImage } from '../utils/imageUtils';
 import {
   getAllClubs,
   createClub,
@@ -748,14 +749,61 @@ const Membership = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">Logo URL</label>
-                <input
-                  type="url"
-                  value={clubForm.logo}
-                  onChange={(e) => setClubForm({ ...clubForm, logo: e.target.value })}
-                  className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
-                  placeholder="https://example.com/logo.png"
-                />
+                <label className="block text-sm font-medium text-gray-400 mb-2">Club Logo</label>
+                <div className="flex items-start gap-4">
+                  {/* Logo Preview */}
+                  <div className="w-20 h-20 rounded-xl bg-[#0a0a0f] border border-white/10 flex items-center justify-center overflow-hidden flex-shrink-0">
+                    {clubForm.logo ? (
+                      <img 
+                        src={clubForm.logo} 
+                        alt="Club logo" 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <ImageIcon className="w-8 h-8 text-gray-600" />
+                    )}
+                  </div>
+                  
+                  {/* Upload Controls */}
+                  <div className="flex-1 space-y-2">
+                    <label className="flex items-center justify-center gap-2 px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-gray-400 hover:text-white hover:border-amber-500/50 transition-all cursor-pointer">
+                      <Upload className="w-4 h-4" />
+                      <span className="text-sm">Upload Logo</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            try {
+                              if (file.size > 2 * 1024 * 1024) {
+                                toast.error('Image must be less than 2MB');
+                                return;
+                              }
+                              const base64 = await convertImageToBase64(file);
+                              const resized = await resizeImage(base64, 400, 400);
+                              setClubForm({ ...clubForm, logo: resized });
+                              toast.success('Logo uploaded');
+                            } catch (error) {
+                              toast.error('Failed to upload logo');
+                            }
+                          }
+                        }}
+                      />
+                    </label>
+                    {clubForm.logo && (
+                      <button
+                        type="button"
+                        onClick={() => setClubForm({ ...clubForm, logo: '' })}
+                        className="text-xs text-red-400 hover:text-red-300 transition-colors"
+                      >
+                        Remove logo
+                      </button>
+                    )}
+                    <p className="text-xs text-gray-500">PNG, JPG up to 2MB</p>
+                  </div>
+                </div>
               </div>
               
               <div>
