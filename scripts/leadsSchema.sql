@@ -3,7 +3,7 @@
 
 CREATE TABLE IF NOT EXISTS leads (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  listing_id UUID REFERENCES listings(id) ON DELETE SET NULL,
+  listing_id BIGINT REFERENCES listings(id) ON DELETE SET NULL,
   listing_title VARCHAR(500),
   name VARCHAR(255) NOT NULL,
   contact VARCHAR(100) DEFAULT '',
