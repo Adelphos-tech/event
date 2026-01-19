@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { DollarSign, MapPin, Briefcase, Home, Film, Package, Phone, Mail, Plus, Calendar, ChevronRight, Sparkles, Search, Filter, Heart as HeartIcon, ArrowUpDown, SlidersHorizontal, Shield, GraduationCap, ExternalLink } from 'lucide-react';
+import { DollarSign, MapPin, Briefcase, Home, Film, Package, Phone, Mail, Plus, Calendar, ChevronRight, Sparkles, Search, Filter, Heart as HeartIcon, ArrowUpDown, SlidersHorizontal, Shield, GraduationCap, ExternalLink, Eye } from 'lucide-react';
 import { getAllListings } from '../db/databaseAdapter';
 import { ListingGridSkeleton, CategoryTabsSkeleton } from '../components/Skeleton';
 import { useFavorites } from '../hooks/useFavorites';
@@ -285,37 +285,33 @@ const MainPage = () => {
                         <span className="text-sm">{listing.location || 'Singapore'}</span>
                     </div>
                     
-                    {/* Contact Info - ONLY blur for pending */}
-                    <div className="pt-3 border-t border-gray-100 space-y-2" onClick={(e) => e.stopPropagation()}>
-                        {isPending ? (
-                            <div className="space-y-2 blur-sm select-none pointer-events-none">
+                    {/* Hidden Contact Info with View Details CTA */}
+                    <div className="pt-3 border-t border-gray-100">
+                        {/* Blurred contact preview */}
+                        <div className="relative">
+                            <div className="space-y-2 blur-[6px] select-none pointer-events-none opacity-60">
                                 <div className="flex items-center gap-2">
                                     <Phone className="w-4 h-4 text-gray-400" />
-                                    <span className="text-sm text-gray-700">+XX XXXX XXXX</span>
+                                    <span className="text-sm text-gray-700">+65 9XXX XXXX</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Mail className="w-4 h-4 text-gray-400" />
-                                    <span className="text-sm text-gray-700">****@****.***</span>
+                                    <span className="text-sm text-gray-700">contact@*****.com</span>
                                 </div>
                             </div>
-                        ) : (
-                            <>
-                                <div className="flex items-center gap-2">
-                                    <Phone className="w-4 h-4 text-gray-400" />
-                                    <a href={`tel:${contact.phone}`} className="text-sm text-gray-700 hover:text-red-600 transition-colors">
-                                        {contact.phone}
-                                    </a>
-                                    {!contact.isApproved && (
-                                        <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Support</span>
-                                    )}
+                            
+                            {/* View Details Overlay */}
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="bg-gradient-to-r from-red-600 to-red-700 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-lg shadow-red-500/30 flex items-center gap-2 group-hover:scale-105 transition-transform">
+                                    <Eye className="w-4 h-4" />
+                                    View Details
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <Mail className="w-4 h-4 text-gray-400" />
-                                    <a href={`mailto:${contact.email}`} className="text-sm text-gray-700 hover:text-red-600 transition-colors truncate">
-                                        {contact.email}
-                                    </a>
-                                </div>
-                            </>
+                            </div>
+                        </div>
+                        
+                        {/* Pending badge if applicable */}
+                        {isPending && (
+                            <p className="text-xs text-amber-600 mt-2 text-center">Awaiting approval</p>
                         )}
                     </div>
                 </div>
