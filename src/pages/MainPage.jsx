@@ -186,12 +186,10 @@ const MainPage = () => {
         return categories.find(c => c.id === categoryId) || categories[0];
     };
 
-    // Listing Card Component with animations
+    // Listing Card Component - Compact version
     const ListingCard = ({ listing, index = 0 }) => {
-        const contact = getContactInfo(listing);
         const catInfo = getCategoryInfo(listing.category);
         const Icon = catInfo.icon;
-        const isPending = listing.status === 'pending';
 
         return (
             <motion.div 
@@ -199,121 +197,86 @@ const MainPage = () => {
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-50px" }}
-                whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
                 onClick={() => handleListingClick(listing)}
-                className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 hover:border-gray-200 cursor-pointer relative">
+                className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 cursor-pointer">
                 
-                {/* Image - always visible */}
+                {/* Image */}
                 {listing.images && listing.images.length > 0 ? (
-                    <div className="relative h-48 overflow-hidden">
+                    <div className="relative aspect-[4/3] overflow-hidden">
                         <img 
                             src={listing.images[0]} 
                             alt={listing.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
                         
-                        {/* Category Badge */}
-                        <div className={`absolute top-3 left-3 px-3 py-1 bg-gradient-to-r ${catInfo.color} text-white text-xs font-medium rounded-full flex items-center gap-1.5`}>
-                            <Icon className="w-3 h-3" />
-                            {catInfo.label}
+                        {/* Category Badge - smaller */}
+                        <div className={`absolute top-2 left-2 px-2 py-0.5 bg-gradient-to-r ${catInfo.color} text-white text-[10px] font-medium rounded-full flex items-center gap-1`}>
+                            <Icon className="w-2.5 h-2.5" />
+                            <span className="hidden sm:inline">{catInfo.label}</span>
                         </div>
                         
-                        
-                        {/* Action Buttons */}
-                        <div className="absolute top-3 right-3 flex gap-2">
-                            {/* Share Button */}
+                        {/* Action Buttons - smaller */}
+                        <div className="absolute top-2 right-2 flex gap-1">
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     const shareUrl = `${window.location.origin}/listing/${listing.id}`;
                                     navigator.clipboard.writeText(shareUrl);
-                                    toast.success('Link copied!', 'Share this listing with others');
+                                    toast.success('Link copied!');
                                 }}
-                                className="p-2 rounded-full backdrop-blur-sm bg-white/80 text-gray-600 hover:bg-white hover:text-blue-500 transition-all"
-                                title="Copy link"
+                                className="p-1.5 rounded-full backdrop-blur-sm bg-white/80 text-gray-600 hover:bg-white hover:text-blue-500 transition-all"
                             >
-                                <Share2 className="w-4 h-4" />
+                                <Share2 className="w-3 h-3" />
                             </button>
-                            
-                            {/* Favorite Button */}
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     toggleFavorite(listing.id);
-                                    toast.success(isFavorite(listing.id) ? 'Removed from favorites' : 'Added to favorites');
                                 }}
-                                className={`p-2 rounded-full backdrop-blur-sm transition-all ${
+                                className={`p-1.5 rounded-full backdrop-blur-sm transition-all ${
                                     isFavorite(listing.id)
                                         ? 'bg-red-500 text-white'
                                         : 'bg-white/80 text-gray-600 hover:bg-white hover:text-red-500'
                                 }`}
                             >
-                                <HeartIcon className={`w-4 h-4 ${isFavorite(listing.id) ? 'fill-current' : ''}`} />
+                                <HeartIcon className={`w-3 h-3 ${isFavorite(listing.id) ? 'fill-current' : ''}`} />
                             </button>
                         </div>
                         
-                        {/* Price Badge - always visible */}
+                        {/* Price Badge */}
                         {(listing.budgetMin || listing.budgetMax) && (
-                            <div className="absolute bottom-3 left-3 px-3 py-1.5 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg">
-                                <span className="text-emerald-600 font-bold text-sm">
+                            <div className="absolute bottom-2 left-2 px-2 py-1 bg-white/95 backdrop-blur-sm rounded-md">
+                                <span className="text-emerald-600 font-bold text-xs">
                                     {listing.currency === 'SGD' ? 'S$' : listing.currency === 'MYR' ? 'RM' : '$'}
                                     {listing.budgetMin?.toLocaleString() || '0'}
-                                    {listing.budgetMax && ` - ${listing.budgetMax.toLocaleString()}`}
+                                    {listing.budgetMax && `+`}
                                 </span>
                             </div>
                         )}
                     </div>
                 ) : (
-                    <div className={`h-32 bg-gradient-to-br ${catInfo.color} flex items-center justify-center relative`}>
-                        <Icon className="w-12 h-12 text-white/50" />
+                    <div className={`aspect-[4/3] bg-gradient-to-br ${catInfo.color} flex items-center justify-center relative`}>
+                        <Icon className="w-8 h-8 text-white/50" />
                     </div>
                 )}
                 
-                {/* Content */}
-                <div className="p-4">
-                    {/* Title - always visible */}
-                    <h3 className="font-semibold text-gray-900 line-clamp-2 mb-2 group-hover:text-red-600 transition-colors">
+                {/* Content - Compact */}
+                <div className="p-3">
+                    <h3 className="font-semibold text-gray-900 text-sm line-clamp-1 mb-1 group-hover:text-red-600 transition-colors">
                         {maskContactInfo(listing.title, listing.isPaid)}
                     </h3>
                     
-                    {/* Description - always visible */}
-                    {listing.description && (
-                        <p className="text-gray-500 text-sm line-clamp-2 mb-3">
-                            {maskContactInfo(listing.description, listing.isPaid)}
-                        </p>
-                    )}
-                    
-                    {/* Location - always visible */}
-                    <div className="flex items-center gap-1.5 text-gray-400 mb-3">
-                        <MapPin className="w-4 h-4" />
-                        <span className="text-sm">{listing.location || 'Singapore'}</span>
+                    <div className="flex items-center gap-1 text-gray-400 text-xs mb-2">
+                        <MapPin className="w-3 h-3" />
+                        <span className="truncate">{listing.location || 'Singapore'}</span>
                     </div>
                     
-                    {/* Hidden Contact Info with View Details CTA */}
-                    <div className="pt-3 border-t border-gray-100">
-                        {/* Blurred contact preview */}
-                        <div className="relative">
-                            <div className="space-y-2 blur-[6px] select-none pointer-events-none opacity-60">
-                                <div className="flex items-center gap-2">
-                                    <Phone className="w-4 h-4 text-gray-400" />
-                                    <span className="text-sm text-gray-700">+65 9XXX XXXX</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Mail className="w-4 h-4 text-gray-400" />
-                                    <span className="text-sm text-gray-700">contact@*****.com</span>
-                                </div>
-                            </div>
-                            
-                            {/* View Details Overlay */}
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="bg-gradient-to-r from-red-600 to-red-700 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-lg shadow-red-500/30 flex items-center gap-2 group-hover:scale-105 transition-transform">
-                                    <Eye className="w-4 h-4" />
-                                    View Details
-                                </div>
-                            </div>
-                        </div>
-                        
+                    {/* View Details Button */}
+                    <div className="bg-gradient-to-r from-red-600 to-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium text-center group-hover:from-red-700 group-hover:to-red-800 transition-all flex items-center justify-center gap-1.5">
+                        <Eye className="w-3 h-3" />
+                        View Details
                     </div>
                 </div>
             </motion.div>
@@ -425,141 +388,81 @@ const MainPage = () => {
                 </div>
             </header>
 
-            {/* Hero Section - Hidden on mobile, shown on desktop */}
-            <section className="relative py-12 px-4 sm:px-6 lg:px-8 hidden sm:block overflow-hidden">
-                <motion.div 
-                    className="max-w-7xl mx-auto text-center"
-                    initial="hidden"
-                    animate="visible"
-                    variants={staggerContainer}
-                >
-                    <motion.div 
-                        variants={fadeInUp}
-                        className="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/50 rounded-full mb-6"
-                    >
-                        <motion.div
-                            animate={{ rotate: [0, 15, -15, 0] }}
-                            transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-                        >
-                            <Sparkles className="w-4 h-4 text-amber-600" />
-                        </motion.div>
-                        <span className="text-sm font-medium text-amber-800">Premium Marketplace</span>
-                    </motion.div>
-                    
-                    <motion.h1 
-                        variants={fadeInUp}
-                        className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4"
-                    >
-                        Discover Amazing <span className="text-red-600">Opportunities</span>
-                    </motion.h1>
-                    <motion.p 
-                        variants={fadeInUp}
-                        className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto"
-                    >
-                        Browse businesses, properties, movies, products, and opportunities. 
-                        Find what you're looking for or list your own.
-                    </motion.p>
-
-                    {/* Search Bar */}
-                    <motion.div 
-                        variants={fadeInUp}
-                        className="max-w-3xl mx-auto mb-6"
-                    >
-                        <motion.div 
-                            className="flex flex-col sm:flex-row gap-3"
-                            whileHover={{ scale: 1.01 }}
-                            transition={{ type: "spring", stiffness: 300 }}
-                        >
-                            <div className="relative flex-1">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                <input
-                                    type="text"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    placeholder="Search listings..."
-                                    className="w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-2xl shadow-lg focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all text-gray-800"
-                                />
-                            </div>
+            {/* Compact Search & Filter Bar - Desktop */}
+            <section className="hidden sm:block sticky top-16 z-40 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+                    <div className="flex items-center gap-4">
+                        {/* Search */}
+                        <div className="relative flex-1 max-w-md">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder="Search listings..."
+                                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all text-gray-800 text-sm"
+                            />
+                        </div>
+                        
+                        {/* Category Tabs */}
+                        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
+                            {categories.map((cat) => {
+                                const Icon = cat.icon;
+                                const count = cat.id === 'all' ? filteredListings.length : listingsByCategory[cat.id]?.length || 0;
+                                return (
+                                    <button
+                                        key={cat.id}
+                                        onClick={() => setSelectedCategory(cat.id)}
+                                        className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+                                            selectedCategory === cat.id
+                                                ? `bg-gradient-to-r ${cat.color} text-white shadow-sm`
+                                                : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                                        }`}
+                                    >
+                                        <Icon className="w-3.5 h-3.5" />
+                                        {cat.label}
+                                        <span className={`px-1.5 py-0.5 rounded text-[10px] ${
+                                            selectedCategory === cat.id ? 'bg-white/20' : 'bg-gray-200/80'
+                                        }`}>
+                                            {count}
+                                        </span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        
+                        {/* Sort & Favorites */}
+                        <div className="flex items-center gap-2">
+                            <select
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value)}
+                                className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-700 font-medium cursor-pointer"
+                            >
+                                {sortOptions.map(opt => (
+                                    <option key={opt.id} value={opt.id}>{opt.label}</option>
+                                ))}
+                            </select>
                             
-                            {/* Sort Dropdown */}
-                            <div className="relative">
-                                <select
-                                    value={sortBy}
-                                    onChange={(e) => setSortBy(e.target.value)}
-                                    className="appearance-none w-full sm:w-auto px-4 py-4 pl-10 pr-10 bg-white border border-gray-200 rounded-2xl shadow-lg focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all text-gray-700 font-medium cursor-pointer"
-                                >
-                                    {sortOptions.map(opt => (
-                                        <option key={opt.id} value={opt.id}>{opt.label}</option>
-                                    ))}
-                                </select>
-                                <ArrowUpDown className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                            </div>
-                            
-                            {/* Favorites Filter */}
                             <button
                                 onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-                                className={`flex items-center justify-center gap-2 px-4 py-4 rounded-2xl font-medium transition-all shadow-lg ${
+                                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                                     showFavoritesOnly
                                         ? 'bg-red-500 text-white'
-                                        : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
+                                        : 'bg-gray-50 border border-gray-200 text-gray-600 hover:bg-gray-100'
                                 }`}
                             >
-                                <HeartIcon className={`w-5 h-5 ${showFavoritesOnly ? 'fill-current' : ''}`} />
-                                <span className="sm:hidden">Favorites</span>
+                                <HeartIcon className={`w-4 h-4 ${showFavoritesOnly ? 'fill-current' : ''}`} />
                                 {favoritesCount > 0 && (
-                                    <span className={`px-2 py-0.5 rounded-full text-xs ${
+                                    <span className={`px-1.5 py-0.5 rounded text-[10px] ${
                                         showFavoritesOnly ? 'bg-white/20' : 'bg-red-100 text-red-600'
                                     }`}>
                                         {favoritesCount}
                                     </span>
                                 )}
                             </button>
-                        </motion.div>
-                    </motion.div>
-
-                    {/* Category Filter Tabs - Horizontal scroll on mobile */}
-                    <motion.div 
-                        variants={fadeInUp}
-                        className="relative -mx-4 sm:mx-0 px-4 sm:px-0 mb-8"
-                    >
-                        <motion.div 
-                            className="flex sm:flex-wrap sm:justify-center gap-2 overflow-x-auto scrollbar-hide pb-2 sm:pb-0"
-                            variants={staggerContainer}
-                            initial="hidden"
-                            animate="visible"
-                        >
-                            {categories.map((cat, index) => {
-                                const Icon = cat.icon;
-                                const count = cat.id === 'all' ? filteredListings.length : listingsByCategory[cat.id]?.length || 0;
-                                return (
-                                    <motion.button
-                                        key={cat.id}
-                                        variants={categoryTabVariants}
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        onClick={() => setSelectedCategory(cat.id)}
-                                        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
-                                            selectedCategory === cat.id
-                                                ? `bg-gradient-to-r ${cat.color} text-white shadow-lg`
-                                                : 'bg-white/80 text-gray-700 hover:bg-white hover:shadow-md border border-gray-200/50'
-                                        }`}
-                                    >
-                                        <Icon className="w-4 h-4" />
-                                        <span className="hidden sm:inline">{cat.label}</span>
-                                        <span className="sm:hidden">{cat.label.split(' ')[0]}</span>
-                                        <span className={`px-2 py-0.5 rounded-full text-xs ${
-                                            selectedCategory === cat.id ? 'bg-white/20' : 'bg-gray-100'
-                                        }`}>
-                                            {count}
-                                        </span>
-                                    </motion.button>
-                                );
-                            })}
-                        </motion.div>
-                        {/* Fade indicator for scroll */}
-                        <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-[#f5f0eb] to-transparent pointer-events-none sm:hidden"></div>
-                    </motion.div>
-                </motion.div>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             {/* Mobile-Only Compact Search & Filters - Shows at top on mobile */}
@@ -635,52 +538,22 @@ const MainPage = () => {
             </section>
 
             {/* Listings Grid */}
-            <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 pt-2 sm:pt-0">
+            <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 pt-4">
                 {selectedCategory === 'all' ? (
-                    // Show listings grouped by category
-                    <div className="space-y-12">
-                        {categories.slice(1).map((cat) => {
-                            const categoryListings = listingsByCategory[cat.id] || [];
-                            if (categoryListings.length === 0) return null;
-                            
-                            const Icon = cat.icon;
-                            return (
-                                <section key={cat.id}>
-                                    {/* Category Header */}
-                                    <div className="flex items-center justify-between mb-6">
-                                        <div className="flex items-center gap-3">
-                                            <div className={`w-10 h-10 bg-gradient-to-br ${cat.color} rounded-xl flex items-center justify-center text-white`}>
-                                                <Icon className="w-5 h-5" />
-                                            </div>
-                                            <div>
-                                                <h2 className="text-xl font-bold text-gray-900">{cat.label}</h2>
-                                                <p className="text-sm text-gray-500">{cat.subtitle}</p>
-                                            </div>
-                                        </div>
-                                        <button 
-                                            onClick={() => setSelectedCategory(cat.id)}
-                                            className="flex items-center gap-1 text-red-600 hover:text-red-700 font-medium text-sm"
-                                        >
-                                            View All
-                                            <ChevronRight className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                    
-                                    {/* Listings Grid */}
-                                    <motion.div 
-                                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-                                        initial="hidden"
-                                        whileInView="visible"
-                                        viewport={{ once: true, margin: "-100px" }}
-                                        variants={staggerContainer}
-                                    >
-                                        {categoryListings.slice(0, 4).map((listing, index) => (
-                                            <ListingCard key={listing.id} listing={listing} index={index} />
-                                        ))}
-                                    </motion.div>
-                                </section>
-                            );
-                        })}
+                    // Show all listings in a grid (no category grouping for cleaner look)
+                    <div>
+                        {filteredListings.length > 0 ? (
+                            <motion.div 
+                                className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+                                initial="hidden"
+                                animate="visible"
+                                variants={staggerContainer}
+                            >
+                                {filteredListings.map((listing, index) => (
+                                    <ListingCard key={listing.id} listing={listing} index={index} />
+                                ))}
+                            </motion.div>
+                        ) : null}
                         
                         {filteredListings.length === 0 && (
                             <div className="text-center py-16">
@@ -701,16 +574,9 @@ const MainPage = () => {
                 ) : (
                     // Show filtered listings for selected category
                     <div>
-                        <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-2xl font-bold text-gray-900">
-                                {getCategoryInfo(selectedCategory).label}
-                                <span className="text-gray-400 font-normal ml-2">({filteredListings.length})</span>
-                            </h2>
-                        </div>
-                        
                         {filteredListings.length > 0 ? (
                             <motion.div 
-                                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                                className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
                                 initial="hidden"
                                 animate="visible"
                                 variants={staggerContainer}
@@ -720,15 +586,15 @@ const MainPage = () => {
                                 ))}
                             </motion.div>
                         ) : (
-                            <div className="text-center py-16">
-                                <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    {React.createElement(getCategoryInfo(selectedCategory).icon, { className: "w-10 h-10 text-gray-400" })}
+                            <div className="text-center py-12">
+                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    {React.createElement(getCategoryInfo(selectedCategory).icon, { className: "w-8 h-8 text-gray-400" })}
                                 </div>
-                                <h3 className="text-xl font-semibold text-gray-900 mb-2">No listings in this category</h3>
-                                <p className="text-gray-500 mb-6">Be the first to post!</p>
+                                <h3 className="text-lg font-semibold text-gray-900 mb-2">No listings in this category</h3>
+                                <p className="text-gray-500 text-sm mb-4">Be the first to post!</p>
                                 <button
                                     onClick={() => navigate('/register-listing')}
-                                    className="px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-semibold"
+                                    className="px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg font-medium text-sm"
                                 >
                                     Create Listing
                                 </button>
