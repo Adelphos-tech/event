@@ -79,6 +79,10 @@ const Membership = () => {
     paymentStatus: 'not_paid',
     amountPaid: 0,
     clubId: null,
+    memberCategory: 'individual', // 'individual' or 'company'
+    uenNumber: '',
+    icPassport: '',
+    nationality: '',
   });
 
   // Load data
@@ -235,6 +239,10 @@ const Membership = () => {
       paymentStatus: 'not_paid',
       amountPaid: 0,
       clubId: selectedClub?.id || null,
+      memberCategory: 'individual',
+      uenNumber: '',
+      icPassport: '',
+      nationality: '',
     });
     setEditingMember(null);
     setShowMemberModal(false);
@@ -1204,6 +1212,75 @@ const Membership = () => {
                   />
                 </div>
               </div>
+              
+              {/* Member Category */}
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2">Member Category</label>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="memberCategory"
+                      value="individual"
+                      checked={memberForm.memberCategory === 'individual'}
+                      onChange={(e) => setMemberForm({ ...memberForm, memberCategory: e.target.value })}
+                      className="w-4 h-4 text-amber-500 bg-[#0a0a0f] border-white/20 focus:ring-amber-500/20"
+                    />
+                    <span className="text-sm text-gray-300">Individual</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="memberCategory"
+                      value="company"
+                      checked={memberForm.memberCategory === 'company'}
+                      onChange={(e) => setMemberForm({ ...memberForm, memberCategory: e.target.value })}
+                      className="w-4 h-4 text-amber-500 bg-[#0a0a0f] border-white/20 focus:ring-amber-500/20"
+                    />
+                    <span className="text-sm text-gray-300">Company</span>
+                  </label>
+                </div>
+              </div>
+              
+              {/* Company: UEN Number */}
+              {memberForm.memberCategory === 'company' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">UEN Number</label>
+                  <input
+                    type="text"
+                    value={memberForm.uenNumber}
+                    onChange={(e) => setMemberForm({ ...memberForm, uenNumber: e.target.value })}
+                    className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
+                    placeholder="e.g., 201912345A"
+                  />
+                </div>
+              )}
+              
+              {/* Individual: IC/Passport & Nationality */}
+              {memberForm.memberCategory === 'individual' && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">IC/Passport</label>
+                    <input
+                      type="text"
+                      value={memberForm.icPassport}
+                      onChange={(e) => setMemberForm({ ...memberForm, icPassport: e.target.value })}
+                      className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
+                      placeholder="S1234567A"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">Nationality</label>
+                    <input
+                      type="text"
+                      value={memberForm.nationality}
+                      onChange={(e) => setMemberForm({ ...memberForm, nationality: e.target.value })}
+                      className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
+                      placeholder="Singaporean"
+                    />
+                  </div>
+                </div>
+              )}
               
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-2">Comments</label>

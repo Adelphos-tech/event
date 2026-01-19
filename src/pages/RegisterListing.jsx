@@ -181,10 +181,6 @@ const RegisterListing = () => {
                         <ArrowLeft className="w-5 h-5" />
                         <span className="font-medium">Back to Listings</span>
                     </button>
-                    <div className="flex items-center gap-2">
-                        <span className="text-gray-500 text-sm">Submission fee:</span>
-                        <span className="font-bold text-gray-800 bg-amber-100 px-2 py-0.5 rounded">S$1</span>
-                    </div>
                 </div>
             </header>
 

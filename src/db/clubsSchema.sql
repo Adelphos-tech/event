@@ -50,13 +50,22 @@ CREATE TABLE IF NOT EXISTS club_members (
   payment_status VARCHAR(50) DEFAULT 'not_paid' CHECK (payment_status IN ('not_paid', 'partial', 'paid')),
   amount_paid DECIMAL(10, 2) DEFAULT 0.00,
   prorata_fee DECIMAL(10, 2) DEFAULT 0.00,
+  -- Member category fields
+  member_category VARCHAR(50) DEFAULT 'individual' CHECK (member_category IN ('individual', 'company')),
+  uen_number VARCHAR(50) DEFAULT '',
+  ic_passport VARCHAR(100) DEFAULT '',
+  nationality VARCHAR(100) DEFAULT '',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Migration: Add photo column if it doesn't exist
+-- Migration: Add new columns if table already exists
 -- Run this if table already exists:
 -- ALTER TABLE club_members ADD COLUMN IF NOT EXISTS photo TEXT;
+-- ALTER TABLE club_members ADD COLUMN IF NOT EXISTS member_category VARCHAR(50) DEFAULT 'individual';
+-- ALTER TABLE club_members ADD COLUMN IF NOT EXISTS uen_number VARCHAR(50) DEFAULT '';
+-- ALTER TABLE club_members ADD COLUMN IF NOT EXISTS ic_passport VARCHAR(100) DEFAULT '';
+-- ALTER TABLE club_members ADD COLUMN IF NOT EXISTS nationality VARCHAR(100) DEFAULT '';
 
 -- Create indexes for faster lookups
 CREATE INDEX IF NOT EXISTS idx_club_members_club_id ON club_members(club_id);

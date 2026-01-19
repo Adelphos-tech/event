@@ -684,7 +684,11 @@ export const createClubMember = async (memberData) => {
       membership_type: memberData.membershipType || 'annual',
       payment_status: memberData.paymentStatus || 'not_paid',
       amount_paid: memberData.amountPaid || 0,
-      prorata_fee: memberData.prorataFee || 0
+      prorata_fee: memberData.prorataFee || 0,
+      member_category: memberData.memberCategory || 'individual',
+      uen_number: memberData.uenNumber || '',
+      ic_passport: memberData.icPassport || '',
+      nationality: memberData.nationality || ''
     })
     .select()
     .single();
@@ -715,6 +719,10 @@ export const updateClubMember = async (memberId, memberData) => {
       payment_status: memberData.paymentStatus || 'not_paid',
       amount_paid: memberData.amountPaid || 0,
       prorata_fee: memberData.prorataFee || 0,
+      member_category: memberData.memberCategory || 'individual',
+      uen_number: memberData.uenNumber || '',
+      ic_passport: memberData.icPassport || '',
+      nationality: memberData.nationality || '',
       updated_at: new Date().toISOString()
     })
     .eq('id', memberId)
@@ -822,6 +830,10 @@ const mapMemberToFrontend = (member) => {
     paymentStatus: member.payment_status,
     amountPaid: member.amount_paid,
     prorataFee: member.prorata_fee,
+    memberCategory: member.member_category || 'individual',
+    uenNumber: member.uen_number || '',
+    icPassport: member.ic_passport || '',
+    nationality: member.nationality || '',
     createdAt: member.created_at,
     updatedAt: member.updated_at
   };
