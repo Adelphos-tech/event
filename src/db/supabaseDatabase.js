@@ -686,9 +686,10 @@ export const createClubMember = async (memberData) => {
       amount_paid: memberData.amountPaid || 0,
       prorata_fee: memberData.prorataFee || 0,
       member_category: memberData.memberCategory || 'individual',
-      uen_number: memberData.uenNumber || '',
       ic_passport: memberData.icPassport || '',
-      nationality: memberData.nationality || ''
+      nationality: memberData.nationality || '',
+      roc_number: memberData.rocNumber || '',
+      country: memberData.country || ''
     })
     .select()
     .single();
@@ -720,9 +721,10 @@ export const updateClubMember = async (memberId, memberData) => {
       amount_paid: memberData.amountPaid || 0,
       prorata_fee: memberData.prorataFee || 0,
       member_category: memberData.memberCategory || 'individual',
-      uen_number: memberData.uenNumber || '',
       ic_passport: memberData.icPassport || '',
       nationality: memberData.nationality || '',
+      roc_number: memberData.rocNumber || '',
+      country: memberData.country || '',
       updated_at: new Date().toISOString()
     })
     .eq('id', memberId)
@@ -831,9 +833,10 @@ const mapMemberToFrontend = (member) => {
     amountPaid: member.amount_paid,
     prorataFee: member.prorata_fee,
     memberCategory: member.member_category || 'individual',
-    uenNumber: member.uen_number || '',
     icPassport: member.ic_passport || '',
     nationality: member.nationality || '',
+    rocNumber: member.roc_number || '',
+    country: member.country || '',
     createdAt: member.created_at,
     updatedAt: member.updated_at
   };

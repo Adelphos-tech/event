@@ -80,9 +80,10 @@ const Membership = () => {
     amountPaid: 0,
     clubId: null,
     memberCategory: 'individual', // 'individual' or 'company'
-    uenNumber: '',
-    icPassport: '',
-    nationality: '',
+    rocNumber: '', // ROC number for company
+    country: '', // Country for company
+    icPassport: '', // IC/Passport for individual
+    nationality: '', // Nationality for individual
   });
 
   // Load data
@@ -240,7 +241,8 @@ const Membership = () => {
       amountPaid: 0,
       clubId: selectedClub?.id || null,
       memberCategory: 'individual',
-      uenNumber: '',
+      rocNumber: '',
+      country: '',
       icPassport: '',
       nationality: '',
     });
@@ -1242,17 +1244,29 @@ const Membership = () => {
                 </div>
               </div>
               
-              {/* Company: UEN Number */}
+              {/* Company: ROC Number & Country */}
               {memberForm.memberCategory === 'company' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">UEN Number</label>
-                  <input
-                    type="text"
-                    value={memberForm.uenNumber}
-                    onChange={(e) => setMemberForm({ ...memberForm, uenNumber: e.target.value })}
-                    className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
-                    placeholder="e.g., 201912345A"
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">ROC Number</label>
+                    <input
+                      type="text"
+                      value={memberForm.rocNumber}
+                      onChange={(e) => setMemberForm({ ...memberForm, rocNumber: e.target.value })}
+                      className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
+                      placeholder="e.g., 201912345A"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">Country</label>
+                    <input
+                      type="text"
+                      value={memberForm.country}
+                      onChange={(e) => setMemberForm({ ...memberForm, country: e.target.value })}
+                      className="w-full px-4 py-3 bg-[#0a0a0f] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 transition-all"
+                      placeholder="Singapore"
+                    />
+                  </div>
                 </div>
               )}
               

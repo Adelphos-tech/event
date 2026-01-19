@@ -52,9 +52,12 @@ CREATE TABLE IF NOT EXISTS club_members (
   prorata_fee DECIMAL(10, 2) DEFAULT 0.00,
   -- Member category fields
   member_category VARCHAR(50) DEFAULT 'individual' CHECK (member_category IN ('individual', 'company')),
-  uen_number VARCHAR(50) DEFAULT '',
+  -- For Individual: IC/Passport + Nationality
   ic_passport VARCHAR(100) DEFAULT '',
   nationality VARCHAR(100) DEFAULT '',
+  -- For Company: ROC Number + Country
+  roc_number VARCHAR(100) DEFAULT '',
+  country VARCHAR(100) DEFAULT '',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -63,9 +66,10 @@ CREATE TABLE IF NOT EXISTS club_members (
 -- Run this if table already exists:
 -- ALTER TABLE club_members ADD COLUMN IF NOT EXISTS photo TEXT;
 -- ALTER TABLE club_members ADD COLUMN IF NOT EXISTS member_category VARCHAR(50) DEFAULT 'individual';
--- ALTER TABLE club_members ADD COLUMN IF NOT EXISTS uen_number VARCHAR(50) DEFAULT '';
 -- ALTER TABLE club_members ADD COLUMN IF NOT EXISTS ic_passport VARCHAR(100) DEFAULT '';
 -- ALTER TABLE club_members ADD COLUMN IF NOT EXISTS nationality VARCHAR(100) DEFAULT '';
+-- ALTER TABLE club_members ADD COLUMN IF NOT EXISTS roc_number VARCHAR(100) DEFAULT '';
+-- ALTER TABLE club_members ADD COLUMN IF NOT EXISTS country VARCHAR(100) DEFAULT '';
 
 -- Create indexes for faster lookups
 CREATE INDEX IF NOT EXISTS idx_club_members_club_id ON club_members(club_id);
