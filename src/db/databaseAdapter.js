@@ -153,3 +153,25 @@ export const getDashboardStats = async (userId = null) => {
     upcoming_events: upcomingEvents
   };
 };
+
+// ==================== LEAD OPERATIONS ====================
+
+export const createLead = async (leadData) => {
+  return await SupabaseDB.createLead(leadData);
+};
+
+export const getAllLeads = async () => {
+  return await SupabaseDB.getAllLeads();
+};
+
+export const getLeadsByListing = async (listingId) => {
+  return await SupabaseDB.getLeadsByListing(listingId);
+};
+
+export const updateLeadStatus = async (leadId, status, notes) => {
+  return await SupabaseDB.updateLeadStatus(leadId, status, notes);
+};
+
+export const deleteLead = async (leadId) => {
+  return await SupabaseDB.deleteLead(leadId);
+};

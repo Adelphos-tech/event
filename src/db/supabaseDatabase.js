@@ -860,3 +860,113 @@ export const getDatabaseStatus = async () => {
     };
   }
 };
+
+// =====================================================
+// LEAD CAPTURE OPERATIONS
+// =====================================================
+
+export const createLead = async (leadData) => {
+  console.log('📝 Creating lead:', leadData);
+  
+  const { data, error } = await supabase
+    .from('leads')
+    .insert({
+      listing_id: leadData.listingId,
+      listing_title: leadData.listingTitle,
+      name: leadData.name,
+      contact: leadData.contact,
+      email: leadData.email,
+      event_date: leadData.eventDate || null,
+      status: 'new',
+      notes: ''
+    })
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('❌ Error creating lead:', error);
+    throw new Error(error.message);
+  }
+  
+  console.log('✅ Lead created:', data.id);
+  return mapLeadToFrontend(data);
+};
+
+export const getAllLeads = async () => {
+  console.log('📊 Fetching all leads...');
+  
+  const { data, error } = await supabase
+    .from('leads')
+    .select('*')
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('❌ Error fetching leads:', error);
+    return [];
+  }
+  
+  console.log(`✅ Found ${data?.length || 0} leads`);
+  return (data || []).map(mapLeadToFrontend);
+};
+
+export const getLeadsByListing = async (listingId) => {
+  const { data, error } = await supabase
+    .from('leads')
+    .select('*')
+    .eq('listing_id', listingId)
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('Error fetching leads for listing:', error);
+    return [];
+  }
+  
+  return (data || []).map(mapLeadToFrontend);
+};
+
+export const updateLeadStatus = async (leadId, status, notes = '') => {
+  const { data, error } = await supabase
+    .from('leads')
+    .update({ status, notes, updated_at: new Date().toISOString() })
+    .eq('id', leadId)
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('Error updating lead:', error);
+    throw new Error(error.message);
+  }
+  
+  return mapLeadToFrontend(data);
+};
+
+export const deleteLead = async (leadId) => {
+  const { error } = await supabase
+    .from('leads')
+    .delete()
+    .eq('id', leadId);
+  
+  if (error) {
+    console.error('Error deleting lead:', error);
+    throw new Error(error.message);
+  }
+  
+  return true;
+};
+
+const mapLeadToFrontend = (lead) => {
+  if (!lead) return null;
+  return {
+    id: lead.id,
+    listingId: lead.listing_id,
+    listingTitle: lead.listing_title,
+    name: lead.name,
+    contact: lead.contact,
+    email: lead.email,
+    eventDate: lead.event_date,
+    status: lead.status,
+    notes: lead.notes,
+    createdAt: lead.created_at,
+    updatedAt: lead.updated_at
+  };
+};

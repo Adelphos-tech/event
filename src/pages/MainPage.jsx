@@ -6,6 +6,7 @@ import { getAllListings } from '../db/databaseAdapter';
 import { ListingGridSkeleton, CategoryTabsSkeleton } from '../components/Skeleton';
 import { useFavorites } from '../hooks/useFavorites';
 import { useToast } from '../components/Toast';
+import LeadCaptureModal from '../components/LeadCaptureModal';
 
 // Animation variants
 const fadeInUp = {
@@ -79,6 +80,25 @@ const MainPage = () => {
     const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
     const { toggleFavorite, isFavorite, favoritesCount } = useFavorites();
     const toast = useToast();
+    
+    // Lead capture modal state
+    const [showLeadModal, setShowLeadModal] = useState(false);
+    const [selectedListing, setSelectedListing] = useState(null);
+
+    // Handle listing click - show lead capture modal first
+    const handleListingClick = (listing) => {
+        setSelectedListing(listing);
+        setShowLeadModal(true);
+    };
+
+    // After lead is captured, navigate to listing
+    const handleLeadSuccess = () => {
+        setShowLeadModal(false);
+        toast.success('Thank you!', 'Your enquiry has been submitted.');
+        if (selectedListing) {
+            navigate(`/listing/${selectedListing.id}`);
+        }
+    };
 
     const sortOptions = [
         { id: 'newest', label: 'Newest First' },
@@ -180,7 +200,7 @@ const MainPage = () => {
                 whileInView="visible"
                 viewport={{ once: true, margin: "-50px" }}
                 whileHover={{ y: -8, transition: { duration: 0.3 } }}
-                onClick={() => navigate(`/listing/${listing.id}`)}
+                onClick={() => handleListingClick(listing)}
                 className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 hover:border-gray-200 cursor-pointer relative">
                 
                 {/* Image - always visible */}
@@ -763,6 +783,14 @@ const MainPage = () => {
                     </div>
                 </div>
             </footer>
+
+            {/* Lead Capture Modal */}
+            <LeadCaptureModal
+                isOpen={showLeadModal}
+                onClose={() => setShowLeadModal(false)}
+                listing={selectedListing}
+                onSuccess={handleLeadSuccess}
+            />
         </div>
     );
 };

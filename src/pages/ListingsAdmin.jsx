@@ -4,10 +4,10 @@ import {
   Shield, LogOut, Plus, Search, RefreshCw, Trash2, Edit, Eye, 
   ChevronLeft, ChevronRight, Users, Briefcase, Home, Heart, 
   DollarSign, Calendar, MapPin, Mail, Phone, CheckCircle, XCircle,
-  MoreVertical, Filter, Download, Image, Clock, TrendingUp, AlertCircle, Sparkles, Bell
+  MoreVertical, Filter, Download, Image, Clock, TrendingUp, AlertCircle, Sparkles, Bell, UserCheck, MessageSquare
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { getAllListingsAdmin, deleteListing, updateListing, getAllUsers } from '../db/databaseAdapter';
+import { getAllListingsAdmin, deleteListing, updateListing, getAllUsers, getAllLeads, updateLeadStatus, deleteLead } from '../db/databaseAdapter';
 import { format } from 'date-fns';
 import { notifyUserListingStatus } from '../utils/emailService';
 import { useToast } from '../components/Toast';
@@ -20,10 +20,12 @@ const ListingsAdmin = () => {
   const [activeTab, setActiveTab] = useState('listings');
   const [listings, setListings] = useState([]);
   const [users, setUsers] = useState([]);
+  const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [leadStatusFilter, setLeadStatusFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedItems, setSelectedItems] = useState([]);
   const [editingListing, setEditingListing] = useState(null);
@@ -49,12 +51,14 @@ const ListingsAdmin = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [listingsData, usersData] = await Promise.all([
+      const [listingsData, usersData, leadsData] = await Promise.all([
         getAllListingsAdmin(),
-        getAllUsers()
+        getAllUsers(),
+        getAllLeads()
       ]);
       setListings(listingsData || []);
       setUsers(usersData || []);
+      setLeads(leadsData || []);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -202,17 +206,33 @@ const ListingsAdmin = () => {
     u.contact?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const totalPages = Math.ceil(
-    (activeTab === 'listings' ? filteredListings.length : filteredUsers.length) / itemsPerPage
-  );
+  const filteredLeads = leads.filter(lead => {
+    const matchesSearch = lead.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         lead.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         lead.listingTitle?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = leadStatusFilter === 'all' || lead.status === leadStatusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const getItemCount = () => {
+    if (activeTab === 'listings') return filteredListings.length;
+    if (activeTab === 'users') return filteredUsers.length;
+    if (activeTab === 'leads') return filteredLeads.length;
+    return 0;
+  };
+
+  const totalPages = Math.ceil(getItemCount() / itemsPerPage);
   const paginatedListings = filteredListings.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const paginatedUsers = filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const paginatedLeads = filteredLeads.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const stats = {
     totalListings: listings.length,
     activeListings: listings.filter(l => l.status === 'active').length,
     pendingListings: listings.filter(l => l.status === 'pending').length,
     totalUsers: users.length,
+    totalLeads: leads.length,
+    newLeads: leads.filter(l => l.status === 'new').length,
     todayUsers: users.filter(u => {
       if (!u.created_at) return false;
       const created = new Date(u.created_at);
@@ -336,22 +356,22 @@ const ListingsAdmin = () => {
         <div className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl shadow-sm overflow-hidden">
           {/* Tabs & Filters */}
           <div className="border-b border-gray-200/50 p-4 flex flex-col lg:flex-row lg:items-center gap-4">
-            <div className="flex gap-2">
-              {['listings', 'users'].map((tab) => (
+            <div className="flex gap-2 flex-wrap">
+              {['listings', 'users', 'leads'].map((tab) => (
                 <button
                   key={tab}
-                  onClick={() => { setActiveTab(tab); setCurrentPage(1); setStatusFilter('all'); setCategoryFilter('all'); setSearchQuery(''); }}
+                  onClick={() => { setActiveTab(tab); setCurrentPage(1); setStatusFilter('all'); setCategoryFilter('all'); setLeadStatusFilter('all'); setSearchQuery(''); }}
                   className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all capitalize ${
                     activeTab === tab 
                       ? 'bg-gradient-to-r from-gray-800 to-gray-900 text-white shadow-lg' 
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
-                  {tab} ({tab === 'listings' ? listings.length : users.length})
+                  {tab} ({tab === 'listings' ? listings.length : tab === 'users' ? users.length : leads.length})
                 </button>
               ))}
               
-              {/* Quick filter for pending */}
+              {/* Quick filter for pending listings */}
               {stats.pendingListings > 0 && activeTab === 'listings' && (
                 <button
                   onClick={() => { setStatusFilter('pending'); setCurrentPage(1); }}
@@ -365,6 +385,21 @@ const ListingsAdmin = () => {
                   {stats.pendingListings} Pending
                 </button>
               )}
+
+              {/* Quick filter for new leads */}
+              {stats.newLeads > 0 && activeTab === 'leads' && (
+                <button
+                  onClick={() => { setLeadStatusFilter('new'); setCurrentPage(1); }}
+                  className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center gap-2 ${
+                    leadStatusFilter === 'new'
+                      ? 'bg-emerald-500 text-white shadow-lg'
+                      : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border border-emerald-200'
+                  }`}
+                >
+                  <UserCheck className="w-4 h-4" />
+                  {stats.newLeads} New
+                </button>
+              )}
             </div>
 
             <div className="flex-1 flex flex-col sm:flex-row gap-3">
@@ -372,7 +407,7 @@ const ListingsAdmin = () => {
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
-                  placeholder={activeTab === 'listings' ? 'Search listings...' : 'Search users...'}
+                  placeholder={activeTab === 'listings' ? 'Search listings...' : activeTab === 'users' ? 'Search users...' : 'Search leads...'}
                   value={searchQuery}
                   onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                   className="w-full pl-11 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all"
@@ -638,11 +673,146 @@ const ListingsAdmin = () => {
             </div>
           )}
 
+          {/* Leads Table */}
+          {activeTab === 'leads' && (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50/80">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Lead Info</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Contact</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Listing</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Event Date</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Created</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {paginatedLeads.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="px-4 py-16 text-center">
+                        <UserCheck className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                        <p className="text-gray-500">No leads found</p>
+                      </td>
+                    </tr>
+                  ) : (
+                    paginatedLeads.map((lead) => (
+                      <tr key={lead.id} className="hover:bg-amber-50/30 transition-colors">
+                        <td className="px-4 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center shadow-sm">
+                              <span className="text-white font-semibold text-sm">
+                                {lead.name?.charAt(0).toUpperCase()}
+                              </span>
+                            </div>
+                            <div>
+                              <p className="text-gray-900 font-medium">{lead.name}</p>
+                              <p className="text-gray-400 text-xs">ID: {lead.id?.slice(0, 8)}...</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-4">
+                          <div className="space-y-1">
+                            {lead.contact && (
+                              <a href={`tel:${lead.contact}`} className="flex items-center gap-2 text-gray-600 hover:text-emerald-600 transition-colors">
+                                <Phone className="w-4 h-4 text-gray-400" />
+                                <span className="text-sm">{lead.contact}</span>
+                              </a>
+                            )}
+                            {lead.email && (
+                              <a href={`mailto:${lead.email}`} className="flex items-center gap-2 text-gray-600 hover:text-emerald-600 transition-colors">
+                                <Mail className="w-4 h-4 text-gray-400" />
+                                <span className="text-sm truncate max-w-[150px]">{lead.email}</span>
+                              </a>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-4 py-4">
+                          <p className="text-gray-900 text-sm font-medium truncate max-w-[200px]" title={lead.listingTitle}>
+                            {lead.listingTitle || 'Unknown Listing'}
+                          </p>
+                        </td>
+                        <td className="px-4 py-4">
+                          <span className="text-gray-600 text-sm">
+                            {lead.eventDate ? format(new Date(lead.eventDate), 'MMM d, yyyy') : '-'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4">
+                          <select
+                            value={lead.status}
+                            onChange={async (e) => {
+                              try {
+                                await updateLeadStatus(lead.id, e.target.value);
+                                setLeads(prev => prev.map(l => l.id === lead.id ? { ...l, status: e.target.value } : l));
+                                toast.success('Lead status updated');
+                              } catch (err) {
+                                toast.error('Failed to update status');
+                              }
+                            }}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-medium border cursor-pointer ${
+                              lead.status === 'new' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
+                              lead.status === 'contacted' ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                              lead.status === 'converted' ? 'bg-purple-100 text-purple-700 border-purple-200' :
+                              'bg-gray-100 text-gray-700 border-gray-200'
+                            }`}
+                          >
+                            <option value="new">New</option>
+                            <option value="contacted">Contacted</option>
+                            <option value="converted">Converted</option>
+                            <option value="closed">Closed</option>
+                          </select>
+                        </td>
+                        <td className="px-4 py-4">
+                          <span className="text-gray-500 text-sm">
+                            {lead.createdAt ? format(new Date(lead.createdAt), 'MMM d, yyyy HH:mm') : '-'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4">
+                          <div className="flex items-center justify-end gap-2">
+                            {lead.contact && (
+                              <a
+                                href={`https://wa.me/${lead.contact.replace(/\D/g, '')}?text=Hi ${lead.name}, thank you for your interest in "${lead.listingTitle}". How can we help you?`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
+                                title="WhatsApp"
+                              >
+                                <MessageSquare className="w-4 h-4" />
+                              </a>
+                            )}
+                            <button
+                              onClick={async () => {
+                                if (window.confirm('Delete this lead?')) {
+                                  try {
+                                    await deleteLead(lead.id);
+                                    setLeads(prev => prev.filter(l => l.id !== lead.id));
+                                    toast.success('Lead deleted');
+                                  } catch (err) {
+                                    toast.error('Failed to delete lead');
+                                  }
+                                }
+                              }}
+                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="border-t border-gray-200/50 px-4 py-4 flex items-center justify-between bg-gray-50/50">
               <p className="text-gray-500 text-sm">
-                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, activeTab === 'listings' ? filteredListings.length : filteredUsers.length)} of {activeTab === 'listings' ? filteredListings.length : filteredUsers.length}
+                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, getItemCount())} of {getItemCount()}
               </p>
               <div className="flex items-center gap-2">
                 <button
