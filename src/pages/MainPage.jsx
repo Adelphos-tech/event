@@ -1,10 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { DollarSign, MapPin, Briefcase, Home, Film, Package, Phone, Mail, Plus, Calendar, ChevronRight, Sparkles, Search, Filter, Heart as HeartIcon, ArrowUpDown, SlidersHorizontal, Shield, GraduationCap, ExternalLink } from 'lucide-react';
 import { getAllListings } from '../db/databaseAdapter';
 import { ListingGridSkeleton, CategoryTabsSkeleton } from '../components/Skeleton';
 import { useFavorites } from '../hooks/useFavorites';
 import { useToast } from '../components/Toast';
+
+// Animation variants
+const fadeInUp = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+};
+
+const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1,
+            delayChildren: 0.1
+        }
+    }
+};
+
+const cardVariants = {
+    hidden: { opacity: 0, y: 30, scale: 0.95 },
+    visible: { 
+        opacity: 1, 
+        y: 0, 
+        scale: 1,
+        transition: {
+            type: "spring",
+            stiffness: 100,
+            damping: 15
+        }
+    }
+};
+
+const categoryTabVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: { 
+        opacity: 1, 
+        scale: 1,
+        transition: { type: "spring", stiffness: 200, damping: 20 }
+    }
+};
 
 // Platform support contact (shown for unpaid listings)
 const PLATFORM_CONTACT = {
@@ -125,17 +166,22 @@ const MainPage = () => {
         return categories.find(c => c.id === categoryId) || categories[0];
     };
 
-    // Listing Card Component
-    const ListingCard = ({ listing }) => {
+    // Listing Card Component with animations
+    const ListingCard = ({ listing, index = 0 }) => {
         const contact = getContactInfo(listing);
         const catInfo = getCategoryInfo(listing.category);
         const Icon = catInfo.icon;
         const isPending = listing.status === 'pending';
 
         return (
-            <div 
+            <motion.div 
+                variants={cardVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-50px" }}
+                whileHover={{ y: -8, transition: { duration: 0.3 } }}
                 onClick={() => navigate(`/listing/${listing.id}`)}
-                className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-gray-200 cursor-pointer relative">
+                className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 hover:border-gray-200 cursor-pointer relative">
                 
                 {/* Image - always visible */}
                 {listing.images && listing.images.length > 0 ? (
@@ -253,7 +299,7 @@ const MainPage = () => {
                         )}
                     </div>
                 </div>
-            </div>
+            </motion.div>
         );
     };
 
@@ -363,24 +409,50 @@ const MainPage = () => {
             </header>
 
             {/* Hero Section - Hidden on mobile, shown on desktop */}
-            <section className="relative py-12 px-4 sm:px-6 lg:px-8 hidden sm:block">
-                <div className="max-w-7xl mx-auto text-center">
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/50 rounded-full mb-6">
-                        <Sparkles className="w-4 h-4 text-amber-600" />
+            <section className="relative py-12 px-4 sm:px-6 lg:px-8 hidden sm:block overflow-hidden">
+                <motion.div 
+                    className="max-w-7xl mx-auto text-center"
+                    initial="hidden"
+                    animate="visible"
+                    variants={staggerContainer}
+                >
+                    <motion.div 
+                        variants={fadeInUp}
+                        className="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/50 rounded-full mb-6"
+                    >
+                        <motion.div
+                            animate={{ rotate: [0, 15, -15, 0] }}
+                            transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                        >
+                            <Sparkles className="w-4 h-4 text-amber-600" />
+                        </motion.div>
                         <span className="text-sm font-medium text-amber-800">Premium Marketplace</span>
-                    </div>
+                    </motion.div>
                     
-                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4">
+                    <motion.h1 
+                        variants={fadeInUp}
+                        className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4"
+                    >
                         Discover Amazing <span className="text-red-600">Opportunities</span>
-                    </h1>
-                    <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+                    </motion.h1>
+                    <motion.p 
+                        variants={fadeInUp}
+                        className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto"
+                    >
                         Browse businesses, properties, movies, products, and opportunities. 
                         Find what you're looking for or list your own.
-                    </p>
+                    </motion.p>
 
                     {/* Search Bar */}
-                    <div className="max-w-3xl mx-auto mb-6">
-                        <div className="flex flex-col sm:flex-row gap-3">
+                    <motion.div 
+                        variants={fadeInUp}
+                        className="max-w-3xl mx-auto mb-6"
+                    >
+                        <motion.div 
+                            className="flex flex-col sm:flex-row gap-3"
+                            whileHover={{ scale: 1.01 }}
+                            transition={{ type: "spring", stiffness: 300 }}
+                        >
                             <div className="relative flex-1">
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                                 <input
@@ -425,20 +497,31 @@ const MainPage = () => {
                                     </span>
                                 )}
                             </button>
-                        </div>
-                    </div>
+                        </motion.div>
+                    </motion.div>
 
                     {/* Category Filter Tabs - Horizontal scroll on mobile */}
-                    <div className="relative -mx-4 sm:mx-0 px-4 sm:px-0 mb-8">
-                        <div className="flex sm:flex-wrap sm:justify-center gap-2 overflow-x-auto scrollbar-hide pb-2 sm:pb-0">
-                            {categories.map((cat) => {
+                    <motion.div 
+                        variants={fadeInUp}
+                        className="relative -mx-4 sm:mx-0 px-4 sm:px-0 mb-8"
+                    >
+                        <motion.div 
+                            className="flex sm:flex-wrap sm:justify-center gap-2 overflow-x-auto scrollbar-hide pb-2 sm:pb-0"
+                            variants={staggerContainer}
+                            initial="hidden"
+                            animate="visible"
+                        >
+                            {categories.map((cat, index) => {
                                 const Icon = cat.icon;
                                 const count = cat.id === 'all' ? filteredListings.length : listingsByCategory[cat.id]?.length || 0;
                                 return (
-                                    <button
+                                    <motion.button
                                         key={cat.id}
+                                        variants={categoryTabVariants}
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
                                         onClick={() => setSelectedCategory(cat.id)}
-                                        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
+                                        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
                                             selectedCategory === cat.id
                                                 ? `bg-gradient-to-r ${cat.color} text-white shadow-lg`
                                                 : 'bg-white/80 text-gray-700 hover:bg-white hover:shadow-md border border-gray-200/50'
@@ -452,14 +535,14 @@ const MainPage = () => {
                                         }`}>
                                             {count}
                                         </span>
-                                    </button>
+                                    </motion.button>
                                 );
                             })}
-                        </div>
+                        </motion.div>
                         {/* Fade indicator for scroll */}
                         <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-[#f5f0eb] to-transparent pointer-events-none sm:hidden"></div>
-                    </div>
-                </div>
+                    </motion.div>
+                </motion.div>
             </section>
 
             {/* Mobile-Only Compact Search & Filters - Shows at top on mobile */}
@@ -567,11 +650,17 @@ const MainPage = () => {
                                     </div>
                                     
                                     {/* Listings Grid */}
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                        {categoryListings.slice(0, 4).map((listing) => (
-                                            <ListingCard key={listing.id} listing={listing} />
+                                    <motion.div 
+                                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                                        initial="hidden"
+                                        whileInView="visible"
+                                        viewport={{ once: true, margin: "-100px" }}
+                                        variants={staggerContainer}
+                                    >
+                                        {categoryListings.slice(0, 4).map((listing, index) => (
+                                            <ListingCard key={listing.id} listing={listing} index={index} />
                                         ))}
-                                    </div>
+                                    </motion.div>
                                 </section>
                             );
                         })}
@@ -603,11 +692,16 @@ const MainPage = () => {
                         </div>
                         
                         {filteredListings.length > 0 ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                {filteredListings.map((listing) => (
-                                    <ListingCard key={listing.id} listing={listing} />
+                            <motion.div 
+                                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                                initial="hidden"
+                                animate="visible"
+                                variants={staggerContainer}
+                            >
+                                {filteredListings.map((listing, index) => (
+                                    <ListingCard key={listing.id} listing={listing} index={index} />
                                 ))}
-                            </div>
+                            </motion.div>
                         ) : (
                             <div className="text-center py-16">
                                 <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
