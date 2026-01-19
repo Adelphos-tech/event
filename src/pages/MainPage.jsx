@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { DollarSign, MapPin, Briefcase, Home, Film, Package, Phone, Mail, Plus, Calendar, ChevronRight, Sparkles, Search, Filter, Heart as HeartIcon, ArrowUpDown, SlidersHorizontal, Shield, GraduationCap, ExternalLink, Eye } from 'lucide-react';
+import { DollarSign, MapPin, Briefcase, Home, Film, Package, Phone, Mail, Plus, Calendar, ChevronRight, Sparkles, Search, Filter, Heart as HeartIcon, ArrowUpDown, SlidersHorizontal, Shield, GraduationCap, ExternalLink, Eye, Share2 } from 'lucide-react';
 import { getAllListings } from '../db/databaseAdapter';
 import { ListingGridSkeleton, CategoryTabsSkeleton } from '../components/Skeleton';
 import { useFavorites } from '../hooks/useFavorites';
@@ -226,21 +226,38 @@ const MainPage = () => {
                             </div>
                         )}
                         
-                        {/* Favorite Button */}
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                toggleFavorite(listing.id);
-                                toast.success(isFavorite(listing.id) ? 'Removed from favorites' : 'Added to favorites');
-                            }}
-                            className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-sm transition-all ${
-                                isFavorite(listing.id)
-                                    ? 'bg-red-500 text-white'
-                                    : 'bg-white/80 text-gray-600 hover:bg-white hover:text-red-500'
-                            }`}
-                        >
-                            <HeartIcon className={`w-4 h-4 ${isFavorite(listing.id) ? 'fill-current' : ''}`} />
-                        </button>
+                        {/* Action Buttons */}
+                        <div className="absolute top-3 right-3 flex gap-2">
+                            {/* Share Button */}
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    const shareUrl = `${window.location.origin}/listing/${listing.id}`;
+                                    navigator.clipboard.writeText(shareUrl);
+                                    toast.success('Link copied!', 'Share this listing with others');
+                                }}
+                                className="p-2 rounded-full backdrop-blur-sm bg-white/80 text-gray-600 hover:bg-white hover:text-blue-500 transition-all"
+                                title="Copy link"
+                            >
+                                <Share2 className="w-4 h-4" />
+                            </button>
+                            
+                            {/* Favorite Button */}
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleFavorite(listing.id);
+                                    toast.success(isFavorite(listing.id) ? 'Removed from favorites' : 'Added to favorites');
+                                }}
+                                className={`p-2 rounded-full backdrop-blur-sm transition-all ${
+                                    isFavorite(listing.id)
+                                        ? 'bg-red-500 text-white'
+                                        : 'bg-white/80 text-gray-600 hover:bg-white hover:text-red-500'
+                                }`}
+                            >
+                                <HeartIcon className={`w-4 h-4 ${isFavorite(listing.id) ? 'fill-current' : ''}`} />
+                            </button>
+                        </div>
                         
                         {/* Price Badge - always visible */}
                         {(listing.budgetMin || listing.budgetMax) && (

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { 
   ArrowLeft, MapPin, Phone, Mail, Calendar, DollarSign, 
   Share2, Heart, ChevronLeft, ChevronRight, Building2,
   Home, Film, Package, Briefcase, Clock, User, AlertCircle
 } from 'lucide-react';
 import { getListing } from '../db/databaseAdapter';
+import LeadCaptureModal from '../components/LeadCaptureModal';
+import { useToast } from '../components/Toast';
 
 // Platform support contact (shown for unpaid listings)
 const PLATFORM_CONTACT = {
@@ -16,10 +18,14 @@ const PLATFORM_CONTACT = {
 const ListingDetail = () => {
   const { listingId } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const toast = useToast();
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [error, setError] = useState(null);
+  const [showLeadModal, setShowLeadModal] = useState(false);
+  const [hasSubmittedLead, setHasSubmittedLead] = useState(false);
 
   const categories = {
     business: { label: 'Business', icon: DollarSign, color: 'from-emerald-500 to-emerald-600' },
@@ -37,6 +43,15 @@ const ListingDetail = () => {
         const data = await getListing(listingId);
         if (data) {
           setListing(data);
+          // Check if user already submitted lead for this listing (stored in sessionStorage)
+          const submittedLeads = JSON.parse(sessionStorage.getItem('submittedLeads') || '[]');
+          const alreadySubmitted = submittedLeads.includes(listingId);
+          setHasSubmittedLead(alreadySubmitted);
+          
+          // Show lead modal automatically if not already submitted
+          if (!alreadySubmitted) {
+            setShowLeadModal(true);
+          }
         } else {
           setError('Listing not found');
         }
@@ -48,6 +63,19 @@ const ListingDetail = () => {
     };
     fetchListing();
   }, [listingId]);
+
+  // Handle lead submission success
+  const handleLeadSuccess = () => {
+    setShowLeadModal(false);
+    setHasSubmittedLead(true);
+    // Store in sessionStorage to prevent showing modal again
+    const submittedLeads = JSON.parse(sessionStorage.getItem('submittedLeads') || '[]');
+    if (!submittedLeads.includes(listingId)) {
+      submittedLeads.push(listingId);
+      sessionStorage.setItem('submittedLeads', JSON.stringify(submittedLeads));
+    }
+    toast.success('Thank you!', 'Your enquiry has been submitted.');
+  };
 
   // Get contact info based on approval status (active = approved)
   // Only show listing owner's contact if the listing is approved (status === 'active')
@@ -308,6 +336,14 @@ const ListingDetail = () => {
           Posted {listing.createdAt ? new Date(listing.createdAt).toLocaleDateString() : 'Recently'}
         </div>
       </main>
+
+      {/* Lead Capture Modal */}
+      <LeadCaptureModal
+        isOpen={showLeadModal}
+        onClose={() => setShowLeadModal(false)}
+        listing={listing}
+        onSuccess={handleLeadSuccess}
+      />
     </div>
   );
 };
