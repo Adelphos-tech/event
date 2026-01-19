@@ -342,11 +342,10 @@ const MainPage = () => {
                                 href="https://tutor.linkmeu.com"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="hidden sm:flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
+                                className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-50 to-orange-50 text-amber-700 hover:from-amber-100 hover:to-orange-100 rounded-lg transition-all border border-amber-200/50"
                             >
                                 <GraduationCap className="w-4 h-4" />
-                                AI Tutor
-                                <ExternalLink className="w-3 h-3 opacity-50" />
+                                <span className="font-medium">AI Tutor</span>
                             </a>
                             
                             {/* Register Button - Prominent */}
