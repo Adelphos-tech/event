@@ -875,10 +875,10 @@ export const createLead = async (leadData) => {
       listing_title: leadData.listingTitle,
       name: leadData.name,
       contact: leadData.contact,
-      email: leadData.email,
+      email: leadData.email || '',
       event_date: leadData.eventDate || null,
       status: 'new',
-      notes: ''
+      notes: leadData.notes || '' // Customer requirement/what they're looking for
     })
     .select()
     .single();

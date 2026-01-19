@@ -1,45 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, User, Phone, Mail, Calendar, Send, Loader2 } from 'lucide-react';
+import { User, Phone, ArrowRight, Loader2, Shield, Zap, MessageSquare } from 'lucide-react';
 import { createLead } from '../db/databaseAdapter';
+
+// Session storage keys
+const SESSION_PHONE_KEY = 'linkmeu_user_phone';
+const SESSION_NAME_KEY = 'linkmeu_user_name';
 
 const LeadCaptureModal = ({ isOpen, onClose, listing, onSuccess }) => {
   const [formData, setFormData] = useState({
     name: '',
     contact: '',
-    email: '',
-    eventDate: ''
+    requirement: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [hasExistingPhone, setHasExistingPhone] = useState(false);
+
+  // Load saved phone/name from session on mount
+  useEffect(() => {
+    const savedPhone = sessionStorage.getItem(SESSION_PHONE_KEY);
+    const savedName = sessionStorage.getItem(SESSION_NAME_KEY);
+    
+    if (savedPhone) {
+      setFormData(prev => ({
+        ...prev,
+        contact: savedPhone,
+        name: savedName || ''
+      }));
+      setHasExistingPhone(true);
+    }
+  }, [isOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    // Basic validation
-    if (!formData.name.trim()) {
-      setError('Please enter your name');
-      return;
-    }
-    if (!formData.contact.trim() && !formData.email.trim()) {
-      setError('Please enter either contact number or email');
+    // Minimal validation - just need phone
+    if (!formData.contact.trim()) {
+      setError('Please enter your phone number');
       return;
     }
 
     setLoading(true);
     try {
+      // Save phone/name to session for future use
+      sessionStorage.setItem(SESSION_PHONE_KEY, formData.contact.trim());
+      if (formData.name.trim()) {
+        sessionStorage.setItem(SESSION_NAME_KEY, formData.name.trim());
+      }
+
       await createLead({
         listingId: listing.id,
         listingTitle: listing.title,
-        name: formData.name.trim(),
+        name: formData.name.trim() || 'Guest',
         contact: formData.contact.trim(),
-        email: formData.email.trim(),
-        eventDate: formData.eventDate || null
+        email: '',
+        eventDate: null,
+        notes: formData.requirement.trim() // Store requirement in notes field
       });
 
-      // Reset form
-      setFormData({ name: '', contact: '', email: '', eventDate: '' });
+      // Reset only requirement, keep phone/name
+      setFormData(prev => ({ ...prev, requirement: '' }));
+      setHasExistingPhone(true);
       
       // Call success callback
       if (onSuccess) {
@@ -47,16 +70,10 @@ const LeadCaptureModal = ({ isOpen, onClose, listing, onSuccess }) => {
       }
     } catch (err) {
       console.error('Error submitting lead:', err);
-      setError('Failed to submit. Please try again.');
+      setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleClose = () => {
-    setFormData({ name: '', contact: '', email: '', eventDate: '' });
-    setError('');
-    onClose();
   };
 
   if (!isOpen) return null;
@@ -68,142 +85,173 @@ const LeadCaptureModal = ({ isOpen, onClose, listing, onSuccess }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-          onClick={handleClose}
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
         >
+          {/* Semi-transparent overlay - can see background */}
+          <div 
+            className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"
+            onClick={onClose}
+          />
+          
+          {/* Modal - slides up on mobile, centered on desktop */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 100 }}
+            transition={{ type: "spring", damping: 30, stiffness: 400 }}
+            className="relative bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl w-full sm:max-w-sm overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
-            <div className="bg-gradient-to-r from-red-600 to-red-700 px-6 py-4 text-white">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-bold">Interested in this listing?</h2>
-                  <p className="text-red-100 text-sm mt-1">Share your details and we'll connect you</p>
-                </div>
-                <button
-                  onClick={handleClose}
-                  className="p-2 hover:bg-white/20 rounded-full transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+            {/* Drag handle for mobile */}
+            <div className="sm:hidden flex justify-center pt-3 pb-1">
+              <div className="w-10 h-1 bg-gray-300 rounded-full" />
             </div>
 
-            {/* Listing Preview */}
-            <div className="px-6 py-3 bg-gray-50 border-b border-gray-100">
-              <p className="text-sm text-gray-500">You're enquiring about:</p>
-              <p className="font-semibold text-gray-900 truncate">{listing?.title}</p>
-            </div>
+            {/* Content */}
+            <div className="px-6 pt-4 pb-6">
+              {/* Header - friendly, non-threatening */}
+              <div className="text-center mb-5">
+                <h2 className="text-xl font-bold text-gray-900">Quick Enquiry</h2>
+                <p className="text-gray-500 text-sm mt-1">Get connected in seconds</p>
+              </div>
 
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm"
-                >
-                  {error}
-                </motion.div>
-              )}
-
-              {/* Name */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Your Name <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Enter your full name"
-                    className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-                    required
+              {/* Listing preview - small, contextual */}
+              <div className="bg-gray-50 rounded-xl p-3 mb-5 flex items-center gap-3">
+                {listing?.images?.[0] && (
+                  <img 
+                    src={listing.images[0]} 
+                    alt="" 
+                    className="w-12 h-12 rounded-lg object-cover"
                   />
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-gray-900 text-sm truncate">{listing?.title}</p>
+                  <p className="text-xs text-gray-500">{listing?.location || 'Singapore'}</p>
                 </div>
               </div>
 
-              {/* Contact */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Contact Number
-                </label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type="tel"
-                    value={formData.contact}
-                    onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-                    placeholder="+65 XXXX XXXX"
-                    className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-                  />
-                </div>
-              </div>
+              {/* Form - minimal fields */}
+              <form onSubmit={handleSubmit} className="space-y-3">
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="p-2.5 bg-red-50 border border-red-100 rounded-xl text-red-600 text-sm text-center"
+                  >
+                    {error}
+                  </motion.div>
+                )}
 
-              {/* Email */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="your@email.com"
-                    className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-                  />
-                </div>
-              </div>
+                {/* Show saved user info if exists */}
+                {hasExistingPhone && (
+                  <div className="bg-green-50 border border-green-100 rounded-xl p-3 flex items-center gap-3">
+                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                      <User className="w-4 h-4 text-green-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-green-800">
+                        {formData.name || 'Guest'}
+                      </p>
+                      <p className="text-xs text-green-600">{formData.contact}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        sessionStorage.removeItem(SESSION_PHONE_KEY);
+                        sessionStorage.removeItem(SESSION_NAME_KEY);
+                        setFormData({ name: '', contact: '', requirement: '' });
+                        setHasExistingPhone(false);
+                      }}
+                      className="text-xs text-green-600 hover:text-green-800 underline"
+                    >
+                      Change
+                    </button>
+                  </div>
+                )}
 
-              {/* Event Date */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Event Date (if applicable)
-                </label>
-                <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type="date"
-                    value={formData.eventDate}
-                    onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
-                    className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-                  />
-                </div>
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white rounded-xl font-semibold transition-all shadow-lg shadow-red-500/20 hover:shadow-xl hover:shadow-red-500/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                {loading ? (
+                {/* Phone & Name - Only show if no saved phone */}
+                {!hasExistingPhone && (
                   <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-5 h-5" />
-                    Submit & View Listing
+                    {/* Phone - Primary field */}
+                    <div className="relative">
+                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        type="tel"
+                        value={formData.contact}
+                        onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                        placeholder="Your phone number"
+                        className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:ring-0 focus:border-red-500 focus:bg-white transition-all text-lg"
+                        autoFocus
+                      />
+                    </div>
+
+                    {/* Name - Optional, smaller */}
+                    <div className="relative">
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <input
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        placeholder="Your name (optional)"
+                        className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-0 focus:border-gray-200 focus:bg-white transition-all text-sm"
+                      />
+                    </div>
                   </>
                 )}
-              </button>
 
-              <p className="text-xs text-gray-500 text-center">
-                By submitting, you agree to be contacted regarding this listing.
-              </p>
-            </form>
+                {/* What are you looking for? - Always show */}
+                <div className="relative">
+                  <MessageSquare className="absolute left-4 top-3 w-4 h-4 text-gray-400" />
+                  <textarea
+                    value={formData.requirement}
+                    onChange={(e) => setFormData({ ...formData, requirement: e.target.value })}
+                    placeholder="What are you looking for? (optional)"
+                    rows={2}
+                    className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-0 focus:border-gray-200 focus:bg-white transition-all text-sm resize-none"
+                  />
+                </div>
+
+                {/* Submit Button - Action-oriented, not scary */}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Please wait...
+                    </>
+                  ) : (
+                    <>
+                      Continue to Listing
+                      <ArrowRight className="w-5 h-5" />
+                    </>
+                  )}
+                </button>
+
+                {/* Trust signals */}
+                <div className="flex items-center justify-center gap-4 pt-2">
+                  <div className="flex items-center gap-1.5 text-gray-400 text-xs">
+                    <Shield className="w-3.5 h-3.5" />
+                    <span>Secure</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-gray-400 text-xs">
+                    <Zap className="w-3.5 h-3.5" />
+                    <span>Instant response</span>
+                  </div>
+                </div>
+
+                {/* Skip option - reduces pressure */}
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="w-full py-2 text-gray-400 text-sm hover:text-gray-600 transition-colors"
+                >
+                  Skip for now
+                </button>
+              </form>
+            </div>
           </motion.div>
         </motion.div>
       )}

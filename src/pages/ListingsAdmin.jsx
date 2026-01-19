@@ -682,7 +682,7 @@ const ListingsAdmin = () => {
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Lead Info</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Contact</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Listing</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Event Date</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Looking For</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Created</th>
                     <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
@@ -734,9 +734,13 @@ const ListingsAdmin = () => {
                           </p>
                         </td>
                         <td className="px-4 py-4">
-                          <span className="text-gray-600 text-sm">
-                            {lead.eventDate ? format(new Date(lead.eventDate), 'MMM d, yyyy') : '-'}
-                          </span>
+                          {lead.notes ? (
+                            <p className="text-gray-700 text-sm max-w-[200px] line-clamp-2" title={lead.notes}>
+                              {lead.notes}
+                            </p>
+                          ) : (
+                            <span className="text-gray-400 text-sm italic">Not specified</span>
+                          )}
                         </td>
                         <td className="px-4 py-4">
                           <select
@@ -772,7 +776,7 @@ const ListingsAdmin = () => {
                           <div className="flex items-center justify-end gap-2">
                             {lead.contact && (
                               <a
-                                href={`https://wa.me/${lead.contact.replace(/\D/g, '')}?text=Hi ${lead.name}, thank you for your interest in "${lead.listingTitle}". How can we help you?`}
+                                href={`https://wa.me/${lead.contact.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi ${lead.name}, thank you for your interest in "${lead.listingTitle}".${lead.notes ? `\n\nYou mentioned: "${lead.notes}"` : ''}\n\nHow can we help you?`)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
