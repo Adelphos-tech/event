@@ -340,7 +340,7 @@ const ListingsAdmin = () => {
               {['listings', 'users'].map((tab) => (
                 <button
                   key={tab}
-                  onClick={() => { setActiveTab(tab); setCurrentPage(1); }}
+                  onClick={() => { setActiveTab(tab); setCurrentPage(1); setStatusFilter('all'); setCategoryFilter('all'); setSearchQuery(''); }}
                   className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all capitalize ${
                     activeTab === tab 
                       ? 'bg-gradient-to-r from-gray-800 to-gray-900 text-white shadow-lg' 
