@@ -219,12 +219,6 @@ const MainPage = () => {
                             {catInfo.label}
                         </div>
                         
-                        {/* Pending Review Badge */}
-                        {isPending && (
-                            <div className="absolute top-12 left-3 px-2 py-1 bg-amber-500 text-white text-xs font-medium rounded-full">
-                                Pending Review
-                            </div>
-                        )}
                         
                         {/* Action Buttons */}
                         <div className="absolute top-3 right-3 flex gap-2">
@@ -273,12 +267,6 @@ const MainPage = () => {
                 ) : (
                     <div className={`h-32 bg-gradient-to-br ${catInfo.color} flex items-center justify-center relative`}>
                         <Icon className="w-12 h-12 text-white/50" />
-                        {/* Pending Review Badge for no-image listings */}
-                        {isPending && (
-                            <div className="absolute top-3 left-3 px-2 py-1 bg-amber-500 text-white text-xs font-medium rounded-full">
-                                Pending Review
-                            </div>
-                        )}
                     </div>
                 )}
                 
@@ -326,10 +314,6 @@ const MainPage = () => {
                             </div>
                         </div>
                         
-                        {/* Pending badge if applicable */}
-                        {isPending && (
-                            <p className="text-xs text-amber-600 mt-2 text-center">Awaiting approval</p>
-                        )}
                     </div>
                 </div>
             </motion.div>
