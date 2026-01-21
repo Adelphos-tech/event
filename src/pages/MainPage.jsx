@@ -97,6 +97,12 @@ const MainPage = () => {
         setShowLeadModal(false);
         toast.success('Thank you!', 'Your enquiry has been submitted.');
         if (selectedListing) {
+            // Store in sessionStorage to prevent showing modal again on ListingDetail
+            const submittedLeads = JSON.parse(sessionStorage.getItem('submittedLeads') || '[]');
+            if (!submittedLeads.includes(selectedListing.id)) {
+                submittedLeads.push(selectedListing.id);
+                sessionStorage.setItem('submittedLeads', JSON.stringify(submittedLeads));
+            }
             console.log('🚀 Navigating to listing:', selectedListing.id);
             navigate(`/listing/${selectedListing.id}`);
         } else {

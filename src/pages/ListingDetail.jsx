@@ -45,7 +45,8 @@ const ListingDetail = () => {
           setListing(data);
           // Check if user already submitted lead for this listing (stored in sessionStorage)
           const submittedLeads = JSON.parse(sessionStorage.getItem('submittedLeads') || '[]');
-          const alreadySubmitted = submittedLeads.includes(listingId);
+          // listingId from URL params is a string, so check both string and number
+          const alreadySubmitted = submittedLeads.includes(listingId) || submittedLeads.includes(Number(listingId));
           setHasSubmittedLead(alreadySubmitted);
           
           // Show lead modal automatically if not already submitted
