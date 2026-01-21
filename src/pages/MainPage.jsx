@@ -93,10 +93,14 @@ const MainPage = () => {
 
     // After lead is captured, navigate to listing
     const handleLeadSuccess = () => {
+        console.log('🎯 handleLeadSuccess called, selectedListing:', selectedListing);
         setShowLeadModal(false);
         toast.success('Thank you!', 'Your enquiry has been submitted.');
         if (selectedListing) {
+            console.log('🚀 Navigating to listing:', selectedListing.id);
             navigate(`/listing/${selectedListing.id}`);
+        } else {
+            console.warn('⚠️ No selectedListing to navigate to');
         }
     };
 

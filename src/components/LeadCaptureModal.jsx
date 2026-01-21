@@ -7,7 +7,7 @@ import { createLead } from '../db/databaseAdapter';
 const SESSION_PHONE_KEY = 'linkmeu_user_phone';
 const SESSION_NAME_KEY = 'linkmeu_user_name';
 
-const LeadCaptureModal = ({ isOpen, onClose, listing, onSuccess }) => {
+const LeadCaptureModal = ({ isOpen, onClose, listing, onSuccess, submitButtonText = 'Continue to Listing' }) => {
   const [formData, setFormData] = useState({
     name: '',
     contact: '',
@@ -35,43 +35,68 @@ const LeadCaptureModal = ({ isOpen, onClose, listing, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    
+    console.log('🔵 handleSubmit called');
+    console.log('🔵 listing:', listing);
+    console.log('🔵 formData:', formData);
+
+    // Validate listing exists
+    if (!listing || !listing.id) {
+      console.error('❌ No listing provided to LeadCaptureModal');
+      setError('Unable to process request. Please try again.');
+      return;
+    }
 
     // Minimal validation - just need phone
-    if (!formData.contact.trim()) {
+    const contact = String(formData.contact || '').trim();
+    if (!contact) {
+      console.error('❌ No phone number provided');
       setError('Please enter your phone number');
       return;
     }
 
+    console.log('🔵 Validation passed, setting loading...');
     setLoading(true);
+    
     try {
       // Save phone/name to session for future use
-      sessionStorage.setItem(SESSION_PHONE_KEY, formData.contact.trim());
-      if (formData.name.trim()) {
-        sessionStorage.setItem(SESSION_NAME_KEY, formData.name.trim());
+      sessionStorage.setItem(SESSION_PHONE_KEY, contact);
+      const name = String(formData.name || '').trim();
+      if (name) {
+        sessionStorage.setItem(SESSION_NAME_KEY, name);
       }
 
+      console.log('📝 Submitting lead for listing:', listing.id, listing.title);
+      
       await createLead({
         listingId: listing.id,
         listingTitle: listing.title,
-        name: formData.name.trim() || 'Guest',
-        contact: formData.contact.trim(),
+        name: name || 'Guest',
+        contact: contact,
         email: '',
         eventDate: null,
-        notes: formData.requirement.trim() // Store requirement in notes field
+        notes: String(formData.requirement || '').trim()
       });
 
+      console.log('✅ Lead created successfully, calling onSuccess');
+      
       // Reset only requirement, keep phone/name
       setFormData(prev => ({ ...prev, requirement: '' }));
       setHasExistingPhone(true);
       
-      // Call success callback
+      // Call success callback - this should navigate to listing
       if (onSuccess) {
+        console.log('🚀 Calling onSuccess callback');
         onSuccess();
+      } else {
+        console.warn('⚠️ No onSuccess callback provided');
       }
     } catch (err) {
-      console.error('Error submitting lead:', err);
+      console.error('❌ Error submitting lead:', err);
+      console.error('❌ Error details:', err.message, err.stack);
       setError('Something went wrong. Please try again.');
     } finally {
+      console.log('🔵 Setting loading to false');
       setLoading(false);
     }
   };
@@ -224,7 +249,7 @@ const LeadCaptureModal = ({ isOpen, onClose, listing, onSuccess }) => {
                     </>
                   ) : (
                     <>
-                      Continue to Listing
+                      {submitButtonText}
                       <ArrowRight className="w-5 h-5" />
                     </>
                   )}

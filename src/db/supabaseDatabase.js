@@ -869,29 +869,51 @@ export const getDatabaseStatus = async () => {
 // =====================================================
 
 export const createLead = async (leadData) => {
-  console.log('📝 Creating lead:', leadData);
+  console.log('📝 Creating lead:', JSON.stringify(leadData, null, 2));
+  
+  // Validate required fields
+  if (!leadData.listingId) {
+    console.error('❌ Missing listingId in leadData');
+    throw new Error('Listing ID is required');
+  }
+  if (!leadData.contact) {
+    console.error('❌ Missing contact in leadData');
+    throw new Error('Contact is required');
+  }
+  
+  const insertData = {
+    listing_id: leadData.listingId,
+    listing_title: leadData.listingTitle || '',
+    name: leadData.name || 'Guest',
+    contact: leadData.contact,
+    email: leadData.email || '',
+    event_date: leadData.eventDate || null,
+    status: 'new',
+    notes: leadData.notes || ''
+  };
+  
+  console.log('📤 Inserting into leads table:', JSON.stringify(insertData, null, 2));
   
   const { data, error } = await supabase
     .from('leads')
-    .insert({
-      listing_id: leadData.listingId,
-      listing_title: leadData.listingTitle,
-      name: leadData.name,
-      contact: leadData.contact,
-      email: leadData.email || '',
-      event_date: leadData.eventDate || null,
-      status: 'new',
-      notes: leadData.notes || '' // Customer requirement/what they're looking for
-    })
+    .insert(insertData)
     .select()
     .single();
   
   if (error) {
-    console.error('❌ Error creating lead:', error);
-    throw new Error(error.message);
+    console.error('❌ Supabase error creating lead:', error);
+    console.error('❌ Error code:', error.code);
+    console.error('❌ Error details:', error.details);
+    console.error('❌ Error hint:', error.hint);
+    throw new Error(error.message || 'Failed to create lead');
   }
   
-  console.log('✅ Lead created:', data.id);
+  if (!data) {
+    console.error('❌ No data returned from insert');
+    throw new Error('No data returned from lead creation');
+  }
+  
+  console.log('✅ Lead created successfully:', data.id);
   return mapLeadToFrontend(data);
 };
 

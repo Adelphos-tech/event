@@ -66,6 +66,7 @@ const ListingDetail = () => {
 
   // Handle lead submission success
   const handleLeadSuccess = () => {
+    console.log('🎯 ListingDetail handleLeadSuccess called');
     setShowLeadModal(false);
     setHasSubmittedLead(true);
     // Store in sessionStorage to prevent showing modal again
@@ -75,6 +76,7 @@ const ListingDetail = () => {
       sessionStorage.setItem('submittedLeads', JSON.stringify(submittedLeads));
     }
     toast.success('Thank you!', 'Your enquiry has been submitted.');
+    console.log('✅ Modal closed, user can now see full listing details');
   };
 
   // Get contact info based on approval status (active = approved)
@@ -343,6 +345,7 @@ const ListingDetail = () => {
         onClose={() => setShowLeadModal(false)}
         listing={listing}
         onSuccess={handleLeadSuccess}
+        submitButtonText="View Full Details"
       />
     </div>
   );
