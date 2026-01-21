@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { DollarSign, MapPin, Briefcase, Home, Film, Package, Phone, Mail, Plus, Calendar, ChevronRight, Sparkles, Search, Filter, Heart as HeartIcon, ArrowUpDown, SlidersHorizontal, Shield, GraduationCap, ExternalLink, Eye, Share2 } from 'lucide-react';
+import { DollarSign, MapPin, Briefcase, Home, Film, Package, Phone, Mail, Plus, Calendar, ChevronRight, Sparkles, Search, Filter, Heart as HeartIcon, ArrowUpDown, SlidersHorizontal, Shield, GraduationCap, ExternalLink, Eye, Share2, Menu, X } from 'lucide-react';
 import { getAllListings } from '../db/databaseAdapter';
 import { ListingGridSkeleton, CategoryTabsSkeleton } from '../components/Skeleton';
 import { useFavorites } from '../hooks/useFavorites';
@@ -84,6 +84,9 @@ const MainPage = () => {
     // Lead capture modal state
     const [showLeadModal, setShowLeadModal] = useState(false);
     const [selectedListing, setSelectedListing] = useState(null);
+    
+    // Mobile menu state
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     // Handle listing click - show lead capture modal first
     const handleListingClick = (listing) => {
@@ -387,15 +390,83 @@ const MainPage = () => {
                             {/* Register Button - Prominent */}
                             <button
                                 onClick={() => navigate('/register-listing')}
-                                className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white rounded-xl font-semibold transition-all shadow-lg shadow-red-500/20 hover:shadow-xl hover:shadow-red-500/30"
+                                className="hidden sm:flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white rounded-xl font-semibold transition-all shadow-lg shadow-red-500/20 hover:shadow-xl hover:shadow-red-500/30"
                             >
                                 <Plus className="w-5 h-5" />
-                                <span className="hidden sm:inline">Register Listing</span>
-                                <span className="sm:hidden">Register</span>
+                                Register Listing
+                            </button>
+                            
+                            {/* Mobile Menu Button */}
+                            <button
+                                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                                className="sm:hidden p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition-all"
+                            >
+                                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                             </button>
                         </div>
                     </div>
                 </div>
+                
+                {/* Mobile Menu Dropdown */}
+                <AnimatePresence>
+                    {mobileMenuOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="sm:hidden bg-white border-t border-gray-100"
+                        >
+                            <div className="px-4 py-4 space-y-2">
+                                <button
+                                    onClick={() => {
+                                        navigate('/events');
+                                        setMobileMenuOpen(false);
+                                    }}
+                                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 transition-all"
+                                >
+                                    <Calendar className="w-5 h-5" />
+                                    <span className="font-medium">Events</span>
+                                </button>
+                                
+                                <button
+                                    onClick={() => {
+                                        navigate('/membership');
+                                        setMobileMenuOpen(false);
+                                    }}
+                                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 transition-all"
+                                >
+                                    <Shield className="w-5 h-5" />
+                                    <span className="font-medium">Membership</span>
+                                </button>
+                                
+                                <a
+                                    href="https://tutor.linkmeu.com"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 text-amber-700 border border-amber-200/50"
+                                >
+                                    <GraduationCap className="w-5 h-5" />
+                                    <span className="font-medium">AI Tutor</span>
+                                    <ExternalLink className="w-4 h-4 ml-auto" />
+                                </a>
+                                
+                                <div className="pt-2 border-t border-gray-100">
+                                    <button
+                                        onClick={() => {
+                                            navigate('/register-listing');
+                                            setMobileMenuOpen(false);
+                                        }}
+                                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-semibold"
+                                    >
+                                        <Plus className="w-5 h-5" />
+                                        Register Listing
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </header>
 
             {/* Compact Search & Filter Bar - Desktop */}
