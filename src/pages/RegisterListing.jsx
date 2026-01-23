@@ -22,6 +22,7 @@ const RegisterListing = () => {
         currency: 'SGD',
         revenue: '',
         contact: '',
+        whatsapp: '',
         email: '',
         password: '',
         location: 'Singapore',
@@ -142,6 +143,7 @@ const RegisterListing = () => {
                 revenue: formData.revenue,
                 location: formData.location,
                 contact: formData.contact,
+                whatsapp: formData.whatsapp || formData.contact, // Use contact if whatsapp not provided
                 email: formData.email,
                 password: formData.password,
                 images: formData.images
@@ -530,6 +532,22 @@ const RegisterListing = () => {
                             {touched.contact && errors.contact && (
                                 <p className="mt-1 text-xs text-red-500">{errors.contact}</p>
                             )}
+                        </div>
+                        
+                        <div className="mt-4">
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                WhatsApp Number <span className="text-gray-400 text-xs font-normal">(Optional)</span>
+                            </label>
+                            <PhoneInput
+                                value={formData.whatsapp}
+                                onChange={(value) => {
+                                    handleFieldChange('whatsapp', value || '');
+                                }}
+                                defaultCountry="SG"
+                                placeholder="WhatsApp number (if different)"
+                                theme="light"
+                            />
+                            <p className="mt-1 text-xs text-gray-500">Leave empty if same as contact number</p>
                         </div>
                     </div>
 

@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { 
   ArrowLeft, MapPin, Phone, Mail, Calendar, DollarSign, 
   Share2, Heart, ChevronLeft, ChevronRight, Building2,
-  Home, Film, Package, Briefcase, Clock, User, AlertCircle
+  Home, Film, Package, Briefcase, Clock, User, AlertCircle, MessageCircle
 } from 'lucide-react';
 import { getListing } from '../db/databaseAdapter';
 import LeadCaptureModal from '../components/LeadCaptureModal';
@@ -87,12 +87,14 @@ const ListingDetail = () => {
     if (isApproved) {
       return {
         phone: listing.contact || PLATFORM_CONTACT.phone,
+        whatsapp: listing.whatsapp || listing.contact || PLATFORM_CONTACT.phone,
         email: listing.email || PLATFORM_CONTACT.email,
         isApproved: true
       };
     }
     return {
       phone: PLATFORM_CONTACT.phone,
+      whatsapp: PLATFORM_CONTACT.phone,
       email: PLATFORM_CONTACT.email,
       isApproved: false
     };
@@ -305,6 +307,22 @@ const ListingDetail = () => {
           )}
           
           <div className="space-y-3">
+            {/* WhatsApp - Primary CTA */}
+            <a 
+              href={`https://wa.me/${contact.whatsapp?.replace(/[^0-9]/g, '')}?text=Hi, I'm interested in your listing: ${listing?.title}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 p-3 bg-green-500 rounded-xl hover:bg-green-600 transition-colors text-white"
+            >
+              <div className="p-2 bg-white/20 rounded-lg">
+                <MessageCircle className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-sm text-green-100">WhatsApp</p>
+                <p className="font-medium">{contact.whatsapp}</p>
+              </div>
+            </a>
+            
             <a 
               href={`tel:${contact.phone}`}
               className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
