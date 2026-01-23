@@ -1,5 +1,6 @@
 import React from 'react';
 import PhoneInputWithCountry from 'react-phone-number-input';
+import flags from 'react-phone-number-input/flags';
 import 'react-phone-number-input/style.css';
 
 /**
@@ -29,6 +30,7 @@ const PhoneInput = ({
         onChange={onChange}
         placeholder={placeholder}
         onBlur={onBlur}
+        flags={flags}
         className={`phone-input-field ${error ? 'phone-input-error' : ''} ${isDark ? 'phone-input-dark' : 'phone-input-light'}`}
       />
       <style>{`
