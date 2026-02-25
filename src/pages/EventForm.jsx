@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Upload, Calendar, MapPin, Users, Mail, Phone, CheckCircle, AlertCircle, Loader2, ArrowLeft } from 'lucide-react';
-import { addEvent, getEvent, registerUser, loginUser, getDatabaseStatus } from '../db/databaseAdapter';
+import { addEvent, updateEvent, getEvent, registerUser, loginUser, getDatabaseStatus } from '../db/databaseAdapter';
 import { convertImageToBase64, resizeImage } from '../utils/imageUtils';
 import PhoneInput from '../components/PhoneInput';
 import { useAuth } from '../context/AuthContext';
@@ -34,7 +34,7 @@ const EventForm = () => {
       const event = await getEvent(parseInt(id));
       // Only super admin can edit events
       if (!user || !canEditEvent(event.ownerId)) {
-        toast.error('Only Super Admin can edit events. Events cannot be edited after creation.');
+        toast.error('You don\'t have permission to edit this event.');
         navigate('/events');
       }
     } catch (error) {
@@ -488,10 +488,21 @@ const EventForm = () => {
         eventData.createdAt = new Date().toISOString();
       }
 
-      const savedId = await addEvent(eventData);
+      if (isEdit) {
+        await updateEvent(parseInt(id), eventData);
+      } else {
+        await addEvent(eventData);
+      }
       
       // Show success message
-      toast.success(`Event "${formData.title}" created successfully!`, 'Your event has been saved and is pending admin approval.');
+      toast.success(
+        isEdit
+          ? `Event "${formData.title}" updated successfully!`
+          : `Event "${formData.title}" created successfully!`,
+        isEdit
+          ? 'Your changes have been saved.'
+          : 'Your event has been saved and is pending admin approval.'
+      );
       
       // Redirect to events page
       setTimeout(() => navigate('/events'), 1500);
