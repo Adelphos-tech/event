@@ -92,7 +92,12 @@ const EventForm = () => {
       if (event) {
         setFormData({
           ...event,
-          eventType: event.eventType || 'conference'
+          eventType: event.eventType || 'conference',
+          organisers: Array.isArray(event.organisers) ? event.organisers : [],
+          guestsOfHonour: Array.isArray(event.guestsOfHonour) ? event.guestsOfHonour : [],
+          speakers: Array.isArray(event.speakers) ? event.speakers : [],
+          sponsors: Array.isArray(event.sponsors) ? event.sponsors : [],
+          media: Array.isArray(event.media) ? event.media : [],
         });
       } else {
         setErrors({ general: 'Event not found' });
@@ -132,7 +137,7 @@ const EventForm = () => {
   // Validate form fields
   const validateField = useCallback((field, value) => {
     const newErrors = { ...errors };
-    
+
     switch (field) {
       case 'title':
         if (!value || !value.trim()) {
@@ -145,7 +150,7 @@ const EventForm = () => {
           delete newErrors.title;
         }
         break;
-        
+
       case 'startDate':
         if (!value) {
           newErrors.startDate = 'Start date is required';
@@ -168,7 +173,7 @@ const EventForm = () => {
           }
         }
         break;
-        
+
       case 'endDate':
         if (!value) {
           newErrors.endDate = 'End date is required';
@@ -183,7 +188,7 @@ const EventForm = () => {
           }
         }
         break;
-        
+
       case 'capacity':
         if (value !== '' && value !== null && value !== undefined) {
           const numValue = parseInt(value);
@@ -198,7 +203,7 @@ const EventForm = () => {
           delete newErrors.capacity;
         }
         break;
-        
+
       case 'description':
         if (value && value.length > MAX_DESCRIPTION_LENGTH) {
           newErrors.description = `Description must be less than ${MAX_DESCRIPTION_LENGTH} characters`;
@@ -206,7 +211,7 @@ const EventForm = () => {
           delete newErrors.description;
         }
         break;
-        
+
       case 'venue':
         if (value && value.length > MAX_VENUE_LENGTH) {
           newErrors.venue = `Venue must be less than ${MAX_VENUE_LENGTH} characters`;
@@ -214,7 +219,7 @@ const EventForm = () => {
           delete newErrors.venue;
         }
         break;
-        
+
       case 'creatorEmail':
         if (!user && !isEdit) {
           if (!value || !value.trim()) {
@@ -226,7 +231,7 @@ const EventForm = () => {
           }
         }
         break;
-        
+
       case 'creatorPassword':
         if (!user && !isEdit) {
           if (!value) {
@@ -238,7 +243,7 @@ const EventForm = () => {
           }
         }
         break;
-        
+
       case 'creatorContact':
         if (!user && !isEdit) {
           if (!value || !value.trim()) {
@@ -250,11 +255,11 @@ const EventForm = () => {
           }
         }
         break;
-        
+
       default:
         break;
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }, [errors, formData, user, isEdit]);
@@ -264,9 +269,9 @@ const EventForm = () => {
     const sanitizedValue = ['title', 'description', 'venue', 'creatorEmail', 'creatorContact'].includes(field)
       ? (typeof value === 'string' ? value : value)
       : value;
-    
+
     setFormData(prev => ({ ...prev, [field]: sanitizedValue }));
-    
+
     // Validate on change if field was touched or submit was attempted
     if (touched[field] || submitAttempted) {
       validateField(field, sanitizedValue);
@@ -280,26 +285,26 @@ const EventForm = () => {
 
   const handleImageUpload = async (field, file) => {
     if (!file) return;
-    
+
     // Validate file type
     if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-      setErrors(prev => ({ 
-        ...prev, 
-        [field]: `Invalid file type. Allowed: ${ALLOWED_IMAGE_TYPES.map(t => t.split('/')[1]).join(', ')}` 
+      setErrors(prev => ({
+        ...prev,
+        [field]: `Invalid file type. Allowed: ${ALLOWED_IMAGE_TYPES.map(t => t.split('/')[1]).join(', ')}`
       }));
       return;
     }
-    
+
     // Validate file size
     const fileSizeMB = file.size / (1024 * 1024);
     if (fileSizeMB > MAX_IMAGE_SIZE_MB) {
-      setErrors(prev => ({ 
-        ...prev, 
-        [field]: `File too large. Maximum size: ${MAX_IMAGE_SIZE_MB}MB` 
+      setErrors(prev => ({
+        ...prev,
+        [field]: `File too large. Maximum size: ${MAX_IMAGE_SIZE_MB}MB`
       }));
       return;
     }
-    
+
     try {
       // Clear any previous error for this field
       setErrors(prev => {
@@ -307,7 +312,7 @@ const EventForm = () => {
         delete newErrors[field];
         return newErrors;
       });
-      
+
       const base64 = await convertImageToBase64(file);
       const resized = await resizeImage(base64, 800, 800);
       handleChange(field, resized);
@@ -324,13 +329,13 @@ const EventForm = () => {
     if (!user && !isEdit) {
       fieldsToValidate.push('creatorEmail', 'creatorPassword', 'creatorContact');
     }
-    
+
     let isValid = true;
     const newErrors = {};
-    
+
     fieldsToValidate.forEach(field => {
       const value = formData[field];
-      
+
       switch (field) {
         case 'title':
           if (!value || !value.trim()) {
@@ -411,7 +416,7 @@ const EventForm = () => {
           break;
       }
     });
-    
+
     setErrors(newErrors);
     return isValid;
   };
@@ -419,7 +424,7 @@ const EventForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitAttempted(true);
-    
+
     // Validate all fields
     if (!validateAllFields()) {
       // Scroll to first error
@@ -431,10 +436,10 @@ const EventForm = () => {
     }
 
     // Confirmation before submission
-    const confirmMessage = isEdit 
+    const confirmMessage = isEdit
       ? 'Are you sure you want to update this event?'
       : `Are you sure you want to create this event?\n\nTitle: ${formData.title}\nDate: ${formData.startDate} to ${formData.endDate}\nVenue: ${formData.venue || 'Not specified'}`;
-    
+
     if (!window.confirm(confirmMessage)) {
       return;
     }
@@ -493,7 +498,7 @@ const EventForm = () => {
       } else {
         await addEvent(eventData);
       }
-      
+
       // Show success message
       toast.success(
         isEdit
@@ -503,7 +508,7 @@ const EventForm = () => {
           ? 'Your changes have been saved.'
           : 'Your event has been saved and is pending admin approval.'
       );
-      
+
       // Redirect to events page
       setTimeout(() => navigate('/events'), 1500);
     } catch (error) {
@@ -558,7 +563,7 @@ const EventForm = () => {
             <h1 className="text-3xl font-bold text-white mb-3">
               {isEdit ? 'Edit Event' : 'Create Your Event'}
             </h1>
-            
+
             {/* General Error Message */}
             {errors.general && (
               <div className="bg-red-900/50 border border-red-700 rounded-lg p-4 mb-4 flex items-start gap-3">
@@ -571,406 +576,397 @@ const EventForm = () => {
             </p>
           </div>
 
-        <form 
-          onSubmit={handleSubmit} 
-          className="space-y-6"
-          onKeyDown={(e) => {
-            // Prevent form submission on Enter key (except in textarea)
-            if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
-              e.preventDefault();
-            }
-          }}
-        >
-          {/* Event Type Tabs */}
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-            <div className="flex flex-wrap gap-2 mb-6">
-              {eventTypes.map(type => (
-                <button
-                  key={type.id}
-                  type="button"
-                  onClick={() => handleChange('eventType', type.id)}
-                  className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
-                    formData.eventType === type.id
-                      ? 'bg-red-600 text-white shadow-md'
-                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                  }`}
-                >
-                  {type.label}
-                </button>
-              ))}
-            </div>
-          {/* Date Range */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                <Calendar className="inline w-4 h-4 mr-1" />From Date
-              </label>
-              <input
-                type="date"
-                value={formData.startDate}
-                onChange={(e) => handleChange('startDate', e.target.value)}
-                onBlur={() => handleBlur('startDate')}
-                min={!isEdit ? new Date().toISOString().split('T')[0] : undefined}
-                className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-red-500 focus:border-transparent ${
-                  errors.startDate ? 'border-red-500' : 'border-gray-700'
-                }`}
-                required
-              />
-              {errors.startDate && (
-                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                  <AlertCircle className="w-3 h-3" />{errors.startDate}
-                </p>
-              )}
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                <Calendar className="inline w-4 h-4 mr-1" />To Date
-              </label>
-              <input
-                type="date"
-                value={formData.endDate}
-                onChange={(e) => handleChange('endDate', e.target.value)}
-                onBlur={() => handleBlur('endDate')}
-                min={formData.startDate || (!isEdit ? new Date().toISOString().split('T')[0] : undefined)}
-                className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-red-500 focus:border-transparent ${
-                  errors.endDate ? 'border-red-500' : 'border-gray-700'
-                }`}
-                required
-              />
-              {errors.endDate && (
-                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                  <AlertCircle className="w-3 h-3" />{errors.endDate}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Title */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Title <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) => handleChange('title', e.target.value)}
-              onBlur={() => handleBlur('title')}
-              onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
-              placeholder="Enter event title..."
-              maxLength={MAX_TITLE_LENGTH}
-              className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent ${
-                errors.title ? 'border-red-500' : 'border-gray-700'
-              }`}
-              required
-            />
-            <div className="flex justify-between mt-1">
-              {errors.title ? (
-                <p className="text-red-500 text-xs flex items-center gap-1">
-                  <AlertCircle className="w-3 h-3" />{errors.title}
-                </p>
-              ) : <span />}
-              <span className="text-xs text-gray-400">
-                {formData.title.length}/{MAX_TITLE_LENGTH}
-              </span>
-            </div>
-          </div>
-
-          {/* Description - Right after title */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Description <span className="text-red-500">*</span>
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => handleChange('description', e.target.value)}
-              onBlur={() => handleBlur('description')}
-              placeholder="Describe your event, what attendees can expect..."
-              rows={4}
-              maxLength={MAX_DESCRIPTION_LENGTH}
-              className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none ${
-                errors.description ? 'border-red-500' : 'border-gray-700'
-              }`}
-            />
-            <div className="flex justify-between mt-1">
-              {errors.description ? (
-                <p className="text-red-500 text-xs flex items-center gap-1">
-                  <AlertCircle className="w-3 h-3" />{errors.description}
-                </p>
-              ) : <span />}
-              <span className="text-xs text-gray-400">
-                {formData.description.length}/{MAX_DESCRIPTION_LENGTH}
-              </span>
-            </div>
-          </div>
-
-          {/* Venue and Capacity */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                <MapPin className="inline w-4 h-4 mr-1" />Venue <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={formData.venue}
-                onChange={(e) => handleChange('venue', e.target.value)}
-                onBlur={() => handleBlur('venue')}
-                placeholder="Event location (e.g., Singapore Convention Centre)"
-                className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent ${
-                  errors.venue ? 'border-red-500' : 'border-gray-700'
-                }`}
-                required
-              />
-              {errors.venue && (
-                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                  <AlertCircle className="w-3 h-3" />{errors.venue}
-                </p>
-              )}
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                <Users className="inline w-4 h-4 mr-1" />Capacity <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="number"
-                value={formData.capacity}
-                onChange={(e) => handleChange('capacity', e.target.value)}
-                onBlur={() => handleBlur('capacity')}
-                placeholder="Max attendees (e.g., 100)"
-                min="1"
-                max={MAX_CAPACITY}
-                className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent ${
-                  errors.capacity ? 'border-red-500' : 'border-gray-700'
-                }`}
-                required
-              />
-              {errors.capacity && (
-                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                  <AlertCircle className="w-3 h-3" />{errors.capacity}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Registration Section - Only for new events when not logged in */}
-          {!isEdit && !user && (
-            <>
-            <div className="pt-4 border-t border-gray-700">
-              <h3 className="text-sm font-semibold text-gray-300 mb-3">Contact Information</h3>
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-6"
+            onKeyDown={(e) => {
+              // Prevent form submission on Enter key (except in textarea)
+              if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+              }
+            }}
+          >
+            {/* Event Type Tabs */}
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+              <div className="flex flex-wrap gap-2 mb-6">
+                {eventTypes.map(type => (
+                  <button
+                    key={type.id}
+                    type="button"
+                    onClick={() => handleChange('eventType', type.id)}
+                    className={`px-6 py-2.5 rounded-lg font-medium transition-all ${formData.eventType === type.id
+                        ? 'bg-red-600 text-white shadow-md'
+                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                      }`}
+                  >
+                    {type.label}
+                  </button>
+                ))}
+              </div>
+              {/* Date Range */}
               <div className="grid grid-cols-2 gap-4">
-              
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    <Phone className="inline w-4 h-4 mr-1" />Contact
+                    <Calendar className="inline w-4 h-4 mr-1" />From Date
                   </label>
-                  <PhoneInput
-                    value={formData.creatorContact}
-                    onChange={(value) => handleChange('creatorContact', value || '')}
-                    onBlur={() => handleBlur('creatorContact')}
-                    defaultCountry="SG"
-                    placeholder="Phone number"
-                    error={!!errors.creatorContact}
-                    required={!user}
+                  <input
+                    type="date"
+                    value={formData.startDate}
+                    onChange={(e) => handleChange('startDate', e.target.value)}
+                    onBlur={() => handleBlur('startDate')}
+                    min={!isEdit ? new Date().toISOString().split('T')[0] : undefined}
+                    className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-red-500 focus:border-transparent ${errors.startDate ? 'border-red-500' : 'border-gray-700'
+                      }`}
+                    required
                   />
+                  {errors.startDate && (
+                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />{errors.startDate}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    <Mail className="inline w-4 h-4 mr-1" />Email
+                    <Calendar className="inline w-4 h-4 mr-1" />To Date
                   </label>
                   <input
-                    type="email"
-                    value={formData.creatorEmail}
-                    onChange={(e) => handleChange('creatorEmail', e.target.value)}
-                    onBlur={() => handleBlur('creatorEmail')}
-                    placeholder="your@email.com"
-                    className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 ${
-                      errors.creatorEmail ? 'border-red-500' : 'border-gray-700'
-                    }`}
-                    required={!user}
+                    type="date"
+                    value={formData.endDate}
+                    onChange={(e) => handleChange('endDate', e.target.value)}
+                    onBlur={() => handleBlur('endDate')}
+                    min={formData.startDate || (!isEdit ? new Date().toISOString().split('T')[0] : undefined)}
+                    className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-red-500 focus:border-transparent ${errors.endDate ? 'border-red-500' : 'border-gray-700'
+                      }`}
+                    required
                   />
-                  {errors.creatorEmail && (
+                  {errors.endDate && (
                     <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" />{errors.creatorEmail}
+                      <AlertCircle className="w-3 h-3" />{errors.endDate}
                     </p>
                   )}
                 </div>
               </div>
-              <div className="mt-3">
-                <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
+
+              {/* Title */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Title <span className="text-red-500">*</span>
+                </label>
                 <input
-                  type="password"
-                  value={formData.creatorPassword}
-                  onChange={(e) => handleChange('creatorPassword', e.target.value)}
-                  onBlur={() => handleBlur('creatorPassword')}
-                  placeholder="At least 6 characters"
-                  className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 ${
-                    errors.creatorPassword ? 'border-red-500' : 'border-gray-700'
-                  }`}
-                  required={!user}
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) => handleChange('title', e.target.value)}
+                  onBlur={() => handleBlur('title')}
+                  onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
+                  placeholder="Enter event title..."
+                  maxLength={MAX_TITLE_LENGTH}
+                  className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent ${errors.title ? 'border-red-500' : 'border-gray-700'
+                    }`}
+                  required
                 />
-                {errors.creatorPassword && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                    <AlertCircle className="w-3 h-3" />{errors.creatorPassword}
-                  </p>
-                )}
-              </div>
-            </div>
-            </>
-          )}
-
-          {/* Note */}
-          <p className="text-sm text-gray-500 pb-4 border-b border-gray-700">
-            1 listing per account. Admin approval required.
-          </p>
-          </div>
-
-          {/* Additional Details Section */}
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-6">
-            <h2 className="text-xl font-semibold text-white">Additional Details</h2>
-
-            {/* Logo and Image */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Logo</label>
-                <div className="space-y-3">
-                  {formData.logo && (
-                    <img
-                      src={formData.logo}
-                      alt="Logo"
-                      className="w-24 h-24 object-cover rounded-lg border-2 border-gray-200"
-                    />
-                  )}
-                  <label className="flex items-center justify-center gap-2 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors">
-                    <Upload size={16} className="text-gray-400" />
-                    <span className="text-sm font-medium text-gray-300">
-                      {formData.logo ? 'Change' : 'Upload'}
-                    </span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => handleImageUpload('logo', e.target.files[0])}
-                    />
-                  </label>
+                <div className="flex justify-between mt-1">
+                  {errors.title ? (
+                    <p className="text-red-500 text-xs flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />{errors.title}
+                    </p>
+                  ) : <span />}
+                  <span className="text-xs text-gray-400">
+                    {formData.title.length}/{MAX_TITLE_LENGTH}
+                  </span>
                 </div>
               </div>
+
+              {/* Description - Right after title */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Event Banner</label>
-                <div className="space-y-3">
-                  {formData.image && (
-                    <img
-                      src={formData.image}
-                      alt="Event"
-                      className="w-full h-24 object-cover rounded-lg border-2 border-gray-200"
-                    />
-                  )}
-                  <label className="flex items-center justify-center gap-2 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors">
-                    <Upload size={16} className="text-gray-400" />
-                    <span className="text-sm font-medium text-gray-300">
-                      {formData.image ? 'Change' : 'Upload'}
-                    </span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => handleImageUpload('image', e.target.files[0])}
-                    />
-                  </label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Description <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => handleChange('description', e.target.value)}
+                  onBlur={() => handleBlur('description')}
+                  placeholder="Describe your event, what attendees can expect..."
+                  rows={4}
+                  maxLength={MAX_DESCRIPTION_LENGTH}
+                  className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none ${errors.description ? 'border-red-500' : 'border-gray-700'
+                    }`}
+                />
+                <div className="flex justify-between mt-1">
+                  {errors.description ? (
+                    <p className="text-red-500 text-xs flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />{errors.description}
+                    </p>
+                  ) : <span />}
+                  <span className="text-xs text-gray-400">
+                    {formData.description.length}/{MAX_DESCRIPTION_LENGTH}
+                  </span>
                 </div>
               </div>
+
+              {/* Venue and Capacity */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <MapPin className="inline w-4 h-4 mr-1" />Venue <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.venue}
+                    onChange={(e) => handleChange('venue', e.target.value)}
+                    onBlur={() => handleBlur('venue')}
+                    placeholder="Event location (e.g., Singapore Convention Centre)"
+                    className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent ${errors.venue ? 'border-red-500' : 'border-gray-700'
+                      }`}
+                    required
+                  />
+                  {errors.venue && (
+                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />{errors.venue}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <Users className="inline w-4 h-4 mr-1" />Capacity <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.capacity}
+                    onChange={(e) => handleChange('capacity', e.target.value)}
+                    onBlur={() => handleBlur('capacity')}
+                    placeholder="Max attendees (e.g., 100)"
+                    min="1"
+                    max={MAX_CAPACITY}
+                    className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent ${errors.capacity ? 'border-red-500' : 'border-gray-700'
+                      }`}
+                    required
+                  />
+                  {errors.capacity && (
+                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />{errors.capacity}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Registration Section - Only for new events when not logged in */}
+              {!isEdit && !user && (
+                <>
+                  <div className="pt-4 border-t border-gray-700">
+                    <h3 className="text-sm font-semibold text-gray-300 mb-3">Contact Information</h3>
+                    <div className="grid grid-cols-2 gap-4">
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          <Phone className="inline w-4 h-4 mr-1" />Contact
+                        </label>
+                        <PhoneInput
+                          value={formData.creatorContact}
+                          onChange={(value) => handleChange('creatorContact', value || '')}
+                          onBlur={() => handleBlur('creatorContact')}
+                          defaultCountry="SG"
+                          placeholder="Phone number"
+                          error={!!errors.creatorContact}
+                          required={!user}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          <Mail className="inline w-4 h-4 mr-1" />Email
+                        </label>
+                        <input
+                          type="email"
+                          value={formData.creatorEmail}
+                          onChange={(e) => handleChange('creatorEmail', e.target.value)}
+                          onBlur={() => handleBlur('creatorEmail')}
+                          placeholder="your@email.com"
+                          className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 ${errors.creatorEmail ? 'border-red-500' : 'border-gray-700'
+                            }`}
+                          required={!user}
+                        />
+                        {errors.creatorEmail && (
+                          <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                            <AlertCircle className="w-3 h-3" />{errors.creatorEmail}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="mt-3">
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                      <input
+                        type="password"
+                        value={formData.creatorPassword}
+                        onChange={(e) => handleChange('creatorPassword', e.target.value)}
+                        onBlur={() => handleBlur('creatorPassword')}
+                        placeholder="At least 6 characters"
+                        className={`w-full px-4 py-3 border rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 ${errors.creatorPassword ? 'border-red-500' : 'border-gray-700'
+                          }`}
+                        required={!user}
+                      />
+                      {errors.creatorPassword && (
+                        <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" />{errors.creatorPassword}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Note */}
+              <p className="text-sm text-gray-500 pb-4 border-b border-gray-700">
+                1 listing per account. Admin approval required.
+              </p>
             </div>
 
-            {/* Organisers */}
-            <DynamicList
-              title="Organisers"
-              items={formData.organisers}
-              onChange={(items) => handleChange('organisers', items)}
-              fields={[
-                { name: 'name', label: 'Name', placeholder: 'Name', type: 'text' },
-                { name: 'detail', label: 'Detail', placeholder: 'Detail', type: 'text' },
-              ]}
-            />
+            {/* Additional Details Section */}
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-6">
+              <h2 className="text-xl font-semibold text-white">Additional Details</h2>
 
-          {/* Guests of Honour */}
-          <DynamicList
-            title="Guests of Honour"
-            items={formData.guestsOfHonour}
-            onChange={(items) => handleChange('guestsOfHonour', items)}
-            fields={[
-              { name: 'name', label: 'Name', placeholder: 'Name', type: 'text' },
-              { name: 'title', label: 'Title', placeholder: 'Title/Position', type: 'text' },
-              { name: 'photo', label: 'Photo', type: 'image' },
-            ]}
-          />
+              {/* Logo and Image */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Logo</label>
+                  <div className="space-y-3">
+                    {formData.logo && (
+                      <img
+                        src={formData.logo}
+                        alt="Logo"
+                        className="w-24 h-24 object-cover rounded-lg border-2 border-gray-200"
+                      />
+                    )}
+                    <label className="flex items-center justify-center gap-2 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors">
+                      <Upload size={16} className="text-gray-400" />
+                      <span className="text-sm font-medium text-gray-300">
+                        {formData.logo ? 'Change' : 'Upload'}
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleImageUpload('logo', e.target.files[0])}
+                      />
+                    </label>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Event Banner</label>
+                  <div className="space-y-3">
+                    {formData.image && (
+                      <img
+                        src={formData.image}
+                        alt="Event"
+                        className="w-full h-24 object-cover rounded-lg border-2 border-gray-200"
+                      />
+                    )}
+                    <label className="flex items-center justify-center gap-2 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors">
+                      <Upload size={16} className="text-gray-400" />
+                      <span className="text-sm font-medium text-gray-300">
+                        {formData.image ? 'Change' : 'Upload'}
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleImageUpload('image', e.target.files[0])}
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
 
-          {/* Speakers */}
-          <DynamicList
-            title="Speakers"
-            items={formData.speakers}
-            onChange={(items) => handleChange('speakers', items)}
-            fields={[
-              { name: 'name', label: 'Name', placeholder: 'Name', type: 'text' },
-              { name: 'title', label: 'Title', placeholder: 'Title/Position', type: 'text' },
-              { name: 'photo', label: 'Photo', type: 'image' },
-            ]}
-          />
+              {/* Organisers */}
+              <DynamicList
+                title="Organisers"
+                items={formData.organisers}
+                onChange={(items) => handleChange('organisers', items)}
+                fields={[
+                  { name: 'name', label: 'Name', placeholder: 'Name', type: 'text' },
+                  { name: 'detail', label: 'Detail', placeholder: 'Detail', type: 'text' },
+                ]}
+              />
 
-          {/* Sponsors */}
-          <DynamicList
-            title="Sponsors"
-            items={formData.sponsors}
-            onChange={(items) => handleChange('sponsors', items)}
-            fields={[
-              { name: 'name', label: 'Name', placeholder: 'Sponsor Name', type: 'text' },
-              { name: 'logo', label: 'Logo', type: 'image' },
-            ]}
-          />
+              {/* Guests of Honour */}
+              <DynamicList
+                title="Guests of Honour"
+                items={formData.guestsOfHonour}
+                onChange={(items) => handleChange('guestsOfHonour', items)}
+                fields={[
+                  { name: 'name', label: 'Name', placeholder: 'Name', type: 'text' },
+                  { name: 'title', label: 'Title', placeholder: 'Title/Position', type: 'text' },
+                  { name: 'photo', label: 'Photo', type: 'image' },
+                ]}
+              />
 
-          {/* Media */}
-          <DynamicList
-            title="Media Partners"
-            items={formData.media}
-            onChange={(items) => handleChange('media', items)}
-            fields={[
-              { name: 'name', label: 'Name', placeholder: 'Media Name', type: 'text' },
-              { name: 'logo', label: 'Logo', type: 'image' },
-            ]}
-          />
+              {/* Speakers */}
+              <DynamicList
+                title="Speakers"
+                items={formData.speakers}
+                onChange={(items) => handleChange('speakers', items)}
+                fields={[
+                  { name: 'name', label: 'Name', placeholder: 'Name', type: 'text' },
+                  { name: 'title', label: 'Title', placeholder: 'Title/Position', type: 'text' },
+                  { name: 'photo', label: 'Photo', type: 'image' },
+                ]}
+              />
 
-          </div>
+              {/* Sponsors */}
+              <DynamicList
+                title="Sponsors"
+                items={formData.sponsors}
+                onChange={(items) => handleChange('sponsors', items)}
+                fields={[
+                  { name: 'name', label: 'Name', placeholder: 'Sponsor Name', type: 'text' },
+                  { name: 'logo', label: 'Logo', type: 'image' },
+                ]}
+              />
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading || Object.keys(errors).filter(k => k !== 'general').length > 0}
-            className="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                Submitting...
-              </>
-            ) : (
-              <>
-                {isEdit ? 'Update Event' : 'Submit Event'}
-              </>
+              {/* Media */}
+              <DynamicList
+                title="Media Partners"
+                items={formData.media}
+                onChange={(items) => handleChange('media', items)}
+                fields={[
+                  { name: 'name', label: 'Name', placeholder: 'Media Name', type: 'text' },
+                  { name: 'logo', label: 'Logo', type: 'image' },
+                ]}
+              />
+
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading || Object.keys(errors).filter(k => k !== 'general').length > 0}
+              className="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  {isEdit ? 'Update Event' : 'Submit Event'}
+                </>
+              )}
+            </button>
+
+            {/* Validation Summary */}
+            {submitAttempted && Object.keys(errors).filter(k => k !== 'general').length > 0 && (
+              <div className="bg-red-900/50 border border-red-700 rounded-lg p-4 flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-red-300 font-medium">Please fix the following errors:</p>
+                  <ul className="text-red-400 text-sm mt-1 list-disc list-inside">
+                    {Object.entries(errors).filter(([k]) => k !== 'general').map(([key, value]) => (
+                      <li key={key}>{value}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             )}
-          </button>
-          
-          {/* Validation Summary */}
-          {submitAttempted && Object.keys(errors).filter(k => k !== 'general').length > 0 && (
-            <div className="bg-red-900/50 border border-red-700 rounded-lg p-4 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-red-300 font-medium">Please fix the following errors:</p>
-                <ul className="text-red-400 text-sm mt-1 list-disc list-inside">
-                  {Object.entries(errors).filter(([k]) => k !== 'general').map(([key, value]) => (
-                    <li key={key}>{value}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          )}
-        </form>
+          </form>
         </div>
       </div>
     </div>
